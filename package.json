@@ -49,8 +49,9 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "lint-staged": {
-    "src/**/*.{ts}": [
-      "eslint --fix"
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --ext .tsx --ext .ts src/",
+      "prettier --write"
     ]
   }
 }
