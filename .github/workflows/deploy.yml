@@ -1,14 +1,6 @@
-name: main 또는 develop 브랜치에 푸쉬되거나 PR이 생성되는 경우
+name: ci
 
-on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
+on: [push, pull_request]
 
 jobs:
   deploy:
@@ -25,3 +17,19 @@ jobs:
 
       - name: 앱 빌드
         run: npm run build
+
+      - name: action-discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            📢 프론트엔드팀 ${{ github.actor }} 푸쉬했어요 확인해주세요! ( っ •‌ᜊ•‌ )う  
+            🔗 https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          title: ! failed !
+          color: FF0000
+
+      - run: echo '${{github.actor}}님 에러 확인 확인해주세요 ( っ •‌ᜊ•‌ )う'
+
+
+
