@@ -38,6 +38,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
     "plugin:jsx-a11y/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     "prettier"
   ],
 
