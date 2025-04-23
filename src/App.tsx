@@ -1,8 +1,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Layout from './layouts/Layout';
-import Home from './pages/Home';
+import Layout from '@/routes/layouts/Layout';
+import Home from '@/routes/pages/Home';
 
-function Router() {
+function App() {
   const router = createBrowserRouter([
     {
       path: '/',
@@ -15,7 +15,8 @@ function Router() {
       ],
     },
   ]);
+
   return <RouterProvider router={router} />;
 }
 
-export default Router;
+export default App;
