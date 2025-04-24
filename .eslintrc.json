@@ -16,10 +16,15 @@
     },
     "import/resolver": {
       "typescript": {
-        "project": ["./tsconfig.app.json", "./tsconfig.json"]
+        "alwaysTryTypes": true,
+        "project": [
+          "./tsconfig.json",
+          "./tsconfig.app.json"
+        ]
       }
     }
   },
+
 
 
   "env": {
