@@ -1,11 +1,11 @@
-import { Link } from 'react-router';
-import { useIdolState } from '@/store/idolStore';
 import { useState } from 'react';
-import useMobile from '@/hooks/useMobile';
+import { Link } from 'react-router';
+import { Close, Hamburger } from '@/assets/icons/inedx';
 import Dropdown from '@/components/common/Dropdown';
 import IdolDropdownPanel from '@/components/common/IdolDropdownPanel';
 import { HEADER_MENU } from '@/constants/headerMenu';
-import { Close, Hamburger } from '@/assets/icons/inedx';
+import useMobile from '@/hooks/useMobile';
+import { useIdolState } from '@/store/idolStore';
 
 function Header() {
   const { idols, selectedIdolId, setSelectIdol } = useIdolState();
