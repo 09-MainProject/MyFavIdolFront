@@ -15,9 +15,12 @@
       "version": "detect"
     },
     "import/resolver": {
-      "typescript": {"project": "./tsconfig.app.json"}
+      "typescript": {
+        "project": ["./tsconfig.app.json", "./tsconfig.json"]
+      }
     }
   },
+
 
   "env": {
     "browser": true,
