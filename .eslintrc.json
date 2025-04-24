@@ -7,7 +7,8 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./tsconfig.app.json", "./tsconfig.node.json"]
+    "project": ["./tsconfig.app.json", "./tsconfig.node.json"],
+    "noWarnOnMultipleProjects": true
   },
 
   "settings": {
