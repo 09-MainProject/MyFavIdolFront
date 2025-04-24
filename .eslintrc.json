@@ -7,7 +7,8 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./tsconfig.app.json", "./tsconfig.node.json"]
+    "project": ["./tsconfig.app.json", "./tsconfig.node.json"],
+    "noWarnOnMultipleProjects": true
   },
 
   "settings": {
@@ -15,7 +16,11 @@
       "version": "detect"
     },
     "import/resolver": {
-      "typescript": {"project": "./tsconfig.app.json"}
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json",
+        "directory": "./"
+      }
     }
   },
 
@@ -25,12 +30,7 @@
     "node": true
   },
 
-  "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "jsx-a11y"
-  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "jsx-a11y"],
 
   "extends": [
     "airbnb",
@@ -43,13 +43,36 @@
   ],
 
   "rules": {
-    "import/extensions": [
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "import/order": [
       "error",
-      "ignorePackages",
       {
-        "ts": "never",
-        "tsx": "never",
-        "js": "never"
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "sibling"],
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          }
+        ],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
       }
     ],
     "import/no-extraneous-dependencies": [
@@ -70,11 +93,22 @@
     "react/require-default-props": "off",
     "import/prefer-default-export": "off",
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-use-before-define": "error",
     "no-var": "error",
-    "no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }]
+    "react/jsx-filename-extension": [
+      1,
+      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    ]
   }
 }
