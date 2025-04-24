@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -8,6 +8,7 @@ import { format, subDays, addDays } from 'date-fns';
 import CardFrame from '../../components/CardFrame';
 
 function Home() {
+  const [isMobile, setIsMobile] = useState(false);
   // swiper 임시
   const imgList = [
     '../src/assets/img/swiper1.png',
@@ -70,6 +71,17 @@ function Home() {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
+
+  // 반응형 코드
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSelect = (offset: number) => {
     const newDate = format(addDays(new Date(), offset), 'yyyy-MM-dd');
@@ -141,21 +153,40 @@ function Home() {
               );
             })}
           </div>
-          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-1 md:grid-cols-4">
             {filtered.map(item => (
               <CardFrame key={item.title}>
-                <img
-                  src={item.idolImage}
-                  alt={item.title}
-                  className="h-auto w-full object-cover"
-                />
-                <div className="p-3 text-center">
-                  <p className="mb-1 text-[1.1rem] font-semibold">
-                    {item.idolName}
-                  </p>
-                  <p className="text-[0.9rem] text-gray-500">{item.title}</p>
-                  <p className="text-[0.8rem] text-gray-400">{item.date}</p>
-                </div>
+                {isMobile ? (
+                  <div className="flex items-center gap-3 p-3">
+                    <img
+                      src={item.idolImage}
+                      alt={item.title}
+                      className="h-[64px] w-[64px] rounded-lg object-cover"
+                    />
+                    <div>
+                      <p className="font-semibold">{item.idolName}</p>
+                      <p className="text-sm text-gray-500">{item.title}</p>
+                      <p className="text-xs text-gray-400">{item.date}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      src={item.idolImage}
+                      alt={item.title}
+                      className="h-auto w-full object-cover"
+                    />
+                    <div className="p-3">
+                      <p className="mb-1 text-[1.1rem] font-semibold">
+                        {item.idolName}
+                      </p>
+                      <p className="text-[0.9rem] text-gray-500">
+                        {item.title}
+                      </p>
+                      <p className="text-[0.8rem] text-gray-400">{item.date}</p>
+                    </div>
+                  </div>
+                )}
               </CardFrame>
             ))}
           </div>
