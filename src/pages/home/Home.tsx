@@ -78,7 +78,7 @@ function Home() {
   return (
     <div className="px-4 md:px-8">
       <div className="mx-auto max-w-[1080px]">
-        <div className="pt-12">
+        <div className="pt-20">
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={20}
