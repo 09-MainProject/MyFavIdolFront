@@ -102,7 +102,7 @@ MyFavIdolFront/
 ## ⚙️ 실행 방법
 
 1. 레포지토리 클론
-git clone https://github.com/your-team/wistar.git
-cd 해당폴더로 이동
-npm i, npm install 패키지 설치
-npm run dev 실행
+- git clone https://github.com/your-team/wistar.git
+- - cd 해당폴더로 이동
+- npm i, npm install 패키지 설치
+- npm run dev 실행
