@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useDebouncedFn from '@/hooks/useDebouncedFn.tsx';
+import useDebouncedFn from '@/hooks/useDebouncedFn';
 
 function useMobile() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
