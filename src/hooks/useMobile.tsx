@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import useDebouncedFn from '@/hooks/useDebouncedFn.tsx';
 
 function useMobile() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 680);
-  };
+  const handleResize = useDebouncedFn(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, 300);
 
   useEffect(() => {
     handleResize();
@@ -13,7 +14,7 @@ function useMobile() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [handleResize]);
   return isMobile;
 }
 
