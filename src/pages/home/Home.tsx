@@ -1,7 +1,8 @@
 import { format, subDays, addDays } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import useMobile from '@/hooks/useMobile';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -9,7 +10,7 @@ import 'swiper/css/pagination';
 import CardFrame from '../../components/CardFrame';
 
 function Home() {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMobile();
 
   const imgList = [
     '../src/assets/img/swiper1.png',
@@ -67,16 +68,6 @@ function Home() {
     format(new Date(), 'yyyy-MM-dd')
   );
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const handleSelect = (offset: number) => {
     const newDate = format(addDays(new Date(), offset), 'yyyy-MM-dd');
     setSelectedDate(newDate);
@@ -87,7 +78,7 @@ function Home() {
   return (
     <div className="px-4 md:px-8">
       <div className="mx-auto max-w-[1080px]">
-        <div className="pt-12">
+        <div className="pt-20">
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={20}
@@ -145,7 +136,7 @@ function Home() {
             })}
           </div>
 
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-1 md:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-4 md:gap-10">
             {filtered.map(item => (
               <CardFrame key={item.title}>
                 {isMobile ? (
