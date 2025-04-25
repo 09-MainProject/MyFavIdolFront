@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
-// import "swiper/css/navigation";
 import 'swiper/css/pagination';
 import { format, subDays, addDays } from 'date-fns';
 import CardFrame from '../../components/CardFrame';
 
 function Home() {
   const [isMobile, setIsMobile] = useState(false);
-  // swiper 임시
+
   const imgList = [
     '../src/assets/img/swiper1.png',
     '../src/assets/img/swiper2.png',
@@ -25,42 +24,36 @@ function Home() {
 
   const mockSchedule: Schedule[] = [
     {
-      // 오늘
       idolName: '보이넥스트도어',
       idolImage: '../src/assets/img/boynextdoor.jpeg',
       title: '예능 방송',
       date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
-      // 오늘
       idolName: '보이넥스트도어',
       idolImage: '../src/assets/img/boynextdoor.jpeg',
       title: '공연',
       date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
-      // 오늘
       idolName: '보이넥스트도어',
       idolImage: '../src/assets/img/boynextdoor.jpeg',
       title: '팬사인',
       date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
-      // 오늘
       idolName: '보이넥스트도어',
       idolImage: '../src/assets/img/boynextdoor.jpeg',
       title: '머없음',
       date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
-      // 어제
       idolName: '엔시티',
       idolImage: '../src/assets/img/ncity.jpeg',
       title: '뮤직쇼 녹화',
       date: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
     },
     {
-      // 내일
       idolName: '보이넥스트도어',
       idolImage: '',
       title: '라이브 방송',
@@ -68,11 +61,8 @@ function Home() {
     },
   ];
 
-  const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), 'yyyy-MM-dd')
-  );
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
-  // 반응형 코드
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -132,13 +122,10 @@ function Home() {
               const isSelected = selectedDate === dateString;
 
               let label = '';
-              if (offset === -1) {
-                label = '어제';
-              } else if (offset === 0) {
-                label = '오늘';
-              } else {
-                label = '내일';
-              }
+              if (offset === -1) label = '어제';
+              else if (offset === 0) label = '오늘';
+              else label = '내일';
+
               return (
                 <div key={offset} className="flex flex-col items-center gap-2">
                   <span className="text-[1.2rem] text-gray-600">{label}</span>
@@ -153,6 +140,7 @@ function Home() {
               );
             })}
           </div>
+
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-1 md:grid-cols-4">
             {filtered.map(item => (
               <CardFrame key={item.title}>
@@ -180,9 +168,7 @@ function Home() {
                       <p className="mb-1 text-[1.1rem] font-semibold">
                         {item.idolName}
                       </p>
-                      <p className="text-[0.9rem] text-gray-500">
-                        {item.title}
-                      </p>
+                      <p className="text-[0.9rem] text-gray-500">{item.title}</p>
                       <p className="text-[0.8rem] text-gray-400">{item.date}</p>
                     </div>
                   </div>
