@@ -9,7 +9,7 @@
 
 프로젝트 아래 가이드를 먼저 확인해주세요.
 
-👉 [팀원용 Notion 가이드 바로가기]([https://www.notion.so/1d89cc6146f38093ba65ff84fe08977a?pvs=4](https://grey-ghost-508.notion.site/1e09cc6146f380228218f51e08edd8a4?v=1e09cc6146f3804f8ffa000c7b0c5ead))
+👉 [팀원용 Notion 가이드 바로가기]([https://www.notion.so/1d89cc6146f38093ba65ff84fe08977a?pvs=4](https://grey-ghost-508.notion.site/1e09cc6146f380228218f51e08edd8a4?v=1e09cc6146f3804f8ffa000c7b0c5ead)
 
 ## 🚀 기술 스택
 
