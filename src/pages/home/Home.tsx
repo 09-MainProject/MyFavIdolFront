@@ -1,9 +1,11 @@
+import { format, subDays, addDays } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { format, subDays, addDays } from 'date-fns';
+
 import CardFrame from '../../components/CardFrame';
 
 function Home() {
@@ -61,7 +63,9 @@ function Home() {
     },
   ];
 
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [selectedDate, setSelectedDate] = useState(
+    format(new Date(), 'yyyy-MM-dd')
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -168,7 +172,9 @@ function Home() {
                       <p className="mb-1 text-[1.1rem] font-semibold">
                         {item.idolName}
                       </p>
-                      <p className="text-[0.9rem] text-gray-500">{item.title}</p>
+                      <p className="text-[0.9rem] text-gray-500">
+                        {item.title}
+                      </p>
                       <p className="text-[0.8rem] text-gray-400">{item.date}</p>
                     </div>
                   </div>
