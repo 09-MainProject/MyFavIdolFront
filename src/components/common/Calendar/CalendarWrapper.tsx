@@ -1,8 +1,10 @@
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar, { TileArgs } from 'react-calendar';
+import NotificationCard from '@components/common/Card/NotificationCard';
+import NotificationInfoCardList from '@components/common/Card/NotificationInfoCardList';
 import { Idol } from '@store/idolStore';
-import CalendarTileContent from '@/components/common/Calendar/CalendarTileContent.tsx';
+import CalendarTileContent from '@/components/common/Calendar/CalendarTileContent';
 
 type ValuePiece = Date | null;
 
@@ -13,6 +15,20 @@ type Props = {
 
 function CalendarWrapper({ idols }: Props) {
   const [value, onChange] = useState<Value>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | string | number>(
+    null
+  );
+  const selectedIdol = idols.filter(idol => idol.startDate === selectedDate);
+
+  useEffect(() => {
+    if (value instanceof Date) {
+      setSelectedDate(format(value, 'yyyy-MM-dd'));
+    } else if (Array.isArray(value)) {
+      setSelectedDate(format(value[0], 'yyyy-MM-dd'));
+    } else {
+      setSelectedDate(null);
+    }
+  }, [value]);
 
   const makeTileContent = ({ date }: TileArgs) => {
     const titleDate = format(date, 'yyyy-MM-dd');
@@ -37,6 +53,11 @@ function CalendarWrapper({ idols }: Props) {
         onChange={onChange}
         tileContent={makeTileContent}
       />
+      {selectedIdol?.map(idol => (
+        <NotificationCard key={idol.id}>
+          <NotificationInfoCardList filterDate={idol} />
+        </NotificationCard>
+      ))}
     </article>
   );
 }
