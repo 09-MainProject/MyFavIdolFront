@@ -15,7 +15,7 @@ function CalendarTileContent({ filterIdols }: Props) {
   const type = TYPE_LABEL[filterIdols];
 
   return (
-    <div>
+    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
       <span className={`text-white ${type.color} p-2`}>{filterIdols}</span>
     </div>
   );
