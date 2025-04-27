@@ -1,7 +1,18 @@
 import { Link } from 'react-router';
 
+type Idol = {
+  id: number;
+  idolId: number;
+  title: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  description: string;
+};
+
 type Props = {
-  idols: { id: number; name: string }[];
+  idols: Idol[];
   selectedIdolId: number | null;
   setSelectIdol: (idolId: number) => void;
 };
@@ -18,7 +29,7 @@ function IdolDropdownPanel({ idols, selectedIdolId, setSelectIdol }: Props) {
               selectedIdolId === idol.id && 'bg-gray-100'
             }`}
           >
-            {idol.name}
+            {idol.title}
           </button>
         </div>
       ))}
