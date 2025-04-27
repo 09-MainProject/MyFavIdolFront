@@ -15,10 +15,12 @@ type Props = {
 
 function CalendarWrapper({ idols }: Props) {
   const [value, onChange] = useState<Value>(new Date());
+  const today = format(new Date(), 'yyyy-MM-dd');
   const [selectedDate, setSelectedDate] = useState<
     Date | string | null | number
   >(null);
   const selectedIdol = idols.filter(idol => idol.startDate === selectedDate);
+  const upcomingIdols = idols.filter(idol => idol.startDate >= today);
 
   useEffect(() => {
     if (value instanceof Date) {
@@ -55,6 +57,11 @@ function CalendarWrapper({ idols }: Props) {
       />
       {selectedIdol?.map(idol => (
         <NotificationCard key={idol.id}>
+          <NotificationInfoCardList filterDate={idol} />
+        </NotificationCard>
+      ))}
+      {upcomingIdols?.map(idol => (
+        <NotificationCard key={`upcoming-${idol.id}`}>
           <NotificationInfoCardList filterDate={idol} />
         </NotificationCard>
       ))}
