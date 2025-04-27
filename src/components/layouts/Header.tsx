@@ -20,8 +20,8 @@ function Header() {
   };
 
   return (
-    <header className="fixed z-[9999] w-full bg-white">
-      <div className="mx-auto flex max-w-[1080px] items-center justify-between p-4">
+    <header className="fixed z-[9999] w-full max-w-[1080px] bg-red-200">
+      <div className="flex items-center p-4">
         <div className="flex items-center gap-4">
           <Link to="/">
             <h1 className="pb-2 text-3xl leading-none font-bold">Wistar</h1>
@@ -30,7 +30,7 @@ function Header() {
           <Dropdown
             isDropdownOpen={isDropdownOpen}
             handleOnToggle={handleOnToggle}
-            selectedIdol={selectedIdol?.name ?? '아이돌 선택'}
+            selectedIdol={selectedIdol?.title ?? '아이돌 선택'}
           >
             <IdolDropdownPanel
               idols={idols}
@@ -49,7 +49,7 @@ function Header() {
             ))}
           </nav>
         ) : (
-          <div>
+          <div className="ml-auto">
             <button
               type="button"
               onClick={() => setIsOpen(prev => !prev)}
