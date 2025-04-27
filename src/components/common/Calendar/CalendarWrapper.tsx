@@ -15,9 +15,9 @@ type Props = {
 
 function CalendarWrapper({ idols }: Props) {
   const [value, onChange] = useState<Value>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | string | number>(
-    null
-  );
+  const [selectedDate, setSelectedDate] = useState<
+    Date | string | null | number
+  >(null);
   const selectedIdol = idols.filter(idol => idol.startDate === selectedDate);
 
   useEffect(() => {
@@ -32,13 +32,13 @@ function CalendarWrapper({ idols }: Props) {
 
   const makeTileContent = ({ date }: TileArgs) => {
     const titleDate = format(date, 'yyyy-MM-dd');
-    const filtered = idols.filter(item => item.startDate === titleDate);
-    const type = filtered.map(item => item.type);
+    const filteredIdols = idols.filter(item => item.startDate === titleDate);
+    const types = filteredIdols.map(item => item.type);
     return (
       <div className="flex h-full flex-col">
         <div className="mt-2 flex max-h-[100px] flex-col overflow-hidden">
-          {type.map(item => (
-            <CalendarTileContent filterIdols={item} key={item} />
+          {types.map(type => (
+            <CalendarTileContent filterIdols={type} key={type} />
           ))}
         </div>
       </div>
