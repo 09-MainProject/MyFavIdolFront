@@ -20,7 +20,7 @@ function Header() {
   };
 
   return (
-    <header className="fixed z-[9999] w-full max-w-[1080px] bg-red-200">
+    <header className="fixed z-[9999] w-full max-w-[1080px]">
       <div className="flex items-center p-4">
         <div className="flex items-center gap-4">
           <Link to="/">
