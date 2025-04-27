@@ -55,7 +55,7 @@ function CalendarWrapper({ idols }: Props) {
         onChange={onChange}
         tileContent={makeTileContent}
       />
-      <h3 className="mt-12 text-2xl font-bold">오늘의 스케줄</h3>
+      <h3 className="mt-12 text-2xl font-bold">선택한 스케줄</h3>
       {selectedIdol?.map(idol => (
         <NotificationCard key={idol.id}>
           <NotificationInfoCardList filterDate={idol} />
