@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router';
 import { Close, Hamburger } from '@/assets/icons/inedx';
 import Dropdown from '@/components/common/Dropdown';
 import IdolDropdownPanel from '@/components/common/IdolDropdownPanel';
@@ -11,6 +11,7 @@ function Header() {
   const { idols, selectedIdolId, setSelectIdol } = useIdolState();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
   const isMobile = useMobile();
 
   const selectedIdol = idols.find(idol => idol.id === selectedIdolId) || null;
@@ -18,6 +19,14 @@ function Header() {
   const handleOnToggle = () => {
     setIsDropdownOpen(prev => !prev);
   };
+
+  const handleOnDropdownClose = () => {
+    setIsDropdownOpen(false);
+  };
+
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [location.pathname]);
 
   return (
     <header className="fixed z-[9999] w-full max-w-[1080px] bg-white">
@@ -36,6 +45,7 @@ function Header() {
               idols={idols}
               selectedIdolId={selectedIdolId}
               setSelectIdol={setSelectIdol}
+              handleOnDropdownClose={handleOnDropdownClose}
             />
           </Dropdown>
         </div>
