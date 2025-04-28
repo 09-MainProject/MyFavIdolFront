@@ -57,7 +57,7 @@ function Artist() {
     {
       id: 4,
       idolId: 2,
-      title: '방탄소년단 팬사인회',
+      title: '방탄소년단 팬사인회!',
       type: '팬사인회',
       startDate: '2025-05-03',
       endDate: '2025-05-03',

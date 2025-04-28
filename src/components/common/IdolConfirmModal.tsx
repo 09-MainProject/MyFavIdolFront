@@ -4,7 +4,7 @@ type Idol = {
 };
 
 type Props = {
-  idol: Idol; // 모달에 표시할 아이돌 정보
+  idol: Idol; // 모달에 표시할 아이돌 정보!
   onConfirm: () => void; // 추가 및 삭제 버튼 클릭 시 실행할 함수
   onCancel: () => void; // 취소 버튼 클릭 시 실행할 함수
   isAlreadySelected: boolean; // 드롭다운에 아이돌의 존재 여부 확인
