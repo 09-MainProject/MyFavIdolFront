@@ -49,7 +49,7 @@ function Artist() {
       navigate('/');
     }
 
-    // 모달 닫기
+    // 모달 닫기 !
     setModalIdol(null);
   };
 
