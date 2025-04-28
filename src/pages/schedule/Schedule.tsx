@@ -13,8 +13,11 @@ function Schedule() {
       type: '공연',
       startDate: '2025-05-25',
       endDate: '2025-05-25',
-      location: '서울 월드컵 경기장',
+      location: '서울 월드컵 경기장!',
       description: 'K-POP 슈퍼 콘서트',
+      img: '../src/assets/img/twice.jpg',
+      name: '트와이스',
+      enName: 'twice',
     },
   ];
 

@@ -9,6 +9,9 @@ export type Idol = {
   endDate: string;
   location: string;
   description: string;
+  img: string;
+  name: string;
+  enName: string;
 };
 
 interface IdolState {
@@ -29,6 +32,9 @@ const idols: Idol[] = [
     endDate: '2025-05-03',
     location: '서울 올림픽홀',
     description: '2025년 상반기 팬미팅',
+    img: '../src/assets/img/ncity.jpeg',
+    name: '트와이스',
+    enName: 'twice',
   },
   {
     id: 2,
@@ -39,6 +45,9 @@ const idols: Idol[] = [
     endDate: '2025-05-10',
     location: '부산 벡스코',
     description: 'TWICE WORLD TOUR 2025',
+    img: '../src/assets/img/ncity.jpeg',
+    name: '트와이스',
+    enName: 'twice',
   },
   {
     id: 3,
@@ -48,7 +57,10 @@ const idols: Idol[] = [
     startDate: '2025-05-18',
     endDate: '2025-05-18',
     location: 'MBC 상암동',
-    description: '음악중심 생방송 출연',
+    description: '음악중심 생방송 출연!',
+    img: '../src/assets/img/ncity.jpeg',
+    name: '트와이스',
+    enName: 'twice',
   },
 ];
 
