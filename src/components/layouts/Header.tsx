@@ -39,7 +39,7 @@ function Header() {
           <Dropdown
             isDropdownOpen={isDropdownOpen}
             handleOnToggle={handleOnToggle}
-            selectedIdol={selectedIdol?.name ?? '아이돌 선택'}
+            selectedIdol={selectedIdol?.name ?? '아이돌 선택!'}
           >
             <IdolDropdownPanel
               idols={idols}
