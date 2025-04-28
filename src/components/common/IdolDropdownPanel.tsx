@@ -9,31 +9,43 @@ type Idol = {
   endDate: string;
   location: string;
   description: string;
+  img: string;
+  name: string;
+  enName: string;
 };
 
 type Props = {
   idols: Idol[];
   selectedIdolId: number | null;
   setSelectIdol: (idolId: number) => void;
+  handleOnDropdownClose: () => void;
 };
 
-function IdolDropdownPanel({ idols, selectedIdolId, setSelectIdol }: Props) {
+function IdolDropdownPanel({
+  idols,
+  selectedIdolId,
+  setSelectIdol,
+  handleOnDropdownClose,
+}: Props) {
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {idols.map(idol => (
         <div key={idol.id}>
           <button
             type="button"
-            onClick={() => setSelectIdol(idol.id)}
+            onClick={() => {
+              setSelectIdol(idol.id);
+              handleOnDropdownClose();
+            }}
             className={`flex w-full items-center justify-between px-4 py-2 ${
               selectedIdolId === idol.id && 'bg-gray-100'
             }`}
           >
-            {idol.title}
+            {idol.name}
           </button>
         </div>
       ))}
-      <div className="text-center">
+      <div className="p-2 text-center">
         <Link to="/artists">추가 / 편집</Link>
       </div>
     </div>
