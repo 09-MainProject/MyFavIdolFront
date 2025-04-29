@@ -2,15 +2,15 @@ import * as React from 'react';
 
 type Props = {
   isDropdownOpen: boolean;
-  handleOnToggle: () => void;
-  selectedIdol: string;
+  handleToggleIdolDropdown: () => void;
+  displayedIdolName: string;
   children: React.ReactNode;
 };
 
 function Dropdown({
   isDropdownOpen,
-  handleOnToggle,
-  selectedIdol,
+  handleToggleIdolDropdown,
+  displayedIdolName,
   children,
 }: Props) {
   return (
@@ -18,9 +18,9 @@ function Dropdown({
       <button
         type="button"
         className="flex items-center leading-none"
-        onClick={handleOnToggle}
+        onClick={handleToggleIdolDropdown}
       >
-        {selectedIdol}
+        {displayedIdolName}
       </button>
       {isDropdownOpen && (
         <div className="absolute top-full left-0 z-10 mt-2 w-40 rounded bg-white shadow">
