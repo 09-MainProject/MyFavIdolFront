@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
+import ScheduleDetail from '@pages/schedule/ScheduleDetail';
 import Layout from '@/components/layouts/Layout';
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
@@ -24,6 +25,10 @@ function App() {
         {
           path: '/schedule',
           element: <Schedule />,
+        },
+        {
+          path: '/schedule/:id',
+          element: <ScheduleDetail />,
         },
         {
           path: '/timeline',
