@@ -18,14 +18,14 @@ type Props = {
   idols: Idol[];
   selectedIdolId: number | null;
   setSelectIdol: (idolId: number) => void;
-  handleOnDropdownClose: () => void;
+  handleCloseIdolDropdown: () => void;
 };
 
 function IdolDropdownPanel({
   idols,
   selectedIdolId,
   setSelectIdol,
-  handleOnDropdownClose,
+  handleCloseIdolDropdown,
 }: Props) {
   return (
     <div className="flex flex-col gap-1">
@@ -35,7 +35,7 @@ function IdolDropdownPanel({
             type="button"
             onClick={() => {
               setSelectIdol(idol.id);
-              handleOnDropdownClose();
+              handleCloseIdolDropdown();
             }}
             className={`flex w-full items-center justify-between px-4 py-2 ${
               selectedIdolId === idol.id && 'bg-gray-100'
