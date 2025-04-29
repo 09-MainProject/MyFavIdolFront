@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Calendar, { TileArgs } from 'react-calendar';
+
+import { Link } from 'react-router';
 import NotificationCard from '@components/common/Card/NotificationCard';
 import NotificationInfoCardList from '@components/common/Card/NotificationInfoCardList';
 import { Idol } from '@store/idolStore';
@@ -58,13 +60,17 @@ function CalendarWrapper({ idols }: Props) {
       <h3 className="mt-12 text-2xl font-bold">선택한 스케줄</h3>
       {selectedIdol?.map(idol => (
         <NotificationCard key={idol.id}>
-          <NotificationInfoCardList filterDate={idol} />
+          <Link to={idol.id.toString()}>
+            <NotificationInfoCardList filterDate={idol} />
+          </Link>
         </NotificationCard>
       ))}
       <h3 className="mt-12 text-2xl font-bold">다가오는 스케줄</h3>
       {upcomingIdols?.map(idol => (
         <NotificationCard key={`upcoming-${idol.id}`}>
-          <NotificationInfoCardList filterDate={idol} />
+          <Link to={idol.id.toString()}>
+            <NotificationInfoCardList filterDate={idol} />
+          </Link>
         </NotificationCard>
       ))}
     </article>
