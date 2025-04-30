@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import Footer from './Footer';
 import Header from './Header/Header';
 import Breadcrumb from '../common/Breadcrumb';
+import ScrollTop from '../common/ScrollTop';
 
 function Layout() {
   return (
@@ -11,6 +12,7 @@ function Layout() {
         <Breadcrumb />
         <Outlet />
       </main>
+      <ScrollTop />
       <Footer />
     </div>
   );
