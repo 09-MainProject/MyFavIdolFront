@@ -4,6 +4,7 @@ function ScrollTop() {
   const [showBtn, setShowBtn] = useState(false);
 
   const scrollToTop = () => {
+    // 새로로 스크롤
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
