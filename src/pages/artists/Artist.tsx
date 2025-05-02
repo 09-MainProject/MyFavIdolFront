@@ -1,18 +1,14 @@
 /*
-1. 전체 아티스트 목록들이 보여짐
-1-1. 전체 아티스트들 allIdolList로 배열에 map메서드를 사용하여 접근 후 불러옴 
-2. 팔로우한 아티스트들은 임시로 store에서 가져옴
-2-1. 이 때 artist 페이지 최 상단에는 드롭다운에 추가된 아티스트 카드 목록들이 있어야 함
-2-2. store에서 드롭다운 박스에 추가 또는 삭제하는 함수를 가져옴
-3. 아이돌마다 모달창에 OOO를 추가할건지 상태 변화를 위해 state 선언
-4. 추가할 아티스트 클릭하면 모달창으로 드롭다운에 추가할지 말지
-5. 카드 클릭 시 팔로우 되어있는 아이돌 리스트 즉, idols의 객체가 모달창에 표시된 아이돌에 값을 넣어주고 그 값을 isSelected라는 변수로 지정
-5-1. isSelected 라는 변수가 true이면 즉 팔로우 한 아이돌이라면 삭제 함수를 호출 아니면 추가 함수를 호출
+리펙토링 순서
+1. 전체 아이돌리스트와 팔로우한 아이돌 리스트의 겹쳐지는 코드 부분을 따로 IdolCardList.tsx에 넣기위한 생성
+2. props 설계 : idolList, title, onCardClick
+3. 카드 클릭 시 onCardClick(item) 실행
+4. Artists에서 기존 idols.map, allIdolList.map 제거하고 IdolCardList로 교체
 */
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import CardFrame from '@/components/CardFrame';
+// import CardFrame from '@/components/CardFrame';
+import { IdolCardList } from '@/components/common/Card/IdolCardList';
 import { IdolConfirmModal } from '@/components/common/IdolConfirmModal';
 import { useIdolState } from '@/store/idolStore';
 
@@ -63,7 +59,7 @@ function Artist() {
       endDate: '2025-05-03',
       location: '서울 코엑스',
       description: '2025년 상반기 뉴진스 팬사인회',
-      img: '../src/assets/img/bts.jpg',
+      img: '../src/assets/img/ncity.jpeg',
       name: '방탄소년단',
       enName: 'bts',
     },
@@ -76,7 +72,7 @@ function Artist() {
       endDate: '2025-05-10',
       location: '대구 스타디움',
       description: 'Red Velvet WORLD TOUR FOLLOW AGAIN',
-      img: '../src/assets/img/redvelvet.jpg',
+      img: '../src/assets/img/ncity.jpeg',
       name: '레드벨벳',
       enName: 'redvelvet',
     },
@@ -89,7 +85,7 @@ function Artist() {
       endDate: '2025-05-18',
       location: 'KBS 여의도',
       description: '뮤직뱅크 생방송 출연',
-      img: '../src/assets/img/ive.jpg',
+      img: '../src/assets/img/ncity.jpeg',
       name: '아이브',
       enName: 'ive',
     },
@@ -103,60 +99,20 @@ function Artist() {
           <h1>Wistar에서 만나볼 수 있어요!</h1>
         </div>
         <div className="mt-20 text-2xl font-bold">
-          <h1 className="mb-5">팔로우한 {idols.length}팀의 아티스트</h1>
-          <div className="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-4 md:gap-10">
-            {idols.map(item => (
-              <CardFrame key={item.id}>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setModalIdol(item)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') setModalIdol(item);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="h-auto w-full object-cover"
-                  />
-                  <div className="p-3">
-                    <p className="mb-1 text-[1.1rem] font-bold">{item.name}</p>
-                    <p className="text-[0.9rem] text-gray-500">{item.enName}</p>
-                  </div>
-                </div>
-              </CardFrame>
-            ))}
-          </div>
+          <IdolCardList
+            title={`팔로우한 ${idols.length}팀의 아티스트`}
+            idolList={idols}
+            onCardClick={setModalIdol}
+            pageType="artist"
+          />
         </div>
-        <div className="mt-20">
-          <h1 className="text-2xl font-bold">전체 아티스트 리스트</h1>
-          <div className="mt-5 grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-4 md:gap-10">
-            {allIdolList.map(item => (
-              <CardFrame key={item.id}>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setModalIdol(item)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') setModalIdol(item);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="h-auto w-full object-cover"
-                  />
-                  <div className="p-3">
-                    <p className="mb-1 text-[1.1rem] font-bold">{item.name}</p>
-                    <p className="text-[0.9rem] text-gray-500">{item.enName}</p>
-                  </div>
-                </div>
-              </CardFrame>
-            ))}
-          </div>
+        <div className="mt-20 text-2xl font-bold">
+          <IdolCardList
+            title="전체 아티스트 페이지"
+            idolList={allIdolList}
+            onCardClick={setModalIdol}
+            pageType="artist"
+          />
         </div>
         {modalIdol && ( // modalIdol 값이 존재할 때만 모달 컴포넌트 렌더링
           <IdolConfirmModal
