@@ -1,10 +1,6 @@
-type Props = {
-  width?: number;
-  height?: number;
-  fill?: string;
-};
+import { IconProps } from '@ts/icon.ts';
 
-function Close({ width = 24, height = 24, fill = 'black' }: Props) {
+function Close({ width = 24, height = 24, fill = 'none' }: IconProps) {
   return (
     <svg
       width={width}

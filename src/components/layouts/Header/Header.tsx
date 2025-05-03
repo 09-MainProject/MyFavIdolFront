@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { useCallback, useState } from 'react';
+import { Link } from 'react-router';
 import { Close, Hamburger } from '@assets/icons/inedx';
 import Dropdown from '@components/common/Dropdown';
 import IdolDropdownPanel from '@components/common/IdolDropdownPanel';
 import DesktopMenu from '@components/layouts/Header/DesktopNav';
 import MobileNav from '@components/layouts/Header/MobileNav';
 import { HEADER_MENU } from '@constants/headerMenu';
+import useDropdownToggle from '@hooks/useDropdownToggle';
 import useMobile from '@hooks/useMobile';
 import { useIdolState } from '@store/idolStore';
 
@@ -14,33 +15,25 @@ const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 function Header() {
   const { idols, selectedIdolId, setSelectIdol } = useIdolState();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isIdolDropdownOpen, setIsIdolDropdownOpen] = useState(false);
-  const location = useLocation();
   const isMobile = useMobile();
+  const {
+    ref,
+    isIdolDropdownOpen,
+    handleToggleIdolDropdown,
+    handleCloseIdolDropdown,
+  } = useDropdownToggle();
 
   const selectedIdol = idols.find(idol => idol.id === selectedIdolId) || null;
   const displayedIdolName = selectedIdol?.name ?? DEFAULT_SELECTED_IDOL;
-
-  const handleToggleIdolDropdown = useCallback(() => {
-    setIsIdolDropdownOpen(prev => !prev);
-  }, []);
-
-  const handleCloseIdolDropdown = useCallback(() => {
-    setIsIdolDropdownOpen(false);
-  }, []);
 
   const handleToggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
 
-  useEffect(() => {
-    setIsIdolDropdownOpen(false);
-  }, [location.pathname]);
-
   return (
     <header className="fixed z-[9999] w-full max-w-[1080px] bg-white">
       <div className="flex items-center p-4">
-        <div className="flex items-center gap-4">
+        <div className="relative flex items-center gap-4" ref={ref}>
           <Link to="/">
             <h1 className="pb-2 text-3xl leading-none font-bold">Wistar</h1>
           </Link>
@@ -48,6 +41,7 @@ function Header() {
             isDropdownOpen={isIdolDropdownOpen}
             handleToggleIdolDropdown={handleToggleIdolDropdown}
             displayedIdolName={displayedIdolName}
+            mode="header"
           >
             <IdolDropdownPanel
               idols={idols}

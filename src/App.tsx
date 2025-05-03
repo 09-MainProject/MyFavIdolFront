@@ -1,5 +1,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import ScheduleDetail from '@pages/schedule/ScheduleDetail';
+import TimelineDetail from '@pages/timeline/TimelineDetail';
+import TimelineEdit from '@pages/timeline/TimelineEdit.tsx';
+import TimelineWrite from '@pages/timeline/TimelineWrite.tsx';
 import Layout from '@/components/layouts/Layout';
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
@@ -33,6 +36,18 @@ function App() {
         {
           path: '/timeline',
           element: <Timeline />,
+        },
+        {
+          path: '/timeline/write',
+          element: <TimelineWrite />,
+        },
+        {
+          path: '/timeline/:id',
+          element: <TimelineDetail />,
+        },
+        {
+          path: '/timeline/edit/:id',
+          element: <TimelineEdit />,
         },
         {
           path: '/login',
