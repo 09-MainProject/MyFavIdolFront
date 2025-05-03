@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { Comment, Heart } from '@assets/icons/inedx';
 import usePostMeta from '@hooks/usePostMeta';
 import { Idol } from '@store/idolStore';
-import { mockComments } from '@/mock/comment';
+import { mockComments } from '@/mocks/comment';
 
 type Props = {
   idol: Idol;
