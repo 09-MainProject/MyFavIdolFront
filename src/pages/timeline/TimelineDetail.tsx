@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import CardFrame from '@components/CardFrame';
-import CommentItem from '@components/common/Card/CommentItem.tsx';
+import CommentItem from '@components/common/Card/CommentItem';
 import TimelineDetailCard from '@components/common/Card/TimelineDetailCard';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
-import { useCommentHandlers } from '@hooks/useCommentHandlers.ts';
-import { useTimelineStore } from '@store/useTimelineStore.ts';
+import useCommentHandlers from '@hooks/useCommentHandlers';
+import { useTimelineStore } from '@store/useTimelineStore';
 
 function TimelineDetail() {
   const { posts, removePost } = useTimelineStore();
