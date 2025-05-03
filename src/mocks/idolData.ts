@@ -7,7 +7,7 @@ export const allIdolList = [
     startDate: '2025-05-03',
     endDate: '2025-05-03',
     location: '서울 코엑스',
-    description: '2025년 상반기 뉴진스 팬사인회',
+    description: '2025년 상반기 뉴진스 팬사인회!',
     img: '../src/assets/img/ncity.jpeg',
     name: '방탄소년단',
     enName: 'bts',
