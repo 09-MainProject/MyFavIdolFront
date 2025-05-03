@@ -6,21 +6,23 @@ type PageType = 'artist' | 'home';
 type IdolArtistsCard = {
   id: number;
   name: string;
-  enName: string;
+  enName?: string;
   img: string;
+  title?: string;
+  startDate?: string;
 };
 
 type Props = {
   idolList: IdolArtistsCard[];
-  onCardClick: (idol: IdolArtistsCard) => void;
-  title: string;
+  onCardClick?: (idol: IdolArtistsCard) => void;
+  idolTitle?: string;
   pageType: PageType;
 };
 
 export function IdolCardList({
   idolList,
   onCardClick,
-  title,
+  idolTitle,
   pageType,
 }: Props) {
   const isMobile = useMobile();
@@ -29,11 +31,14 @@ export function IdolCardList({
     if (pageType === 'artist') {
       return isMobile ? 'grid-cols-3 gap-6' : 'gap-10 grid-cols-4';
     }
+    if (pageType === 'home') {
+      return isMobile ? 'flex items-center gap-3 p-3' : 'gap-10 grid-cols-4';
+    }
     return 'grid-cols-4';
   };
   return (
     <>
-      <h1 className="mb-5">{title}</h1>
+      <h1 className="mb-5">{idolTitle}</h1>
       <div className={`grid gap-4 ${gridClass()}`}>
         {idolList.map(idol => (
           <CardFrame key={idol.id}>
@@ -46,15 +51,46 @@ export function IdolCardList({
               }}
               className="cursor-pointer"
             >
-              <img
-                src={idol.img}
-                alt={idol.name}
-                className="h-auto w-full object-cover"
-              />
-              <div className="p-3">
-                <p className="mb-1 text-[1.1rem] font-bold">{idol.name}</p>
-                <p className="text-[0.9rem] text-gray-500">{idol.enName}</p>
-              </div>
+              {isMobile && pageType === 'home' ? (
+                <div className="flex items-center gap-3 p-3">
+                  <img
+                    src={idol.img}
+                    alt={idol.title}
+                    className="h-[64px] w-[64px] rounded-lg object-cover"
+                  />
+                  <div>
+                    <p className="font-semibold">{idol.name}</p>
+                    <p className="text-sm text-gray-500">{idol.title}</p>
+                    <p className="text-xs text-gray-400">{idol.startDate}</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <img
+                    src={idol.img}
+                    alt={idol.name}
+                    className="h-auto w-full object-cover"
+                  />
+                  <div className="p-3">
+                    <p className="mb-1 text-[1.1rem] font-bold">{idol.name}</p>
+                    {pageType === 'artist' && (
+                      <p className="text-[0.9rem] text-gray-500">
+                        {idol.enName}
+                      </p>
+                    )}
+                    {pageType === 'home' && (
+                      <p className="text-[0.9rem] text-gray-500">
+                        {idol.title}
+                      </p>
+                    )}
+                    {pageType === 'home' && (
+                      <p className="text-[0.8rem] text-gray-500">
+                        {idol.startDate}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </CardFrame>
         ))}
