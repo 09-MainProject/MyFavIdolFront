@@ -83,7 +83,8 @@
           "**/src/mocks/**",
           "**/test/**",
           "**/*.test.{js,ts,tsx}",
-          "**/setupTests.{js,ts,tsx}"
+          "**/setupTests.{js,ts,tsx}",
+          "**/setupTests.{ts,tsx}"
         ]
       }
     ],
