@@ -1,9 +1,6 @@
-type Props = {
-  width?: number;
-  height?: number;
-  fill?: string;
-};
-function Arrow({ width = 48, height = 48, fill = 'none' }: Props) {
+import { IconProps } from '@ts/icon.ts';
+
+function Arrow({ width = 48, height = 48, fill = 'none' }: IconProps) {
   return (
     <svg
       width={width}
