@@ -1,67 +1,17 @@
-import { format, subDays, addDays } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { useState } from 'react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import useMobile from '@/hooks/useMobile';
-
+import { IdolCardList } from '@/components/common/Card/IdolCardList';
 import 'swiper/css';
 import 'swiper/css/pagination';
-
-import CardFrame from '../../components/CardFrame';
+import { allIdolList } from '@/mocks/idolData';
 
 function Home() {
-  const isMobile = useMobile();
-
   const imgList = [
     '../src/assets/img/swiper1.png',
     '../src/assets/img/swiper2.png',
     '../src/assets/img/swiper3.png',
-  ];
-
-  interface Schedule {
-    idolName: string;
-    idolImage: string;
-    title: string;
-    date: string;
-  }
-
-  const mockSchedule: Schedule[] = [
-    {
-      idolName: '보이넥스트도어',
-      idolImage: '../src/assets/img/boynextdoor.jpeg',
-      title: '예능 방송',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      idolName: '보이넥스트도어',
-      idolImage: '../src/assets/img/boynextdoor.jpeg',
-      title: '공연',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      idolName: '보이넥스트도어',
-      idolImage: '../src/assets/img/boynextdoor.jpeg',
-      title: '팬사인',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      idolName: '보이넥스트도어',
-      idolImage: '../src/assets/img/boynextdoor.jpeg',
-      title: '머없음',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      idolName: '엔시티',
-      idolImage: '../src/assets/img/ncity.jpeg',
-      title: '뮤직쇼 녹화',
-      date: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
-    },
-    {
-      idolName: '보이넥스트도어',
-      idolImage: '',
-      title: '라이브 방송',
-      date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
-    },
   ];
 
   const [selectedDate, setSelectedDate] = useState(
@@ -73,7 +23,7 @@ function Home() {
     setSelectedDate(newDate);
   };
 
-  const filtered = mockSchedule.filter(item => item.date === selectedDate);
+  const filtered = allIdolList.filter(item => item.startDate === selectedDate);
 
   return (
     <div className="px-4 md:px-8">
@@ -135,44 +85,13 @@ function Home() {
               );
             })}
           </div>
-
-          <div className="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-4 md:gap-10">
-            {filtered.map(item => (
-              <CardFrame key={item.title}>
-                {isMobile ? (
-                  <div className="flex items-center gap-3 p-3">
-                    <img
-                      src={item.idolImage}
-                      alt={item.title}
-                      className="h-[64px] w-[64px] rounded-lg object-cover"
-                    />
-                    <div>
-                      <p className="font-semibold">{item.idolName}</p>
-                      <p className="text-sm text-gray-500">{item.title}</p>
-                      <p className="text-xs text-gray-400">{item.date}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <img
-                      src={item.idolImage}
-                      alt={item.title}
-                      className="h-auto w-full object-cover"
-                    />
-                    <div className="p-3">
-                      <p className="mb-1 text-[1.1rem] font-semibold">
-                        {item.idolName}
-                      </p>
-                      <p className="text-[0.9rem] text-gray-500">
-                        {item.title}
-                      </p>
-                      <p className="text-[0.8rem] text-gray-400">{item.date}</p>
-                    </div>
-                  </div>
-                )}
-              </CardFrame>
-            ))}
-          </div>
+          {filtered.length === 0 ? (
+            <p className="text-center text-gray-500">
+              해당 날짜에 스케줄이 없습니다.
+            </p>
+          ) : (
+            <IdolCardList idolList={filtered} pageType="home" />
+          )}
         </section>
       </div>
     </div>
