@@ -16,7 +16,6 @@ async function enableMocking() {
       url: '/mockServiceWorker.js',
     },
   });
-  console.log('MSW started');
 }
 
 const queryClient = new QueryClient();

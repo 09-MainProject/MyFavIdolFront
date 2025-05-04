@@ -62,11 +62,11 @@ function SignUp() {
 
     try {
       const response = await axios.post('/signup', form);
-      if (response.status === 201) {
-        console.log('회원가입 성공:', response.data);
-      }
+      // eslint-disable-next-line no-console
+      console.log(response);
     } catch (error) {
-      console.error('회원가입 실패:', error);
+      // eslint-disable-next-line no-console
+      console.log(error);
     }
   };
 

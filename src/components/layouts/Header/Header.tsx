@@ -33,14 +33,15 @@ function Header() {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
 
-  const handleOnLogout = () => {
+  const handleOnLogout = async () => {
     try {
-      axios.post('/token/logout', null, {
+      await axios.post('/token/logout', null, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       setLogout();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   };

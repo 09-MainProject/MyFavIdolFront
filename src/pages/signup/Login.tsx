@@ -28,17 +28,14 @@ function Login() {
         },
         withCredentials: true,
       });
-      console.log('로그인:', response.data);
 
       if (response.data.code === 200) {
         const { accessToken, csrfToken } = response.data.data;
-        console.log('토큰:', { accessToken, csrfToken });
         setLogin(accessToken, csrfToken);
         navigate('/');
-      } else {
-        console.error('Login failed:', response.data.message);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('로그인 실패:', error);
     }
   };
