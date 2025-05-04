@@ -12,8 +12,6 @@ export const loginHandlers = [
       const body = await request.json();
       const { email, password } = body as Props;
 
-      console.log('Stored users:', user);
-
       const login = user.find(
         v => v.email === email && v.password === password
       );
@@ -63,7 +61,6 @@ export const loginHandlers = [
         { status: 401 }
       );
     } catch (error) {
-      console.error('Login error:', error);
       return HttpResponse.json(
         {
           code: 500,
