@@ -1,3 +1,9 @@
+import {
+  followCheckHandlers,
+  followCreateHandlers,
+  followDeleteHandlers,
+  followHandlers,
+} from '@mocks/handlers/followHandlers.ts';
 import { loginHandlers, refreshHandlers } from '@mocks/handlers/loginHandlers';
 import {
   profileDelete,
@@ -15,4 +21,8 @@ export const handlers = [
   ...profileHandlers,
   ...profileUpdateHandlers,
   ...profileDelete,
+  ...followHandlers,
+  ...followCheckHandlers,
+  ...followCreateHandlers,
+  ...followDeleteHandlers,
 ];
