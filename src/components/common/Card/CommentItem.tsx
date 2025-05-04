@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Frame } from '@assets/icons/inedx';
 import Dropdown from '@components/common/Dropdown';
 import { UserComment } from '@mocks/comment.ts';
-
+// 1
 type Props = {
   value: {
     type: 'edit' | 'reply';
