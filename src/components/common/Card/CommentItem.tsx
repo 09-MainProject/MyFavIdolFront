@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Frame } from '@assets/icons/inedx.ts';
-import Dropdown from '@components/common/Dropdown.tsx';
-import { UserComment } from '@/mock/comment.ts';
+import { Frame } from '@assets/icons/inedx';
+import Dropdown from '@components/common/Dropdown';
+import { UserComment } from '@/mocks/data/comment';
 
 type Props = {
   value: {
@@ -145,7 +145,6 @@ function CommentItem({
           </div>
         </Dropdown>
       </div>
-
       <ul className="mt-4 space-y-4">
         {allComments
           .filter(reply => reply.parentId === item.id)
