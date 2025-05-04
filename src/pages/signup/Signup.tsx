@@ -1,16 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 
+type User = {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  name: string;
+  nickname: string;
+};
+
 function SignUp() {
-  const [form, setForm] = useState({
-    username: '',
+  const [form, setForm] = useState<User>({
     email: '',
     password: '',
-    confirmPassword: '',
+    passwordConfirm: '',
+    name: '',
+    nickname: '',
   });
-
   const [isPasswordMatched, setIsPasswordMatched] = useState<boolean | null>(
     null
   );
@@ -20,11 +29,11 @@ function SignUp() {
 
   useEffect(() => {
     setIsPasswordMatched(
-      form.password === '' || form.confirmPassword === ''
+      form.password === '' || form.passwordConfirm === ''
         ? null
-        : form.password === form.confirmPassword
+        : form.password === form.passwordConfirm
     );
-  }, [form.password, form.confirmPassword]);
+  }, [form.password, form.passwordConfirm]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,19 +52,30 @@ function SignUp() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
+    if (form.password !== form.passwordConfirm) {
       setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('/signup', form);
+      if (response.status === 201) {
+        console.log('회원가입 성공:', response.data);
+      }
+    } catch (error) {
+      console.error('회원가입 실패:', error);
     }
   };
 
   const isFormFilled = // 불리언 값을 담는 변수이므로 {} 필요 없음
-    form.username !== '' &&
+    form.name !== '' &&
     form.email !== '' &&
     form.password !== '' &&
-    form.confirmPassword !== '';
+    form.passwordConfirm !== '' &&
+    form.nickname !== '';
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
@@ -68,9 +88,9 @@ function SignUp() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            name="username"
+            name="name"
             placeholder="Enter your username"
-            value={form.username}
+            value={form.name}
             onChange={handleChange}
             className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
           />
@@ -79,6 +99,14 @@ function SignUp() {
             name="email"
             placeholder="Enter your email"
             value={form.email}
+            onChange={handleChange}
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+          />
+          <input
+            type="text"
+            name="nickname"
+            placeholder="Enter your email"
+            value={form.nickname}
             onChange={handleChange}
             className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
           />
@@ -95,9 +123,9 @@ function SignUp() {
           />
           <input
             type="password"
-            name="confirmPassword"
+            name="passwordConfirm"
             placeholder="Confirm your password"
-            value={form.confirmPassword}
+            value={form.passwordConfirm}
             onChange={handleChange}
             className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
           />
