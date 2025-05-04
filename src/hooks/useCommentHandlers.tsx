@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-
-import { mockComments, UserComment } from '@/mocks/comment';
-
+import { mockComments, UserComment } from '@/mocks/data/comment';
 
 function useCommentHandlers() {
   const [comment, setComment] = useState<UserComment[]>(mockComments);
