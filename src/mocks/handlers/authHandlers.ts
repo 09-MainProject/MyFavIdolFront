@@ -8,12 +8,37 @@ type Signup = {
   nickname: string;
 };
 
+// 테스트용 계정 미리 추가
+export const user: Signup[] = [
+  {
+    email: 'test@gmail.com',
+    password: '1234',
+    passwordConfirm: '1234',
+    name: '테스트',
+    nickname: '테스트닉네임',
+  },
+];
+
 export const authHandlers = [
   http.post('/signup', async ({ request }) => {
     try {
       const body = await request.json();
       const { email, password, passwordConfirm, name, nickname } =
         body as Signup;
+
+      // 이미 존재하는 이메일인지 확인
+      if (user.some(u => u.email === email)) {
+        return HttpResponse.json(
+          {
+            code: 400,
+            message: '이미 존재하는 이메일입니다.',
+            data: null,
+          },
+          { status: 400 }
+        );
+      }
+
+      user.push({ email, password, passwordConfirm, name, nickname });
 
       if (password === passwordConfirm) {
         return HttpResponse.json(

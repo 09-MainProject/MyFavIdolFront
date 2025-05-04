@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw';
+import { user } from '@mocks/handlers/authHandlers.ts';
 
 type Props = {
   email: string;
@@ -11,24 +12,47 @@ export const loginHandlers = [
       const body = await request.json();
       const { email, password } = body as Props;
 
+      console.log('Stored users:', user);
+
+      const login = user.find(
+        v => v.email === email && v.password === password
+      );
+
       if (email === 'test@gmail.com' && password === '1234') {
-        return HttpResponse.json(
-          {
-            code: 200,
-            message: '로그인을 성공했습니다.',
-            data: {
-              accessToken: 'mock_access_token',
-              csrfToken: 'mock_csrf_token',
-            },
+        const response = {
+          code: 200,
+          message: '로그인을 성공했습니다.',
+          data: {
+            accessToken: 'mock_access_token',
+            csrfToken: 'mock_csrf_token',
           },
-          {
-            status: 200,
-            headers: {
-              'Set-Cookie':
-                'refresh_token=mock_refresh_token; Path=/; Max-Age=3600; HttpOnly; SameSite=Strict',
-            },
-          }
-        );
+        };
+        return HttpResponse.json(response, {
+          status: 200,
+          headers: {
+            'Set-Cookie':
+              'refresh_token=mock_refresh_token; Path=/; Max-Age=3600; HttpOnly; SameSite=Strict',
+          },
+        });
+      }
+
+      if (login) {
+        const response = {
+          code: 200,
+          message: '로그인을 성공했습니다.',
+          data: {
+            accessToken: 'mock_access_token',
+            csrfToken: 'mock_csrf_token',
+          },
+        };
+
+        return HttpResponse.json(response, {
+          status: 200,
+          headers: {
+            'Set-Cookie':
+              'refresh_token=mock_refresh_token; Path=/; Max-Age=3600; HttpOnly; SameSite=Strict',
+          },
+        });
       }
 
       return HttpResponse.json(
@@ -39,6 +63,7 @@ export const loginHandlers = [
         { status: 401 }
       );
     } catch (error) {
+      console.error('Login error:', error);
       return HttpResponse.json(
         {
           code: 500,
