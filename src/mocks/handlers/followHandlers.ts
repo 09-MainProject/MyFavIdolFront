@@ -1,28 +1,38 @@
 import { http, HttpResponse } from 'msw';
-import { followedIdolsMock } from '@mocks/data/followedIdolsMock.ts';
+import { followedIdolsMock } from '@mocks/data/followedIdolsMock';
 
 export const followHandlers = [
   http.get('/api/idols/follows', async ({ request }) => {
     try {
       const token = request.headers.get('Authorization');
-      if (token && token.startsWith('Bearer ')) {
+
+      if (!token || !token.startsWith('Bearer ')) {
         return HttpResponse.json(
           {
-            code: 200,
-            message: '아이돌 팔로우 목록 조회',
-            data: {
-              follows: followedIdolsMock,
-            },
+            code: 401,
+            message: '인증 정보가 없습니다.',
+            data: null,
           },
-          {
-            status: 200,
-            headers: {
-              'Set-Cookie':
-                'refresh_token=mock_refresh_token; Path=/; Max-Age=3600; HttpOnly; SameSite=Strict',
-            },
-          }
+          { status: 401 }
         );
       }
+
+      return HttpResponse.json(
+        {
+          code: 200,
+          message: '아이돌 팔로우 목록 조회',
+          data: {
+            follows: followedIdolsMock,
+          },
+        },
+        {
+          status: 200,
+          headers: {
+            'Set-Cookie':
+              'refresh_token=mock_refresh_token; Path=/; Max-Age=3600; HttpOnly; SameSite=Strict',
+          },
+        }
+      );
     } catch (e) {
       return HttpResponse.json(
         {
