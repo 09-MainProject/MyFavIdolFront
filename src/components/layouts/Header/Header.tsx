@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 import { Close, Hamburger } from '@assets/icons/inedx';
@@ -8,6 +9,7 @@ import MobileNav from '@components/layouts/Header/MobileNav';
 import { HEADER_MENU } from '@constants/headerMenu';
 import useDropdownToggle from '@hooks/useDropdownToggle';
 import useMobile from '@hooks/useMobile';
+import { useAuthStore } from '@store/authStore.ts';
 import { useIdolState } from '@store/idolStore';
 
 const DEFAULT_SELECTED_IDOL = '아이돌 선택';
@@ -15,6 +17,7 @@ const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 function Header() {
   const { idols, selectedIdolId, setSelectIdol } = useIdolState();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { login, setLogout, accessToken } = useAuthStore();
   const isMobile = useMobile();
   const {
     ref,
@@ -29,6 +32,18 @@ function Header() {
   const handleToggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
+
+  const handleOnLogout = () => {
+    try {
+      axios.post('/token/logout', null, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      setLogout();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <header className="fixed z-[9999] w-full max-w-[1080px] bg-white">
@@ -70,7 +85,11 @@ function Header() {
         {!isMobile && (
           <ul className="ml-auto flex gap-4">
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login">
+                <button type="button" onClick={handleOnLogout}>
+                  {login ? 'logout' : 'login'}
+                </button>
+              </Link>
             </li>
             <li>
               <Link to="/signup">Sign up</Link>
