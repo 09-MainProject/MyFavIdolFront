@@ -10,7 +10,12 @@ async function enableMocking() {
   }
 
   const { worker } = await import('./mocks/browser');
-  await worker.start();
+  await worker.start({
+    onUnhandledRequest: 'bypass',
+    serviceWorker: {
+      url: '/mockServiceWorker.js',
+    },
+  });
 }
 
 const queryClient = new QueryClient();

@@ -1,9 +1,14 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 
 function Login() {
+  const navigate = useNavigate();
+  const { setLogin } = useAuthStore();
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -14,8 +19,25 @@ function Login() {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const response = await axios.post('/token/login', form, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      if (response.data.code === 200) {
+        const { accessToken, csrfToken } = response.data.data;
+        setLogin(accessToken, csrfToken);
+        navigate('/');
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('로그인 실패:', error);
+    }
   };
 
   return (

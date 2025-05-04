@@ -28,6 +28,7 @@ function Artist() {
   const navigate = useNavigate();
 
   const selectedIdol = idols.find(idol => idol.id === selectedIdolId);
+  // eslint-disable-next-line no-console
   console.log(selectedIdol);
 
   const handleConfirm = () => {
