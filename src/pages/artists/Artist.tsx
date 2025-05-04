@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 // import CardFrame from '@/components/CardFrame';
 import { IdolCardList } from '@/components/common/Card/IdolCardList';
 import { IdolConfirmModal } from '@/components/common/IdolConfirmModal';
+import { allIdolList } from '@/mocks/idolData';
 import { useIdolState } from '@/store/idolStore';
 
 function Artist() {
@@ -50,48 +51,6 @@ function Artist() {
     setModalIdol(null);
   };
 
-  const allIdolList = [
-    {
-      id: 4,
-      idolId: 2,
-      title: '방탄소년단 팬사인회!',
-      type: '팬사인회',
-      startDate: '2025-05-03',
-      endDate: '2025-05-03',
-      location: '서울 코엑스',
-      description: '2025년 상반기 뉴진스 팬사인회',
-      img: '../src/assets/img/ncity.jpeg',
-      name: '방탄소년단',
-      enName: 'bts',
-    },
-    {
-      id: 5,
-      idolId: 3,
-      title: '레드벨벳 월드투어',
-      type: '공연',
-      startDate: '2025-05-10',
-      endDate: '2025-05-10',
-      location: '대구 스타디움',
-      description: 'Red Velvet WORLD TOUR FOLLOW AGAIN',
-      img: '../src/assets/img/ncity.jpeg',
-      name: '레드벨벳',
-      enName: 'redvelvet',
-    },
-    {
-      id: 6,
-      idolId: 4,
-      title: '아이브 음악방송 출연',
-      type: '방송',
-      startDate: '2025-05-18',
-      endDate: '2025-05-18',
-      location: 'KBS 여의도',
-      description: '뮤직뱅크 생방송 출연',
-      img: '../src/assets/img/ncity.jpeg',
-      name: '아이브',
-      enName: 'ive',
-    },
-  ];
-
   return (
     <div className="mx-auto max-w-[1080px]">
       <div className="mt-20 px-4 md:px-8">
@@ -101,7 +60,7 @@ function Artist() {
         </div>
         <div className="mt-20 text-2xl font-bold">
           <IdolCardList
-            title={`팔로우한 ${idols.length}팀의 아티스트`}
+            idolTitle={`팔로우한 ${idols.length}팀의 아티스트`}
             idolList={idols}
             onCardClick={setModalIdol}
             pageType="artist"
@@ -109,7 +68,7 @@ function Artist() {
         </div>
         <div className="mt-20 text-2xl font-bold">
           <IdolCardList
-            title="전체 아티스트 페이지"
+            idolTitle="전체 아티스트 페이지"
             idolList={allIdolList}
             onCardClick={setModalIdol}
             pageType="artist"
