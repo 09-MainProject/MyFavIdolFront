@@ -4,6 +4,11 @@ import {
   followDeleteHandlers,
   followHandlers,
 } from '@mocks/handlers/followHandlers.ts';
+import {
+  idolDetailHandlers,
+  idolHandlers,
+  idolUpdateHandlers,
+} from '@mocks/handlers/idolHandlers.ts';
 import { loginHandlers, refreshHandlers } from '@mocks/handlers/loginHandlers';
 import {
   profileDelete,
@@ -25,4 +30,7 @@ export const handlers = [
   ...followCheckHandlers,
   ...followCreateHandlers,
   ...followDeleteHandlers,
+  ...idolHandlers,
+  ...idolDetailHandlers,
+  ...idolUpdateHandlers,
 ];
