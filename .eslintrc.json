@@ -96,6 +96,7 @@
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": "error",
     "no-var": "error",
+    "camelcase": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -111,5 +112,6 @@
       1,
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ]
+
   }
 }
