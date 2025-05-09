@@ -1,19 +1,19 @@
-import { Config } from 'axios';
+import { useAuthStore } from '@/store/authStore';
 import axios from 'axios';
-import { useAuthStore } from '@/store/useAuthStore';
 
 export const api = axios.create({
   baseURL: '/api',
   withCredentials: true,
 });
 
-// 헤더에 토큰 추가
-// api.interceptors.request.use(config => {
-//   const token = useAuthStore.getState().accessToken;
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// export default api;
+api.interceptors.request.use(
+  config => {
+    const token = useAuthStore.getState().accessToken;
+    if (token) {
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config; // ✅ 반드시 반환해야 함
+  },
+  error => Promise.reject(error)
+);

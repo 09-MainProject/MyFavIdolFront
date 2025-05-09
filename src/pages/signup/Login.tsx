@@ -30,8 +30,8 @@ function Login() {
       });
 
       if (response.data.code === 200) {
-        const { accessToken, csrfToken } = response.data.data;
-        setLogin(accessToken, csrfToken);
+        const { access_token, csrf_token } = response.data.data;
+        setLogin(access_token, csrf_token);
         navigate('/');
       }
     } catch (error) {
