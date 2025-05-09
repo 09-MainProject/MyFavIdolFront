@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from '@/lib/api';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '@store/authStore.ts';
@@ -22,7 +22,7 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/token/login', form, {
+      const response = await api.post('/users/token/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
