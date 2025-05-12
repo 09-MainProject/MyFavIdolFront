@@ -7,7 +7,9 @@ import Layout from '@/components/layouts/Layout';
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
 import Schedule from '@/pages/schedule/Schedule';
+import CheckPassword from '@/pages/signup/CheckPassword';
 import Login from '@/pages/signup/Login';
+import Profile from '@/pages/signup/Profile';
 import Signup from '@/pages/signup/Signup';
 import Timeline from '@/pages/timeline/Timeline';
 
@@ -56,6 +58,14 @@ function App() {
         {
           path: '/signup',
           element: <Signup />,
+        },
+         {
+          path: '/profile',
+          element: <Profile />,
+        },
+        {
+          path: '/checkpassword',
+          element: <CheckPassword />,
         },
       ],
     },
