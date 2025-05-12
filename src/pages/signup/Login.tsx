@@ -1,10 +1,10 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
+import { api } from '@/lib/api';
+import { useAuthStore } from '@store/authStore.ts';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 function Login() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/token/login', form, {
+      const response = await api.post('/users/token/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -30,8 +30,8 @@ function Login() {
       });
 
       if (response.data.code === 200) {
-        const { accessToken, csrfToken } = response.data.data;
-        setLogin(accessToken, csrfToken);
+        const { access_token, csrf_token } = response.data.data;
+        setLogin(access_token, csrf_token);
         navigate('/');
       }
     } catch (error) {
