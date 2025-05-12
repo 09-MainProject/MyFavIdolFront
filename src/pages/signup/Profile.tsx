@@ -1,25 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 // import Calendar from '@/components/Calendar';
 // import TodaySchedule from '@/components/TodaySchedule';
 
 function Profile() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { login, user, setLogout } = useAuthStore(); // 회원정보 갱신 때 setUser를 추가
   const [profile, setProfile] = useState({
-    nickname: 'username',
+    nickname: '',
     profileImage: '',
   });
-
+  const [openMenu, setOpenMenu] = useState(false); // 드롭다운 상태
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        nickname: user.nickname || '',
+        profileImage: user.profileImage || '',
+      });
+    }
+  }, [user]);
+
+  // const refreshProfile = async () => { 회원정보 수정 후 최신 정보 갱신을 위해 사용
+  //   try {
+  //     const response = await fetch('/api/users/profile', {
+  //       credentials: 'include',
+  //     });
+  //     const data = await response.json();
+  //     setUser(data);
+  //   } catch (e) {
+  //     console.error('프로필 갱신 실패', e);
+  //   }
+  // };
+
+  const handleLogout = () => {
+    setLogout();
+    navigate('/');
+  };
 
   return (
     <div>
-      {/* 경로 안내 텍스트 */}
       <div className="text-4xl text-black">{'Home > 일정 관리 > 프로필'}</div>
 
       <div className="flex min-h-screen flex-col items-center bg-white px-4 pt-10">
         <div className="flex w-full max-w-3xl flex-col gap-6">
-          {/* BreadCrumb (경로 링크) */}
           <div className="flex items-center text-sm text-gray-600">
             <Link to="/" className="text-gray-600 hover:text-black">
               Home
@@ -34,19 +59,43 @@ function Profile() {
 
           <h2 className="text-2xl font-bold">프로필</h2>
 
-          <div className="flex items-center">
-            <div className="h-20 w-20 rounded-full bg-gray-300" />
-            <div className="ml-4">
-              <p className="text-lg font-semibold">{profile.nickname}</p>
-              <button
-                type="button"
-                onClick={() => navigate('/profile/check')}
-                className="mt-1 text-sm text-blue-500 hover:underline"
-              >
-                프로필 수정하기
-              </button>
+          {login ? (
+            <div className="relative flex items-center">
+              <div className="h-20 w-20 rounded-full bg-gray-300" />
+              <div className="ml-4">
+                <button
+                  type='button'
+                  onClick={() => setOpenMenu(prev => !prev)}
+                  className="text-lg font-semibold hover:underline"
+                >
+                  {profile.nickname}님 환영합니다 ▼
+                </button>
+
+                {openMenu && (
+                  <div className="absolute z-10 mt-2 w-48 rounded-md border bg-white shadow-md">
+                    <button
+                      type='button'
+                      onClick={() => navigate('/profile')}
+                      className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                    >
+                      회원정보 수정
+                    </button>
+                    <button
+                      type='button'
+                      onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="ml-4 text-sm text-gray-500">
+              로그인 후 프로필을 확인할 수 있어요.
+            </div>
+          )}
 
           <div>
             <h3 className="mb-4 text-lg font-semibold">팬로그</h3>
