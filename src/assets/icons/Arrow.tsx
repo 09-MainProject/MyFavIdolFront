@@ -1,4 +1,4 @@
-import { IconProps } from '@ts/icon.ts';
+import { IconProps } from '@/types/icon.ts';
 
 function Arrow({ width = 48, height = 48, fill = 'none' }: IconProps) {
   return (

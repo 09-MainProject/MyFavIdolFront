@@ -1,5 +1,4 @@
-import React from 'react';
-import { IconProps } from '@ts/icon.ts';
+import { IconProps } from '@/types/icon.ts';
 
 function Frame({ width = 24, height = 24, fill = 'none' }: IconProps) {
   return (
