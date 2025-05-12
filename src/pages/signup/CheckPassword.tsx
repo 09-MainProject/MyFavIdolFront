@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { api } from '@/lib/api';
 
 function CheckPassword() {
   const [password, setPassword] = useState('');
+  const [, setErrorMessage] = useState('');
+  const [, setVerified] = useState(false);
   const navigate = useNavigate();
 
   // 예시: 실제로는 서버에 요청해서 비교해야 함!
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== '') {
-      // 실제로는 여기서 백엔드에 비밀번호 확인 요청 후 성공 시 navigate
-      navigate('/profile/edit');
+  const handleSubmit = async e => {
+    e.preventDefault(); // 새로 고침을 막음 다시 한 번 기억
+    try {
+      await api.post('/users/check/password', { password }); //
+      setVerified(true);
+      setErrorMessage('');
+      navigate('/profile');
+    } catch (error) {
+      // 백엔드 서버의 주소로 하면 오류가 날 수 있어서 컴포넌트 내 프로필로 이동
+      setVerified(false);
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -61,3 +70,4 @@ function CheckPassword() {
 
 export default CheckPassword;
 
+// 나중에 서버와 연결되면, 이 페이지에서 비밀번호 대조 후 /profile/edit로 navigate()하기
