@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from 'react';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 import { api } from '@/lib/api';
-import React, { useEffect, useState } from 'react';
 
 type User = {
   email: string;
@@ -13,18 +13,15 @@ type User = {
 };
 
 // 글자 수 유효성 검사
-const isPasswordLengthValid = (password: string) => {
-  return password.length >= 8 && password.length <= 25;
-};
+const isPasswordLengthValid = (password: string) => password.length >= 8 && password.length <= 25;
 // 특수문자 포함 여부
 const containsSpecialChar = (password: string) => {
+  // eslint-disable-next-line no-useless-escape
   const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
   return specialCharRegex.test(password);
 };
 // 길이랑 특수문자가 포함됐는지 확인 함수 (나중에 싹 다 리팩토링 // 합친다거나 그런 거 여부 확인해보기)
-const isValidPassword = (password: string) => {
-  return isPasswordLengthValid(password) && containsSpecialChar(password);
-};
+const isValidPassword = (password: string) => isPasswordLengthValid(password) && containsSpecialChar(password);
 
 function SignUp() {
   const [form, setForm] = useState<User>({

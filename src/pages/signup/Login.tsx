@@ -1,10 +1,10 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@store/authStore.ts';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
 
 function Login() {
   const navigate = useNavigate();

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 function EditProfile() {
@@ -19,7 +18,7 @@ function EditProfile() {
           <div className="h-20 w-20 rounded-full bg-gray-300" />
           <div className="ml-4">
             <p className="text-lg font-semibold">리센느</p>
-            <button className="mt-1 text-sm text-gray-500" disabled>
+            <button type='submit' className="mt-1 text-sm text-gray-500" disabled>
               프로필 수정하기
             </button>
           </div>
@@ -60,7 +59,9 @@ function EditProfile() {
         {/* 알람 변경 */}
         <div>
           <h3 className="mb-2 text-base font-semibold">알람 변경하기</h3>
-          <label className="text-sm text-gray-400">알림 동의 on/off</label>
+
+          {/* label -> div로 수정 (eslint오류나서) */}
+          <div className="text-sm text-gray-400">알림 동의 on/off</div>
         </div>
       </div>
     </div>

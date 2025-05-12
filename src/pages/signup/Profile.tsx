@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // import TodaySchedule from '@/components/TodaySchedule';
 
 function Profile() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState({
     nickname: 'username',
     profileImage: '',
