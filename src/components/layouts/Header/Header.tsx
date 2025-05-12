@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCallback, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { Close, Hamburger } from '@assets/icons/inedx';
 import Dropdown from '@components/common/Dropdown';
 import IdolDropdownPanel from '@components/common/IdolDropdownPanel';
@@ -15,9 +15,11 @@ import { useIdolState } from '@store/idolStore';
 const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 
 function Header() {
+  const navigate = useNavigate();
   const { idols, selectedIdolId, setSelectIdol } = useIdolState();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { login, setLogout, accessToken } = useAuthStore();
+  const { login, user, setLogout, accessToken } = useAuthStore();
+  const [openDropdown, setOpenDropdown] = useState(false);
   const isMobile = useMobile();
   const {
     ref,
@@ -38,10 +40,9 @@ function Header() {
       await axios.post('/token/logout', null, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-
       setLogout();
+      navigate('/');
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log(error);
     }
   };
@@ -67,6 +68,7 @@ function Header() {
             />
           </Dropdown>
         </div>
+
         {!isMobile ? (
           <DesktopMenu menuList={HEADER_MENU} />
         ) : (
@@ -84,18 +86,50 @@ function Header() {
         )}
 
         {!isMobile && (
-          <ul className="ml-auto flex gap-4">
-            <li>
-              <Link to="/login">
-                <button type="button" onClick={handleOnLogout}>
-                  {login ? 'logout' : 'login'}
+          <div className="ml-auto flex items-center gap-4">
+            {login ? (
+              <>
+                <div className="relative">
+                  <button
+                    type='button'
+                    onClick={() => setOpenDropdown(prev => !prev)}
+                    className="text-sm font-semibold hover:underline"
+                  >
+                    {user?.nickname}님 ▼
+                  </button>
+
+                  {openDropdown && (
+                    <div className="absolute z-10 mt-2 w-40 rounded border bg-white text-sm shadow">
+                      <button
+                        type='button'
+                        onClick={() => navigate('/checkpassword')}
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                      >
+                        회원정보 수정
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type='button'
+                  onClick={handleOnLogout}
+                  className="text-sm text-red-500 hover:underline"
+                >
+                  로그아웃
                 </button>
-              </Link>
-            </li>
-            <li>
-              <Link to="/signup">Sign up</Link>
-            </li>
-          </ul>
+              </>
+            ) : (
+              <ul className="flex gap-4">
+                <li>
+                  <Link to="/login">로그인</Link>
+                </li>
+                <li>
+                  <Link to="/signup">회원가입</Link>
+                </li>
+              </ul>
+            )}
+          </div>
         )}
       </div>
     </header>
