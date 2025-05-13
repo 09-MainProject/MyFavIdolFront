@@ -1,5 +1,6 @@
 import { create } from 'zustand/react';
 
+// Idol 삭제 필요 : 다른 페이지에서 사용하고 있는 부분이 있어 코드 삭제 후 수정 부탁드려요
 export type Idol = {
   id: number;
   idolId: number;
@@ -14,14 +15,7 @@ export type Idol = {
   enName: string;
 };
 
-interface IdolState {
-  idols: Idol[];
-  selectedIdolId: number | null;
-  setSelectIdol: (idolId: number) => void;
-  addIdol: (idol: Idol) => void;
-  removeIdol: (idolId: number) => void;
-}
-
+// idols 삭제 필요 : 다른 페이지에서 사용하고 있는 부분이 있어 코드 삭제 후 수정 부탁드려요
 const idols: Idol[] = [
   {
     id: 1,
@@ -35,41 +29,17 @@ const idols: Idol[] = [
     img: '../src/assets/img/ncity.jpeg',
     name: '트와이스',
     enName: 'twice',
-  },
-  {
-    id: 2,
-    idolId: 1,
-    title: '트와이스 콘서트',
-    type: '공연',
-    startDate: '2025-05-10',
-    endDate: '2025-05-10',
-    location: '부산 벡스코',
-    description: 'TWICE WORLD TOUR 2025',
-    img: '../src/assets/img/ncity.jpeg',
-    name: '트와이스',
-    enName: 'twice',
-  },
-  {
-    id: 3,
-    idolId: 1,
-    title: '음방 출연 - 음악중심',
-    type: '방송',
-    startDate: '2025-05-18',
-    endDate: '2025-05-18',
-    location: 'MBC 상암동',
-    description: '음악중심 생방송 출연!',
-    img: '../src/assets/img/ncity.jpeg',
-    name: '트와이스',
-    enName: 'twice',
-  },
+  }
 ];
 
+interface IdolState {
+  idols: Idol[]; // 삭제해야함
+  selectedIdolId: number | null;
+  setSelectIdol: (idolId: number) => void;
+}
+
 export const useIdolState = create<IdolState>(set => ({
-  idols,
+  idols, // 삭제 해야함
   selectedIdolId: null,
   setSelectIdol: (id: number) => set({ selectedIdolId: id }),
-  addIdol: (idol: Idol) =>
-    set(state => ({ idols: [...state.idols, { ...idol }] })),
-  removeIdol: (idolId: number) =>
-    set(state => ({ idols: state.idols.filter(id => id.id !== idolId) })),
 }));

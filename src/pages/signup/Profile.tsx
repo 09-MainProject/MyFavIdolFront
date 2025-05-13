@@ -37,6 +37,9 @@ function Profile() {
     setLogout();
     navigate('/');
   };
+  
+// eslint-disable-next-line no-console
+  console.log(handleLogout);
 
   return (
     <div>

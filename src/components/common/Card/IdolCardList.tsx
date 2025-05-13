@@ -1,22 +1,23 @@
 import CardFrame from '@/components/CardFrame';
 import useMobile from '@/hooks/useMobile';
 
+// Api => Artist => IdolCardList
 type PageType = 'artist' | 'home';
 
-type IdolArtistsCard = {
+export interface IdolArtistsCard {
   id: number;
   name: string;
-  enName?: string;
   img: string;
   title?: string;
   startDate?: string;
-};
+}
 
 type Props = {
   idolList: IdolArtistsCard[];
   onCardClick?: (idol: IdolArtistsCard) => void;
   idolTitle?: string;
   pageType: PageType;
+  isVertical: boolean;
 };
 
 export function IdolCardList({
@@ -24,15 +25,13 @@ export function IdolCardList({
   onCardClick,
   idolTitle,
   pageType,
+  isVertical,
 }: Props) {
   const isMobile = useMobile();
 
   const gridClass = () => {
-    if (pageType === 'artist') {
-      return isMobile ? 'grid-cols-3 gap-6' : 'gap-10 grid-cols-4';
-    }
-    if (pageType === 'home') {
-      return isMobile ? 'flex items-center gap-3 p-3' : 'gap-10 grid-cols-4';
+    if (isMobile) {
+      return isVertical ? 'flex items-center gap-3 p-3' : 'grid-cols-3 gap-6';
     }
     return 'grid-cols-4';
   };
@@ -73,17 +72,17 @@ export function IdolCardList({
                   />
                   <div className="p-3">
                     <p className="mb-1 text-[1.1rem] font-bold">{idol.name}</p>
-                    {pageType === 'artist' && (
+                    {/* {pageType === 'artist' && (
                       <p className="text-[0.9rem] text-gray-500">
                         {idol.enName}
                       </p>
-                    )}
-                    {pageType === 'home' && (
+                    )} */}
+                    {idol.title && (
                       <p className="text-[0.9rem] text-gray-500">
                         {idol.title}
                       </p>
                     )}
-                    {pageType === 'home' && (
+                    {idol.startDate && (
                       <p className="text-[0.8rem] text-gray-500">
                         {idol.startDate}
                       </p>

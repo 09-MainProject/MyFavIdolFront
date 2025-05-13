@@ -8,7 +8,9 @@ function CheckPassword() {
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
 
-
+// eslint-disable-next-line no-console
+  console.log(verified);
+  
   const handleSubmit = async e => {
     e.preventDefault(); // 새로 고침을 막음
     try {

@@ -90,7 +90,7 @@ function Home() {
               해당 날짜에 스케줄이 없습니다.
             </p>
           ) : (
-            <IdolCardList idolList={filtered} pageType="home" />
+            <IdolCardList idolList={filtered} pageType="home" isVertical={false} />
           )}
         </section>
       </div>
