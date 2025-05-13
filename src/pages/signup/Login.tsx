@@ -1,10 +1,10 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
+import { api } from '@/lib/api';
 
 function Login() {
   const navigate = useNavigate();
@@ -13,16 +13,19 @@ function Login() {
     email: '',
     password: '',
   });
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/token/login', form, {
+      const response = await api.post('/users/token/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -30,16 +33,16 @@ function Login() {
       });
 
       if (response.data.code === 200) {
-        const { accessToken, csrfToken } = response.data.data;
-        setLogin(accessToken, csrfToken);
+        const { access_token, csrf_token } = response.data.data;
+        setLogin(access_token, csrf_token);
         navigate('/');
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('로그인 실패:', error);
-    }
+   if (error.response?.status === 401) {
+    setErrorMessage('비밀번호가 일치하지 않습니다.')
+   }
+  }
   };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="w-full max-w-md p-8">
@@ -73,7 +76,9 @@ function Login() {
             Login
           </button>
         </form>
-
+{errorMessage && (
+  <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+)}
         <div className="mt-2 text-center">
           <button
             type="button"

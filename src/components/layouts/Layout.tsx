@@ -22,6 +22,7 @@ function Layout() {
         });
         setUser(response.data.data);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(e);
       }
     };

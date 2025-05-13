@@ -20,6 +20,7 @@
     "react-calendar": "^5.1.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.5.1",
+    "react-router-dom": "^7.6.0",
     "swiper": "^11.2.6",
     "tailwindcss": "^4.1.4",
     "zustand": "^5.0.4"
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/eslint-plugin-query": "^5.73.3",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/node": "^22.14.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",

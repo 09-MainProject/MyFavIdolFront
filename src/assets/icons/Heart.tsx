@@ -1,4 +1,4 @@
-import { IconProps } from '@ts/icon.ts';
+import { IconProps } from '@/types/icon.ts';
 
 function Heart({ width = 24, height = 24, fill = 'none' }: IconProps) {
   return (
