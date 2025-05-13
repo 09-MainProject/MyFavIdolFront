@@ -1,9 +1,9 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Comment, Frame, Heart} from '@assets/icons/inedx';
-import Dropdown from '@components/common/Dropdown.tsx';
+import {Comment, Frame, Heart} from '@assets/icons/inedx.ts';
+import Dropdown from '@components/common/Dropdown/Dropdown.tsx';
 import useDropdownToggle from '@hooks/useDropdownToggle.tsx';
-import {Idol} from '@store/idolStore';
+import {Idol} from '@store/idolStore.ts';
 
 type Props = {
     idol: Idol;

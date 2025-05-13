@@ -1,10 +1,10 @@
 import React, {useCallback, useState} from 'react';
 import {useNavigate, useParams} from 'react-router';
 import CardFrame from '@components/CardFrame';
-import CommentItem from '@components/common/Card/CommentItem';
-import TimelineDetailCard from '@components/common/Card/TimelineDetailCard';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
 import useComments from '@hooks/useComments.tsx';
+import CommentItem from '@pages/timeline/CommentItem.tsx';
+import TimelineDetailCard from '@pages/timeline/TimelineDetailCard.tsx';
 import {useTimelineStore} from '@store/useTimelineStore';
 
 function TimelineDetail() {

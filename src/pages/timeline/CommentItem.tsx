@@ -1,9 +1,9 @@
 import React from 'react';
-import {Frame} from '@assets/icons/inedx';
-import Dropdown from '@components/common/Dropdown';
-import useCommentDropdown from '@hooks/useCommentDropdown';
+import {Frame} from '@assets/icons/inedx.ts';
+import Dropdown from '@components/common/Dropdown/Dropdown.tsx';
+import useCommentDropdown from '@hooks/useCommentDropdown.tsx';
 import {InputMode} from '@hooks/useComments.tsx';
-import {UserComment} from '@mocks/data/comment';
+import {UserComment} from '@mocks/data/comment.ts';
 
 type Props = {
     childCommentMap: Record<string, UserComment[]>;
