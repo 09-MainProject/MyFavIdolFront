@@ -10,7 +10,6 @@ export interface IdolArtistsCard {
   img: string;
   title?: string;
   startDate?: string;
-  isVertical: boolean;
 }
 
 type Props = {
