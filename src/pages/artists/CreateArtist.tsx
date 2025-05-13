@@ -54,59 +54,62 @@ function CreateArtist() {
   };
   return (
     <div className='flex min-h-screen items-center justify-center bg-white'>
-      <form onSubmit={handleAddIdol} className='w-full max-w-md p-8 space-y-4'>
-        <div className='block text-md font-medium text-gray-700'>이름</div>
-        <input
-          className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
-          id='name'
-          type="text"
-          value={formIdolData.name}
-          onChange={e => setFormIdolData(prev => ({ ...prev, name: e.target.value }))}
-        />
+      <div>  
+        <h2 className="mb-2 text-center text-2xl font-bold">Idol 추가</h2>
+        <form onSubmit={handleAddIdol} className='w-full max-w-md p-8 space-y-4'>
+          <div className='block text-md font-medium text-gray-700'>이름</div>
+          <input
+            className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm'
+            id='name'
+            type="text"
+            value={formIdolData.name}
+            onChange={e => setFormIdolData(prev => ({ ...prev, name: e.target.value }))}
+            />
 
-        <div className='block text-md font-medium text-gray-700'>데뷔일</div>
-        <input
-          id='debut_date'
-          type="date"
-          value={formIdolData.debut_date}
-          onChange={e => setFormIdolData(prev => ({ ...prev, debut_date: e.target.value }))}
-          className='w-full border border-gray-300 px-3 py-2 text-sm rounded'
-        />
+          <div className='block text-md font-medium text-gray-700'>데뷔일</div>
+          <input
+            id='debut_date'
+            type="date"
+            value={formIdolData.debut_date}
+            onChange={e => setFormIdolData(prev => ({ ...prev, debut_date: e.target.value }))}
+            className='w-full border border-gray-300 px-3 py-2 text-sm rounded'
+            />
 
-        <div className='block text-md font-medium text-gray-700'>소속사</div>
-        <input
-          id='agency'
-          type="text"
-          value={formIdolData.agency}
-          onChange={e => setFormIdolData(prev => ({ ...prev, agency: e.target.value }))}
-          className='w-full rounded border border-gray-300 px-3 py-2 text-sm'
-        />
+          <div className='block text-md font-medium text-gray-700'>소속사</div>
+          <input
+            id='agency'
+            type="text"
+            value={formIdolData.agency}
+            onChange={e => setFormIdolData(prev => ({ ...prev, agency: e.target.value }))}
+            className='w-full rounded border border-gray-300 px-3 py-2 text-sm'
+            />
 
-        <div className='block text-md font-medium text-gray-700'>소개</div>
-        <textarea
-          id='description'
-          value={formIdolData.description}
-          onChange={e => setFormIdolData(prev => ({ ...prev, description: e.target.value }))}
-          className='w-full border border-gray-300 px-3 py-2 text-sm'
-        />
+          <div className='block text-md font-medium text-gray-700'>소개</div>
+          <textarea
+            id='description'
+            value={formIdolData.description}
+            onChange={e => setFormIdolData(prev => ({ ...prev, description: e.target.value }))}
+            className='w-full border border-gray-300 px-3 py-2 text-sm'
+            />
 
 
-        <input
-          id='profile_image'
-          type="url"
-          value={formIdolData.profile_image}
-          onChange={e => setFormIdolData(prev => ({ ...prev, profile_image: e.target.value }))}
-          className='border w-30 border-gray-300 text-sm'
-        />
+          <input
+            id='profile_image'
+            type="url"
+            value={formIdolData.profile_image}
+            onChange={e => setFormIdolData(prev => ({ ...prev, profile_image: e.target.value }))}
+            className='border w-30 border-gray-300 text-sm'
+            />
 
-        <div className='mt-6 flex justify-center'>
-          <button
-            type="submit"
-            className='w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm'>
-            아티스트 등록
-          </button>
-        </div>
-      </form>
+          <div className='mt-6 flex justify-center'>
+            <button
+              type="submit"
+              className='w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm'>
+              아티스트 등록
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
