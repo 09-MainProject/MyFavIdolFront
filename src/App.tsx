@@ -15,6 +15,7 @@ import Timeline from '@/pages/timeline/Timeline';
 import TimelineDetail from '@/pages/timeline/TimelineDetail';
 import TimelineEdit from '@/pages/timeline/TimelineEdit';
 import TimelineWrite from '@/pages/timeline/TimelineWrite';
+import CreateArtist from './pages/artists/CreateArtist';
 
 
 function App() {
@@ -75,6 +76,10 @@ function App() {
 path: '/editprofile',
 element: <EditProfile />,
         },
+        {
+          path: '/artists/create',
+          element: <CreateArtist />,
+        }
       ],
     },
   ]);
