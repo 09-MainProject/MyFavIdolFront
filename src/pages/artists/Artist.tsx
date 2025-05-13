@@ -28,10 +28,10 @@ function Artist() {
       try {
         const resIdolList = await axios.get('/api/idols/');
         // eslint-disable-next-line no-console
-        console.log('전체 데이터 :', resIdolList.data.data);
+        console.log('전체 데이터 :', resIdolList);
         // 응답 데이터를 map 메서드를 통해 분해
         setIdolList(
-          resIdolList.data.data.map(
+          resIdolList.data.map(
             (item: {
               idol_id: number;
               name: string;
