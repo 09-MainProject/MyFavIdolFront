@@ -4,18 +4,18 @@ import { api } from '@/lib/api';
 
 function CheckPassword() {
   const [password, setPassword] = useState('');
-  const [, setErrorMessage] = useState('');
-  const [, setVerified] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
 
-  // 예시: 실제로는 서버에 요청해서 비교해야 함!
+
   const handleSubmit = async e => {
-    e.preventDefault(); // 새로 고침을 막음 다시 한 번 기억
+    e.preventDefault(); // 새로 고침을 막음
     try {
       await api.post('/users/check/password', { password }); //
       setVerified(true);
       setErrorMessage('');
-      navigate('/profile');
+      navigate('/editprofile');
     } catch (error) {
       // 백엔드 서버의 주소로 하면 오류가 날 수 있어서 컴포넌트 내 프로필로 이동
       setVerified(false);
@@ -51,6 +51,11 @@ function CheckPassword() {
           onChange={e => setPassword(e.target.value)}
           className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
         />
+        {/* 에러 메세지 */}
+        {errorMessage && (
+          <p className='text-sm text-red-500 mt-[-12px]'>{errorMessage}</p>
+        )}
+
         {/* 비밀번호 일치 여부 비밀번호 입력이 없으면 버튼은 활성화되지 않는다 */}
         <button
           type="submit"
@@ -69,5 +74,3 @@ function CheckPassword() {
 }
 
 export default CheckPassword;
-
-// 나중에 서버와 연결되면, 이 페이지에서 비밀번호 대조 후 /profile/edit로 navigate()하기

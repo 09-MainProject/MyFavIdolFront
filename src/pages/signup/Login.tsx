@@ -13,11 +13,14 @@ function Login() {
     email: '',
     password: '',
   });
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,11 +38,11 @@ function Login() {
         navigate('/');
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('로그인 실패:', error);
-    }
+   if (error.response?.status === 401) {
+    setErrorMessage('비밀번호가 일치하지 않습니다.')
+   }
+  }
   };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="w-full max-w-md p-8">
@@ -73,7 +76,9 @@ function Login() {
             Login
           </button>
         </form>
-
+{errorMessage && (
+  <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+)}
         <div className="mt-2 text-center">
           <button
             type="button"

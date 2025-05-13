@@ -12,7 +12,7 @@ import Login from '@/pages/signup/Login';
 import Profile from '@/pages/signup/Profile';
 import Signup from '@/pages/signup/Signup';
 import Timeline from '@/pages/timeline/Timeline';
-
+import EditProfile from '@/pages/signup/EditProfile';
 function App() {
   const router = createBrowserRouter([
     {
@@ -66,6 +66,10 @@ function App() {
         {
           path: '/checkpassword',
           element: <CheckPassword />,
+        },
+        {
+path: '/editprofile',
+element: <EditProfile />,
         },
       ],
     },
