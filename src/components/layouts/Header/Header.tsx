@@ -15,7 +15,8 @@ import { useIdolState } from '@store/idolStore';
 const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 
 function Header() {
-  const { idols, selectedIdolId, setSelectIdol } = useIdolState();
+  const idols = [];
+  const { selectedIdolId, setSelectIdol } = useIdolState();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { login, setLogout, accessToken } = useAuthStore();
   const isMobile = useMobile();
