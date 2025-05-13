@@ -1,171 +1,170 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Frame } from '@assets/icons/inedx';
+import React from 'react';
+import {Frame} from '@assets/icons/inedx';
 import Dropdown from '@components/common/Dropdown';
-import { UserComment } from '@mocks/data/comment';
+import useCommentDropdown from '@hooks/useCommentDropdown';
+import {InputMode} from '@hooks/useComments.tsx';
+import {UserComment} from '@mocks/data/comment';
 
 type Props = {
-  value: {
-    type: 'edit' | 'reply';
-    id: string;
-    value: string;
-  };
-  allComments: UserComment[];
-  item: UserComment;
-  handleOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleOnRemove: (targetId: string) => void;
-  handleOnEdit: () => void;
-  handleEditInit: (targetId: string, content: string) => void;
-  handleReplyInit: (targetId: string) => void;
-  handleOnReply: (parentId: string) => void;
-  activeInput: {
-    type: 'edit' | 'reply';
-    id: string;
-  } | null;
+    childCommentMap: Record<string, UserComment[]>;
+    item: UserComment;
+    inputMode: InputMode;
+    setInputMode: React.Dispatch<React.SetStateAction<InputMode>>;
+    commentService: {
+        handleEditComment: () => void;
+        handleAddReplyComment: () => void;
+        handleDeleteComment: (comment_id: number) => void;
+    }
 };
 
 function CommentItem({
-  item,
-  handleOnRemove,
-  handleOnChange,
-  handleOnReply,
-  activeInput,
-  allComments,
-  handleEditInit,
-  handleReplyInit,
-  handleOnEdit,
-  value,
-}: Props) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [isIdolDropdownOpen, setIsIdolDropdownOpen] = useState<string | null>(
-    null
-  );
+                         item,
+                         childCommentMap,
+                         inputMode,
+                         setInputMode,
+                         commentService
+                     }: Props) {
+    const childComments = childCommentMap[item.comment_id] ?? [];
+    const {ref, handleToggleIdolDropdown, isIdolDropdownOpen} = useCommentDropdown();
 
-  const handleToggleIdolDropdown = useCallback((commentId: string) => {
-    setIsIdolDropdownOpen(prev => (prev === commentId ? null : commentId));
-  }, []);
+    const renderCommentItem = () => {
+        if (inputMode.mode === 'edit' && inputMode.payload.comment_id !== item.comment_id) return null;
+        if (inputMode.mode === 'reply' && inputMode.payload.parent_id !== item.comment_id) return null;
 
-  useEffect(() => {
-    const handle = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsIdolDropdownOpen(null);
-      }
+        switch (inputMode.mode) {
+            case 'edit': {
+                return <div className="flex gap-2">
+                    <input
+                        type="text"
+                        className="flex-1 rounded border border-gray-300 p-2 text-sm"
+                        value={inputMode?.payload?.value ?? ''}
+                        onChange={(e) => setInputMode({
+                            mode: 'edit',
+                            payload: {...inputMode.payload, value: e.target.value}
+                        })}
+                    />
+                    <button
+                        type="button"
+                        className="rounded bg-blue-500 px-4 py-1.5 text-sm text-white"
+                        onClick={commentService.handleEditComment}
+                    >
+                        저장
+                    </button>
+                </div>;
+            }
+            case 'reply': {
+                return <div className="flex gap-2">
+                    <input
+                        type="text"
+                        className="flex-1 rounded border border-gray-300 p-2 text-sm"
+                        value={inputMode?.payload?.value ?? ''}
+                        onChange={(e) => setInputMode({
+                            mode: 'reply',
+                            payload: {...inputMode.payload, value: e.target.value}
+                        })}
+                    />
+                    <button
+                        type="button"
+                        className="rounded bg-blue-500 px-4 py-1.5 text-sm text-white"
+                        onClick={commentService.handleAddReplyComment}
+                    >
+                        저장
+                    </button>
+                </div>;
+            }
+            case 'unknown':
+                return null;
+            default:
+                return null;
+        }
     };
-    document.addEventListener('mousedown', handle);
-  }, [ref]);
 
-  return (
-    <li className="relative w-full border-b border-gray-100 last:border-none">
-      <div className="flex w-full items-start gap-4 pr-12">
-        <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200" />
+    return (
+        <li className="relative w-full border-b border-gray-100 last:border-none">
+            <div className="flex w-full items-start gap-4 pr-12">
+                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-200"/>
 
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+                <div className="flex-1">
+                    <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-gray-800">
-              {item.parentId && <span className="text-blue-500">답글 · </span>}
-              {item.author}
+              {item.parent_id && <span className="text-blue-500">답글 · </span>}
+                {item.author}
             </span>
-            <span className="text-xs text-gray-400">{item.createdAt}</span>
-          </div>
+                        <span className="text-xs text-gray-400">{item.createdAt}</span>
+                    </div>
 
-          <p className="mt-1 text-sm whitespace-pre-wrap text-gray-900">
-            {item.content}
-          </p>
+                    <p className="mt-1 text-sm whitespace-pre-wrap text-gray-900">
+                        {item.content}
+                    </p>
+                    <form className="mt-4">
+                        {renderCommentItem()}
+                    </form>
+                </div>
+            </div>
 
-          {activeInput?.id === item.id && (
-            <form className="mt-4">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={value.value}
-                  onChange={handleOnChange}
-                  className="flex-1 rounded border border-gray-300 p-2 text-sm"
-                  placeholder={
-                    activeInput.type === 'reply' ? '답글을 입력하세요' : ''
-                  }
-                />
+            <div className="absolute top-4 right-4" ref={ref}>
                 <button
-                  type="button"
-                  onClick={
-                    activeInput.type === 'reply'
-                      ? () => handleOnReply(item.id)
-                      : handleOnEdit
-                  }
-                  className="rounded bg-blue-500 px-4 py-1.5 text-sm text-white"
+                    type="button"
+                    onClick={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    className="text-gray-400 hover:text-gray-600"
                 >
-                  저장
+                    <Frame/>
                 </button>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-
-      <div className="absolute top-4 right-4" ref={ref}>
-        <button
-          type="button"
-          onClick={() => handleToggleIdolDropdown(item.id)}
-          className="text-gray-400 hover:text-gray-600"
-        >
-          <Frame />
-        </button>
-        <Dropdown
-          isDropdownOpen={isIdolDropdownOpen === item.id}
-          handleToggleIdolDropdown={() => handleToggleIdolDropdown(item.id)}
-          mode="comment"
-        >
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                handleReplyInit(item.id);
-                handleToggleIdolDropdown(item.id);
-              }}
-              className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-            >
-              답글 달기
-            </button>
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={() => handleEditInit(item.id, item.content)}
-              className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-            >
-              수정
-            </button>
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={() => handleOnRemove(item.id)}
-              className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
-            >
-              삭제
-            </button>
-          </div>
-        </Dropdown>
-      </div>
-      <ul className="mt-4 space-y-4">
-        {allComments
-          .filter(reply => reply.parentId === item.id)
-          .map(reply => (
-            <CommentItem
-              key={reply.id}
-              item={reply}
-              allComments={allComments}
-              activeInput={activeInput}
-              value={value}
-              handleOnChange={handleOnChange}
-              handleOnRemove={handleOnRemove}
-              handleOnEdit={handleOnEdit}
-              handleEditInit={handleEditInit}
-              handleReplyInit={handleReplyInit}
-              handleOnReply={handleOnReply}
-            />
-          ))}
-      </ul>
-    </li>
-  );
+                <Dropdown
+                    isDropdownOpen={isIdolDropdownOpen === String(item.comment_id)}
+                    handleToggleIdolDropdown={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    mode="comment"
+                >
+                    <div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                handleToggleIdolDropdown(String(item.comment_id));
+                                setInputMode({mode: 'reply', payload: {parent_id: item.comment_id}});
+                            }}
+                            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                        >
+                            답글 달기
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            type="button"
+                            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                            onClick={() => setInputMode({
+                                mode: 'edit',
+                                payload: {comment_id: item.comment_id}
+                            })}
+                        >
+                            수정
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            type="button"
+                            className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+                            onClick={() => commentService.handleDeleteComment(item.comment_id)}
+                        >
+                            삭제
+                        </button>
+                    </div>
+                </Dropdown>
+            </div>
+            <ul className="mt-4 space-y-4">
+                {childComments.map(replyComment =>
+                    <CommentItem
+                        key={replyComment.comment_id}
+                        item={replyComment}
+                        childCommentMap={childCommentMap}
+                        inputMode={inputMode}
+                        setInputMode={setInputMode}
+                        commentService={commentService}
+                    />
+                )
+                }
+            </ul>
+        </li>
+    );
 }
 
-export default CommentItem;
+export default React.memo(CommentItem);
