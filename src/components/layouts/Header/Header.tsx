@@ -44,6 +44,7 @@ function Header() {
       setLogout();
       navigate('/');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   };
@@ -88,7 +89,7 @@ function Header() {
 
         {!isMobile && (
           <div className="ml-auto flex items-center gap-4">
-           {login ? (
+            {login ? (
               <div className="relative">
                   <button
                     type="button"
