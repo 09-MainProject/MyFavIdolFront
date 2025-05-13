@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 
 function Login() {
   const navigate = useNavigate();
-  const { setLogin } = useAuthStore();
+  const { setLogin, setUser } = useAuthStore();
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -18,8 +18,10 @@ function Login() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value}));
   };
+  //   setForm({ ...form, [name]: value });
+  // };
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,8 +35,17 @@ function Login() {
       });
 
       if (response.data.code === 200) {
-        const { access_token, csrf_token } = response.data.data;
+        const { access_token, csrf_token, user } = response.data.data;
         setLogin(access_token, csrf_token);
+        
+const profileRes = await api.get('/users/profile', { 
+  headers: {
+    Authorization: `Bearer ${access_token}`,
+  },
+  withCredentials: true,
+});
+
+        setUser(profileRes.data);
         navigate('/');
       }
     } catch (error) {

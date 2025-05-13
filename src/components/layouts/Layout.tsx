@@ -8,18 +8,20 @@ import Breadcrumb from '../common/Breadcrumb';
 import ScrollTop from '../common/ScrollTop';
 
 function Layout() {
-  const { setLogin, csrfToken, accessToken, setUser } = useAuthStore();
+  const { login, setLogin, csrfToken, accessToken, setUser } = useAuthStore();
 
   useEffect(() => {
-    if (!csrfToken || !accessToken) return;
+    if (!csrfToken || !accessToken || login) return;
     setLogin(accessToken, csrfToken);
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/profile', {
+        console.log('➡️ 프로필 요청 시도');
+        const response = await axios.get('/api/users/profile', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
+        console.log('✅ 프로필 받아옴:', response.data);
         setUser(response.data.data);
       } catch (e) {
         // eslint-disable-next-line no-console

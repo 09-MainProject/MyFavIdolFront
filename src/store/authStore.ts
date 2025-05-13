@@ -42,6 +42,7 @@ export const useAuthStore = create<AuthStore>()(
         set(state => ({ user: { ...state.user, ...user } })),
       setLogout: () => {
         set({ accessToken: null, csrfToken: null, login: false, user: null });
+          localStorage.removeItem('login-token'); // 토큰 강제 삭제 추가해서 로그인 안해도 로그인처럼 보이던 거 해결
       },
       isAuthenticated: () => {
         const { accessToken, csrfToken } = get();

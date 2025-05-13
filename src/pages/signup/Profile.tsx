@@ -61,12 +61,12 @@ function Profile() {
           <h2 className="text-2xl font-bold">프로필</h2>
 
        
-          {login ? (
+          {login && user ? (
             <div className="flex items-center">
               <div className="h-20 w-20 rounded-full bg-gray-300" />
               <div className="ml-4">
                 <p className="text-lg font-semibold">
-                  {profile.nickname}님 환영합니다
+                  {profile.nickname || user.nickname}님 환영합니다
                 </p>
               </div>
             </div>
