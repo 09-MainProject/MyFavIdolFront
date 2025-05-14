@@ -140,15 +140,18 @@ function CommentItem({
                             수정
                         </button>
                     </div>
-                    <div>
-                        <button
-                            type="button"
-                            className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
-                            onClick={() => commentService.handleDeleteComment(item.comment_id)}
-                        >
-                            삭제
-                        </button>
-                    </div>
+                    {
+                        item.parent_id &&
+                        <div>
+                            <button
+                                type="button"
+                                className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+                                onClick={() => commentService.handleDeleteComment(item.comment_id)}
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    }
                     {
                         !item.parent_id &&
                         <div>

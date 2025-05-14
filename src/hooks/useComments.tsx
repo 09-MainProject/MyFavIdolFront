@@ -30,7 +30,6 @@ function useComments() {
         return {parentComments: parent, childCommentMap: childMap};
     }, [comments]);
 
-
     return {
         parentComments,
         comments,
