@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router';
 import {Comment, Frame, Heart} from '@assets/icons/inedx.ts';
 import Dropdown from '@components/common/Dropdown/Dropdown.tsx';
-import useDropdownToggle from '@hooks/useDropdownToggle.tsx';
+import useOutsideClick from '@hooks/useOutsideClick.tsx';
 import {Idol} from '@store/idolStore.ts';
 
 type Props = {
@@ -11,8 +11,8 @@ type Props = {
 };
 
 function TimelineDetailCard({idol, handleDeletePost}: Props) {
-    const {ref, isIdolDropdownOpen, handleToggleIdolDropdown} =
-        useDropdownToggle();
+    const {ref, handleToggleDropdown, dropdownOpen} =
+        useOutsideClick();
 
     return (
         <div className="mt-8 rounded-xl bg-white">
@@ -45,14 +45,14 @@ function TimelineDetailCard({idol, handleDeletePost}: Props) {
                 <div className="relative" ref={ref}>
                     <button
                         type="button"
-                        onClick={handleToggleIdolDropdown}
+                        onClick={handleToggleDropdown}
                         className="p-1 text-gray-400 hover:text-gray-600"
                     >
                         <Frame/>
                     </button>
                     <Dropdown
-                        isDropdownOpen={isIdolDropdownOpen}
-                        handleToggleIdolDropdown={handleToggleIdolDropdown}
+                        dropdownOpen={dropdownOpen}
+                        handleToggleDropdown={handleToggleDropdown}
                         mode="comment"
                     >
                         <div className="px-4 py-2 text-center hover:bg-red-50">

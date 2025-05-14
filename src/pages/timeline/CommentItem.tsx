@@ -26,7 +26,7 @@ function CommentItem({
                          commentService
                      }: Props) {
     const childComments = childCommentMap[item.comment_id] ?? [];
-    const {ref, handleToggleIdolDropdown, isIdolDropdownOpen} = useCommentDropdown();
+    const {ref, handleCommentDropdownToggle, commentDropdownOpen} = useCommentDropdown();
 
     const renderCommentItem = () => {
         if (inputMode.mode === 'edit' && inputMode.payload.comment_id !== item.comment_id) return null;
@@ -106,21 +106,21 @@ function CommentItem({
             <div className="absolute top-4 right-4" ref={ref}>
                 <button
                     type="button"
-                    onClick={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    onClick={() => handleCommentDropdownToggle(String(item.comment_id))}
                     className="text-gray-400 hover:text-gray-600"
                 >
                     <Frame/>
                 </button>
                 <Dropdown
-                    isDropdownOpen={isIdolDropdownOpen === String(item.comment_id)}
-                    handleToggleIdolDropdown={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    dropdownOpen={commentDropdownOpen === String(item.comment_id)}
+                    handleToggleDropdown={() => handleCommentDropdownToggle(String(item.comment_id))}
                     mode="comment"
                 >
                     <div>
                         <button
                             type="button"
                             onClick={() => {
-                                handleToggleIdolDropdown(String(item.comment_id));
+                                handleCommentDropdownToggle(String(item.comment_id));
                                 setInputMode({mode: 'reply', payload: {parent_id: item.comment_id}});
                             }}
                             className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"

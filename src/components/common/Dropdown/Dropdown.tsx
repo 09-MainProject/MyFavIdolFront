@@ -1,16 +1,16 @@
 import * as React from 'react';
 
 type Props = {
-    isDropdownOpen?: boolean;
-    handleToggleIdolDropdown: () => void;
+    dropdownOpen?: boolean;
+    handleToggleDropdown: () => void;
     displayedIdolName?: string;
     children: React.ReactNode;
     mode: 'comment' | 'header';
 };
 
 function Dropdown({
-                      isDropdownOpen,
-                      handleToggleIdolDropdown,
+                      dropdownOpen,
+                      handleToggleDropdown,
                       displayedIdolName,
                       children,
                       mode,
@@ -24,11 +24,11 @@ function Dropdown({
                         ? 'rounded-full p-2 hover:bg-gray-100'
                         : 'mr-4 rounded-4xl border px-4 py-2 leading-none'
                 }`}
-                onClick={handleToggleIdolDropdown}
+                onClick={handleToggleDropdown}
             >
                 {displayedIdolName}
             </button>
-            {isDropdownOpen && (
+            {dropdownOpen && (
                 <div
                     className={`absolute z-50 rounded-md bg-white shadow-lg ${
                         mode === 'comment'
