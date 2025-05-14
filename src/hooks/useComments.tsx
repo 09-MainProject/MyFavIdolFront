@@ -17,7 +17,6 @@ function useComments() {
     const {parentComments, childCommentMap} = useMemo(() => {
         const parent = [];
         const childMap: Record<string, UserComment[]> = {};
-
         comments.forEach(comment => {
             if (comment.parent_id == null) {
                 parent.push(comment);
@@ -34,6 +33,7 @@ function useComments() {
 
     return {
         parentComments,
+        comments,
         setComments,
         childCommentMap,
         inputMode,
