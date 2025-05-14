@@ -14,6 +14,7 @@ type Props = {
         handleEditComment: () => void;
         handleAddReplyComment: () => void;
         handleDeleteComment: (comment_id: number) => void;
+        handleAllDeleteComment: (comment_id: number) => void;
     }
 };
 
@@ -148,19 +149,32 @@ function CommentItem({
                             삭제
                         </button>
                     </div>
+                    {
+                        !item.parent_id &&
+                        <div>
+                            <button
+                                type="button"
+                                className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+                                onClick={() => commentService.handleAllDeleteComment(item.comment_id)}
+                            >
+                                전체 삭제
+                            </button>
+                        </div>
+                    }
                 </Dropdown>
             </div>
-            <ul className="mt-4 space-y-4">
-                {childComments.map(replyComment =>
-                    <CommentItem
-                        key={replyComment.comment_id}
-                        item={replyComment}
-                        childCommentMap={childCommentMap}
-                        inputMode={inputMode}
-                        setInputMode={setInputMode}
-                        commentService={commentService}
-                    />
-                )
+            <ul className="mt-4 space-y-4 pl-4">
+                {childComments.length > 0 &&
+                    childComments.map(replyComment =>
+                        <CommentItem
+                            key={replyComment.comment_id}
+                            item={replyComment}
+                            childCommentMap={childCommentMap}
+                            inputMode={inputMode}
+                            setInputMode={setInputMode}
+                            commentService={commentService}
+                        />
+                    )
                 }
             </ul>
         </li>
