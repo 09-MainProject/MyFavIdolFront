@@ -40,7 +40,7 @@ function TimelineDetail() {
         const newReply = {
             comment_id: Number(new Date()),
             content: inputMode.payload.value,
-            author: 'dndndn',
+            author: 'dndndㄻㅇㄴㄹㄴㅇn',
             createdAt: new Date().toISOString(),
             parent_id: inputMode.payload.parent_id,
             img: '../src/assets/img/ncity.jpeg'
