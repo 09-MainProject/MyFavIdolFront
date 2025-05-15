@@ -15,6 +15,7 @@ export interface IdolArtistsCard {
 type Props = {
   idolList: IdolArtistsCard[];
   onCardClick?: (idol: IdolArtistsCard) => void;
+  onDetailClick?: (idolId: number) => void;
   idolTitle?: string;
   pageType: PageType;
   isVertical: boolean;
@@ -23,6 +24,7 @@ type Props = {
 export function IdolCardList({
   idolList,
   onCardClick,
+  onDetailClick,
   idolTitle,
   pageType,
   isVertical,
@@ -64,14 +66,14 @@ export function IdolCardList({
                   </div>
                 </div>
               ) : (
-                <>
+                  <>
                   <img
                     src={idol.img}
                     alt={idol.name}
                     className="h-auto w-full object-cover"
                   />
                   <div className="p-3">
-                    <p className="mb-1 text-[1.1rem] font-bold">{idol.name}</p>
+                    <p className="text-center mb-1 text-[1.1rem] font-bold">{idol.name}</p>
                     {/* {pageType === 'artist' && (
                       <p className="text-[0.9rem] text-gray-500">
                         {idol.enName}
@@ -86,8 +88,21 @@ export function IdolCardList({
                       <p className="text-[0.8rem] text-gray-500">
                         {idol.startDate}
                       </p>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                      e.stopPropagation();
+                      onDetailClick?.(idol.id);
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') onDetailClick?.(idol.id);
+                      }}
+                      className='mt-2 mb-2 text-sm text-gray-500 cursor-pointer text-center'>
+                      상세정보
+                    </div>
                 </>
               )}
             </div>

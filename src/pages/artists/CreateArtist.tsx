@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
+// import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+// import { uploadImageApi } from '@/components/common/uploadImageApi';
 import { useAuthStore } from '@/store/authStore';
 
 // 아이돌 생성에 필요한 데이터 타입
@@ -9,11 +11,13 @@ interface IdolData {
   debut_date: string;
   agency: string;
   description: string;
-  profile_image: string;
+  // profile_image: File | null;
   is_active: boolean;
 };
 function CreateArtist() {
+  const [imageFile, setImageFile] = useState<File|null>(null);
   const { accessToken } = useAuthStore.getState();
+  console.log(accessToken);
   const navigate = useNavigate();
 
   // 폼에서 입력되는 아이돌 정보 상태
@@ -22,9 +26,20 @@ function CreateArtist() {
     debut_date: '',
     agency: '',
     description: '',
-    profile_image: '',
+    // profile_image: null,
     is_active: true,
   });
+    // form데이터 
+  function setFormData(object_id : number) {
+    const formData = new FormData();
+
+    formData.append('object_type', 'idol');
+    formData.append('object_id', `${object_id}`);
+    formData.append('object_type', 'idol');
+
+    formData.append('image', imageFile);
+    return formData;
+  }
 
   const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
@@ -33,18 +48,26 @@ function CreateArtist() {
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         }
-        });
-      
+      });
+      const formData = setFormData(res.data.id);
+      await axios.post('/api/images/upload', formData, {
+        headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
       // 응답 받은 데이터를 상태에 반영
       setFormIdolData({
         name: res.data.name,
         debut_date: res.data.debut_date,
         agency: res.data.agency,
         description: res.data.description,
-        profile_image: res.data.profile_image,
         is_active: res.data.is_active,
       });
+
       
       navigate('/');
     } catch (err) {
@@ -54,7 +77,8 @@ function CreateArtist() {
   };
   return (
     <div className='flex min-h-screen items-center justify-center bg-white'>
-      <div>  
+      <div>
+  
         <h2 className="mb-2 text-center text-2xl font-bold">Idol 추가</h2>
         <form onSubmit={handleAddIdol} className='w-full max-w-md p-8 space-y-4'>
           <div className='block text-md font-medium text-gray-700'>이름</div>
@@ -95,9 +119,9 @@ function CreateArtist() {
 
           <input
             id='profile_image'
-            type="url"
-            value={formIdolData.profile_image}
-            onChange={e => setFormIdolData(prev => ({ ...prev, profile_image: e.target.value }))}
+            type="file"
+            // value={formIdolData.profile_image}
+            onChange={e => setImageFile(e.target.files[0])}
             className='border w-30 border-gray-300 text-sm'
             />
 
