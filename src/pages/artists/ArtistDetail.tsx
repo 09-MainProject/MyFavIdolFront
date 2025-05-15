@@ -1,8 +1,8 @@
-// import axios from 'axios';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import useMobile from '@/hooks/useMobile';
+import { useAuthStore } from '@/store/authStore';
 
 interface IdolData {
   name: string;
@@ -14,9 +14,54 @@ interface IdolData {
 };
 function ArtistDetail() {
   const { id } = useParams();
-  console.log('id:', typeof id);
   const [idolInfo, setIdolInfo] = useState<IdolData | null>(null);
   const isMobile = useMobile();
+  const navigate = useNavigate();
+
+  // 권한 확인
+  function useAdminCheck() {
+    const { accessToken } = useAuthStore.getState();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+      if (!accessToken) return;
+
+      try {
+        const payload = accessToken.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+        console.log(decodedPayload);
+
+        setIsAdmin(decodedPayload?.is_admin === true);
+      } catch (err) {
+        console.error(err);
+        setIsAdmin(false);
+      }
+    }, [accessToken]);
+
+    return isAdmin;
+  }
+  const isAdmin = useAdminCheck();
+  console.log(isAdmin);
+
+  async function handleDelete() {
+    const { accessToken } = useAuthStore.getState();
+    if (!id) return;
+    const confirm = window.confirm('정말로 삭제하시겠습니까?');
+    if (!confirm) return;
+
+    try {
+      const ID = Number(id);
+      await axios.delete(`http://43.203.181.6/api/idols/${ID}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      alert('삭제가 완료되었습니다.');
+      navigate('/artists');
+    } catch (err) {
+      console.error(err);
+    }
+  }
   
   useEffect(() => {
     async function fetchIdolDetail() {
@@ -34,9 +79,14 @@ function ArtistDetail() {
     }
   }, [id]);
   console.log('idolInfo 이름', idolInfo?.name);
-
   return (
     <div>
+      {!isAdmin && (
+        <div className='flex justify-end gap-2 px-4 w-full'>
+          <button className='px-1 py-2 text-sm cursor-pointer' type='button'>수정</button>
+          <button className='px-1 py-2 text-sm cursor-pointer' type='button' onClick={handleDelete}>삭제</button>
+        </div>
+      )}
       <div className="flex min-h-screen flex-col items-center bg-white px-4 pt-10">
         {isMobile ? (
           <div className='flex flex-col items-center gap-4'>
