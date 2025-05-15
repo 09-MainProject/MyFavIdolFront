@@ -21,26 +21,26 @@ function Artist() {
   const [followIdols, setFollowIdols] = useState<IdolArtistsCard[]>([]);
   // 아이돌 생성
   // const [newIdol, setNewIdol] = useState<Idol[]>([]);
-
+  
   // 전체 아이돌 리스트 api 요청
   useEffect(() => {
     async function fetchIdolList() {
       try {
         const resIdolList = await axios.get('/api/idols/');
         // eslint-disable-next-line no-console
-        console.log('전체 데이터 :', resIdolList);
+        console.log('전체 데이터 :', resIdolList.data);
         // 응답 데이터를 map 메서드를 통해 분해
         setIdolList(
           resIdolList.data.map(
             (item: {
-              idol_id: number;
+              id: number;
               name: string;
-              profile_image: string;
+              image_url: string;
             }) => ({
               // api로 받은 아이돌 구조
-              id: item.idol_id,
+              id: item.id,
               name: item.name,
-              img: item.profile_image,
+              img: item.image_url,
             })
           )
         );
@@ -147,6 +147,7 @@ function Artist() {
               }}
               pageType="artist"
               isVertical={false}
+              onDetailClick={(idolId)=> navigate(`/artists/${idolId}`)}
             />
           </div>
           {modalIdol && ( // modalIdol 값이 존재할 때만 모달 컴포넌트 렌더링

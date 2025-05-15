@@ -15,6 +15,7 @@ import Timeline from '@/pages/timeline/Timeline';
 import TimelineDetail from '@/pages/timeline/TimelineDetail';
 import TimelineEdit from '@/pages/timeline/TimelineEdit';
 import TimelineWrite from '@/pages/timeline/TimelineWrite';
+import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 
 
@@ -79,7 +80,11 @@ element: <EditProfile />,
         {
           path: '/artists/create',
           element: <CreateArtist />,
-        }
+        },
+        {
+          path: '/artists/:id',
+          element: <ArtistDetail />,
+        },
       ],
     },
   ]);

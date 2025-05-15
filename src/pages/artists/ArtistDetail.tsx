@@ -1,0 +1,88 @@
+// import axios from 'axios';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import useMobile from '@/hooks/useMobile';
+
+interface IdolData {
+  name: string;
+  debut_date: string;
+  agency: string;
+  description: string;
+  image_url: string;
+  is_active: boolean;
+};
+function ArtistDetail() {
+  const { id } = useParams();
+  console.log('id:', typeof id);
+  const [idolInfo, setIdolInfo] = useState<IdolData | null>(null);
+  const isMobile = useMobile();
+  
+  useEffect(() => {
+    async function fetchIdolDetail() {
+      try {
+        const ID = Number(id);
+        const res = await axios.get(`http://43.203.181.6/api/idols/${ID}/`);
+        setIdolInfo(res?.data);
+        console.log('res data : ', res.data);
+      } catch (err){
+        console.error('error :', err);
+      }
+    }
+    if (id) {
+      fetchIdolDetail();
+    }
+  }, [id]);
+  console.log('idolInfo 이름', idolInfo?.name);
+
+  return (
+    <div>
+      <div className="flex min-h-screen flex-col items-center bg-white px-4 pt-10">
+        {isMobile ? (
+          <div className='flex flex-col items-center gap-4'>
+            <h1 className='text-[50px] font-bold text-center'>{idolInfo?.name}</h1>
+            <p className='text-gray-700 text-[18px] text-center'>{idolInfo?.description}</p>
+            <img src={idolInfo.image_url} alt={idolInfo.name} className='w-full rounded' />
+            <div className='mt-4 text-center'>
+              <div className='text-sm'>
+                <span className='font-bold'>DEBUT</span>
+                <span className='text-gray-500 ml-4'>{idolInfo.debut_date}</span>
+              </div>
+              <p className='text-sm text-gray-700'>{idolInfo.agency}</p>
+            </div>
+          </div>
+        ) : (
+        <div className="flex w-full max-w-3xl flex-col gap-6">
+          {idolInfo ? (
+            <>
+              <h1 className='text-[60px] font-bold text-center'>
+                {idolInfo?.name}
+              </h1>
+              <p className='text-gray-700 text-[20px] text-center mt-[50px]'>{idolInfo?.description}</p>
+              <div className='flex items-center w-full'>
+                <img src={idolInfo.image_url} alt={idolInfo.name} className='h-full w-full rounded object-cover' />
+              </div>
+                <div className='flex justify-between w-full'>
+                  <div className="flex items-center">
+                    <span className="font-bold text-[13px]">DEBUT</span>
+                    <span className="ml-2 text-[13px] text-gray-500">{idolInfo?.debut_date}</span>
+                </div>
+                <div>
+                  <p className='text-gray-700 text-[13px]'>{idolInfo?.agency}</p>
+                </div>
+
+                </div>
+            </>
+          ) : (
+              <p className='text-gray400'>
+                로딩 중...
+              </p>
+          )}
+        </div>   
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default ArtistDetail;
