@@ -3,7 +3,7 @@ import {useCallback, useEffect, useRef} from 'react';
 function useImgLazy() {
     const imgRef = useRef<HTMLImageElement | null>(null);
 
-    const handleImgLoad = useCallback((entry) => {
+    const handleImgLoad = useCallback((entry: IntersectionObserverEntry[]) => {
         entry.forEach(entries => {
             if (entries.isIntersecting) {
                 const img = entries.target as HTMLImageElement;
