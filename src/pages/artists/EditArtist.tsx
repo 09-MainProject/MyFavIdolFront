@@ -1,8 +1,6 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-// import { useParams } from 'react-router';
 import { useNavigate, useParams } from 'react-router-dom';
-// import { uploadImageApi } from '@/components/common/uploadImageApi';
+import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 // 아이돌 생성에 필요한 데이터 타입
@@ -11,7 +9,6 @@ interface IdolData {
   debut_date: string;
   agency: string;
   description: string;
-  // profile_image: File | null;
   is_active: boolean;
 };
 function EditArtist() {
@@ -26,7 +23,6 @@ function EditArtist() {
     debut_date: '',
     agency: '',
     description: '',
-    // profile_image: null,
     is_active: true,
   });
   
@@ -34,7 +30,7 @@ function EditArtist() {
   useEffect(() => {
     async function fetchIdolInfo() {
       try {
-        const res = await axios.get(`http://43.203.181.6/api/idols${Number(id)}`);
+        const res = await api.get(`/idols${Number(id)}`);
         const { name, debut_date, agency, description, is_active } = res.data;
         
         setFormIdolData({
@@ -62,7 +58,6 @@ function EditArtist() {
     formData.append('object_type', 'idol');
     formData.append('object_id', `${object_id}`);
     formData.append('object_type', 'idol');
-
     formData.append('image', imageFile);
     return formData;
   }
@@ -70,7 +65,7 @@ function EditArtist() {
   const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
     try {
-      const res = await axios.patch(`/api/idols${Number(id)}`,formIdolData ,
+      const res = await api.patch(`/idols${Number(id)}`,formIdolData ,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -78,7 +73,7 @@ function EditArtist() {
         }
       });
       const formData = setFormData(res.data.id);
-      await axios.post('/api/images/upload', formData, {
+      await api.post('/images/upload', formData, {
         headers: {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'multipart/form-data',

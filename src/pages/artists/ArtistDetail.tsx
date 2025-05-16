@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import useMobile from '@/hooks/useMobile';
+import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 interface IdolData {
@@ -45,7 +45,7 @@ function ArtistDetail() {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://43.203.181.6/api/idols${Number(id)}`, {
+      await api.delete(`/idols${Number(id)}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -60,7 +60,7 @@ function ArtistDetail() {
   useEffect(() => {
     async function fetchIdolDetail() {
       try {
-        const res = await axios.get(`http://43.203.181.6/api/idols${Number(id)}`);
+        const res = await api.get(`/idols${Number(id)}`);
         setIdolInfo(res?.data);
       } catch (err){
         console.error('error :', err);
