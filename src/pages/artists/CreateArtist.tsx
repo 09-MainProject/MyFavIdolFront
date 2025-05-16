@@ -1,8 +1,6 @@
-import axios from 'axios';
 import { useState } from 'react';
-// import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-// import { uploadImageApi } from '@/components/common/uploadImageApi';
+import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 // 아이돌 생성에 필요한 데이터 타입
@@ -44,7 +42,7 @@ function CreateArtist() {
   const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
     try {
-      const res = await axios.post('/api/idols',formIdolData ,
+      const res = await api.post('/idols',formIdolData ,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -52,7 +50,7 @@ function CreateArtist() {
         }
       });
       const formData = setFormData(res.data.id);
-      await axios.post('/api/images/upload', formData, {
+      await api.post('/images/upload', formData, {
         headers: {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'multipart/form-data',
