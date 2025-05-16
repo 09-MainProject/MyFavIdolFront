@@ -75,7 +75,7 @@ function ArtistDetail() {
     <div>
       {isAdmin && (
         <div className='flex justify-end gap-2 px-4 w-full'>
-          <button className='px-1 py-2 text-sm cursor-pointer' type='button'>수정</button>
+          <button className='px-1 py-2 text-sm cursor-pointer' type='button' onClick={() => navigate(`/artists/${Number(id)}/edit`)}>수정</button>
           <button className='px-1 py-2 text-sm cursor-pointer' type='button' onClick={handleDelete}>삭제</button>
         </div>
       )}
