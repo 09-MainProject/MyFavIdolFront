@@ -26,7 +26,7 @@ function Artist() {
   useEffect(() => {
     async function fetchIdolList() {
       try {
-        const resIdolList = await axios.get('/api/idols/');
+        const resIdolList = await axios.get('/api/idols');
         // eslint-disable-next-line no-console
         console.log('전체 데이터 :', resIdolList.data);
         // 응답 데이터를 map 메서드를 통해 분해

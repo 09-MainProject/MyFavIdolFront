@@ -41,8 +41,7 @@ function ArtistDetail() {
     return isAdmin;
   }
   const isAdmin = useAdminCheck();
-  console.log(isAdmin);
-
+  console.log('isAdmin', isAdmin);
   async function handleDelete() {
     const { accessToken } = useAuthStore.getState();
     if (!id) return;
@@ -51,7 +50,7 @@ function ArtistDetail() {
 
     try {
       const ID = Number(id);
-      await axios.delete(`http://43.203.181.6/api/idols/${ID}/`, {
+      await axios.delete(`http://43.203.181.6/api/idols${ID}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -67,16 +66,17 @@ function ArtistDetail() {
     async function fetchIdolDetail() {
       try {
         const ID = Number(id);
-        const res = await axios.get(`http://43.203.181.6/api/idols/${ID}/`);
+        console.log('ID', ID);
+        const res = await axios.get(`http://43.203.181.6/api/idols${ID}`);
         setIdolInfo(res?.data);
         console.log('res data : ', res.data);
       } catch (err){
         console.error('error :', err);
       }
     }
-    if (id) {
+    // if (id) {
       fetchIdolDetail();
-    }
+    // }
   }, [id]);
   console.log('idolInfo 이름', idolInfo?.name);
   return (

@@ -44,7 +44,7 @@ function CreateArtist() {
   const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 새로고침 방지
     try {
-      const res = await axios.post('/api/idols/',formIdolData ,
+      const res = await axios.post('/api/idols',formIdolData ,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
