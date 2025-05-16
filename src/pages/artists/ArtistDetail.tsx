@@ -21,27 +21,23 @@ function ArtistDetail() {
   // 권한 확인
   function useAdminCheck() {
     const { accessToken } = useAuthStore.getState();
+    const { user } = useAuthStore();
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
       if (!accessToken) return;
 
       try {
-        const payload = accessToken.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payload));
-        console.log(decodedPayload);
-
-        setIsAdmin(decodedPayload?.is_admin === true);
+        setIsAdmin(user?.is_superuser === true || user?.is_staff === true);
       } catch (err) {
         console.error(err);
         setIsAdmin(false);
       }
-    }, [accessToken]);
+    }, [accessToken, user]);
 
     return isAdmin;
   }
   const isAdmin = useAdminCheck();
-  console.log('isAdmin', isAdmin);
   async function handleDelete() {
     const { accessToken } = useAuthStore.getState();
     if (!id) return;
@@ -49,8 +45,7 @@ function ArtistDetail() {
     if (!confirm) return;
 
     try {
-      const ID = Number(id);
-      await axios.delete(`http://43.203.181.6/api/idols${ID}`, {
+      await axios.delete(`http://43.203.181.6/api/idols${Number(id)}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -65,11 +60,8 @@ function ArtistDetail() {
   useEffect(() => {
     async function fetchIdolDetail() {
       try {
-        const ID = Number(id);
-        console.log('ID', ID);
-        const res = await axios.get(`http://43.203.181.6/api/idols${ID}`);
+        const res = await axios.get(`http://43.203.181.6/api/idols${Number(id)}`);
         setIdolInfo(res?.data);
-        console.log('res data : ', res.data);
       } catch (err){
         console.error('error :', err);
       }
@@ -78,10 +70,10 @@ function ArtistDetail() {
       fetchIdolDetail();
     // }
   }, [id]);
-  console.log('idolInfo 이름', idolInfo?.name);
+  
   return (
     <div>
-      {!isAdmin && (
+      {isAdmin && (
         <div className='flex justify-end gap-2 px-4 w-full'>
           <button className='px-1 py-2 text-sm cursor-pointer' type='button'>수정</button>
           <button className='px-1 py-2 text-sm cursor-pointer' type='button' onClick={handleDelete}>삭제</button>

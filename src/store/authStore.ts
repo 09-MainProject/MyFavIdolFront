@@ -7,6 +7,8 @@ type User = {
   commentAlarm: boolean;
   likeAlarm: boolean;
   scheduleAlarm: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
 };
 
 interface AuthState {
