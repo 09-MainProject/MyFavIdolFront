@@ -28,7 +28,7 @@ function ArtistDetail() {
       if (!accessToken) return;
 
       try {
-        setIsAdmin(user?.is_superuser === true || user?.is_staff === true);
+        setIsAdmin(user?.is_staff === true);
       } catch (err) {
         console.error(err);
         setIsAdmin(false);
