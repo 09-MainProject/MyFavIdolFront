@@ -101,6 +101,12 @@ function EditArtist() {
       console.error(err);
     }
   };
+
+  // 수정 취소 버튼 함수
+  function handleCancle() {
+    navigate(`/artists/${Number(id)}`);
+  }
+
   return (
     <div className='flex min-h-screen items-center justify-center bg-white'>
       <div>
@@ -151,11 +157,17 @@ function EditArtist() {
             className='border w-30 border-gray-300 text-sm'
             />
 
-          <div className='mt-6 flex justify-center'>
+          <div className='mt-6 flex justify-center gap-2'>
             <button
               type="submit"
               className='w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm'>
               수정 완료
+            </button>
+            <button
+              type="submit"
+              onClick={handleCancle}
+              className='w-full font-semibold py-2 rounded bg-red-400 text-white hover:bggray800 text-sm'>
+              취소
             </button>
           </div>
         </form>
