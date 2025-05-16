@@ -1,8 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
+
+const uploadProfileImage = async (file: File, userId: number): Promise<string> => {
+  const formData = new FormData();
+  formData.append('object_type', 'profile'); // 또는 서버 명세에 맞게
+  formData.append('object_id', String(userId));
+  formData.append('image', file);
+
+  const res = await api.post('/images/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return res.data.image_url; // ← 이건 Swagger 명세에서 확인!
+};
+
+
+
 
 function EditProfile() {
+  const { login, user, setLogout, setUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
     name: '',
@@ -28,7 +48,7 @@ const [preview, setPreview] = useState<string | null>(null);
         const data = res.data;
         // 데이터 값이 있으면 데이터 값을 불러오고, 없으면 빈칸 유지
         // API 못 불러오면 에러 발생
-        // 프로필 호출
+        // 프로필 호출 
         setForm({
           name: data.name || '',
           email: data.email || '',
@@ -103,28 +123,84 @@ const handleSave = async () => {
   try {
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append('name', form.name);
-    formData.append('email', form.email);
-    formData.append('nickname', form.nickname);
-    formData.append('schedule_alarm', String(form.alarmOptIn));
+    let profileImageUrl = preview;
 
-
-    if (form.newPassword) {
-      formData.append('password', form.newPassword);
+    if (selectedFile && user?.id) {
+// 이미지 업로드를 url로 받는다
+const uploadedUrl = await uploadProfileImage(selectedFile, user.id);
+      profileImageUrl = uploadedUrl;
     }
+// 이후 프로필 patch를 요청 => profile_image
+// const payload: any = {
+//   nickname: form.nickname,
+//   schedule_alarm: form.alarmOptIn,
+// };
+const payload = {
+  name: form.name,
+  nickname: form.nickname,
+  password: form.newPassword || undefined,
+  schedule_alarm: form.alarmOptIn, 
+  profile_image: profileImageUrl,
+};
+if (form.name && form.name.trim() !== '') {
+  payload.name = form.name;
+}
+// 비밀번호 있을 경우만 추가
+if (form.newPassword) {
+  payload.password = form.newPassword;
+}
 
-    if (selectedFile) {
-      formData.append('profile_image', selectedFile); 
-    }
+// 프로필 이미지 URL 있을 경우만 추가
+if (profileImageUrl) {
+  payload.profile_image = profileImageUrl;
+}
 
-    await api.patch('/users/profile', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+//서버에에 요청
+await api.patch('/users/profile', payload);
+// const updated = res.data;
+//프로필 재조회 
+const res = await api.get('/users/profile', payload);
+console.log('📦 재조회 프로필:', res.data);
+const updated = res.data;
+console.log('✅ PATCH 응답:', res.data);
+//Zustand 동기화 작업
+
+
+
+// const formData = new FormData();
+
+//     formData.append('name', form.name);
+//     // formData.append('email', form.email);
+//     formData.append('nickname', form.nickname);
+//     formData.append('schedule_alarm', String(form.alarmOptIn ? 'true' : 'false'));
+
+
+//     if (form.newPassword) {
+//       formData.append('password', form.newPassword);
+//     }
+
+//     if (selectedFile) {
+//       formData.append('profile_image', selectedFile); 
+//     }
+
+//     await api.patch('/users/profile', formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//       },
+//     });
+
+//        const res = await api.patch('/users/profile');
+//     const updated = res.data;
+
+    setUser({
+  nickname: updated.nickname,
+      profileImage: updated.profile_image ?? '',
+      commentAlarm: updated.commentAlarm ?? true,
+      likeAlarm: updated.likeAlarm ?? true,
+      scheduleAlarm: updated.scheduleAlarm ?? true,
     });
-       const res = await api.get('/users/profile');
-    const updated = res.data;
+    Navigate('/profile');
+
         setForm({
       name: updated.name || '',
       email: updated.email || '',
@@ -140,7 +216,7 @@ const handleSave = async () => {
     setIsEditing(false);
     setError(null);
   } catch (err) {
-    console.error('프로필 저장 안댐:', err);
+    console.error('프로필 저장 실패:', err);
     setError('프로필 저장에 실패했습니다.');
   } finally {
     setLoading(false);

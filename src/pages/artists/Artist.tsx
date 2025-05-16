@@ -53,32 +53,6 @@ function Artist() {
     fetchIdolList();
   }, []);
 
-  // 아이돌 생성
-  const handleAddIdol = async () => {
-    try {
-      const res = await axios.post('/api/idols/', {
-        name: '트와이스',
-        debut_date: '2015-10-20',
-        agency: 'JYP',
-        description: 'K-pop girl group',
-        profile_image: 'https://example.com/images/twice.jpg',
-        is_active: true,
-      });
-      const newIdol = {
-        id: res.data.data.idol_id,
-        name: res.data.data.name,
-        img: res.data.data.profile_image,
-        isVertical: false,
-      };
-      setIdolList(prev => [...prev, newIdol]);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    }
-    // eslint-disable-next-line no-console
-    console.log('추가 후 아이돌 리스트', idolList);
-  };
-
   // 팔로우 아이돌 api 요청
   useEffect(() => {
     async function fetchFollowIdols() {
@@ -140,7 +114,7 @@ function Artist() {
 
   return (
     <div>
-      <button onClick={handleAddIdol} type="button">
+      <button onClick={() => navigate('/artists/create')} type='button'>
         추가
       </button>
       <div className="mx-auto max-w-[1080px]">

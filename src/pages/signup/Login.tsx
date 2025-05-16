@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
+import Input from '@components/common/Input/Input.tsx';
 import { useAuthStore } from '@store/authStore.ts';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 import { api } from '@/lib/api';
+import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
@@ -15,19 +17,22 @@ function Login() {
   });
   const [errorMessage, setErrorMessage] = useState('');
 
+  const refreshProfile = async () => {
+  const response = await api.get('/users/profile');
+  const userData = response.data.data;
+  setUser(userData);
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value}));
+    setForm({ ...form, [name]: value });
   };
-  //   setForm({ ...form, [name]: value });
-  // };
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('로그인 제대로?', form);
     try {
-      const response = await api.post('/users/token/login', form, {
+      const response = await axios.post('/api/users/token/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -35,25 +40,21 @@ function Login() {
       });
 
       if (response.data.code === 200) {
-        const { access_token, csrf_token, user } = response.data.data;
+        const { access_token, csrf_token } = response.data.data;
         setLogin(access_token, csrf_token);
-        
-const profileRes = await api.get('/users/profile', { 
-  headers: {
-    Authorization: `Bearer ${access_token}`,
-  },
-  withCredentials: true,
-});
+        await refreshProfile();
 
-        setUser(profileRes.data);
         navigate('/');
+        window.location.reload();
       }
     } catch (error) {
-    if (error.response?.status === 401) {
-    setErrorMessage('비밀번호가 일치하지 않습니다.');
+        console.log('에러', error.response?.data || error);
+      if (error.response?.status === 401) {
+        setErrorMessage('비밀번호가 일치하지 않습니다.');
+      }
     }
-  }
   };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="w-full max-w-md p-8">
@@ -63,23 +64,22 @@ const profileRes = await api.get('/users/profile', {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          <Input
             type="email"
             name="email"
             placeholder="Enter your email"
             value={form.email}
             onChange={handleChange}
-            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            variant="outlined"
           />
-          <input
+          <Input
             type="password"
             name="password"
             placeholder="Enter your password"
             value={form.password}
             onChange={handleChange}
-            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            variant="outlined"
           />
-
           <button
             type="submit"
             className="w-full rounded bg-black py-2 text-sm font-semibold text-white hover:bg-gray-800"
@@ -87,9 +87,11 @@ const profileRes = await api.get('/users/profile', {
             Login
           </button>
         </form>
-{errorMessage && (
-  <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
-)}
+
+        {errorMessage && (
+          <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+        )}
+
         <div className="mt-2 text-center">
           <button
             type="button"

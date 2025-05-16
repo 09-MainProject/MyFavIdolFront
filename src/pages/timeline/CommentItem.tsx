@@ -14,6 +14,7 @@ type Props = {
         handleEditComment: () => void;
         handleAddReplyComment: () => void;
         handleDeleteComment: (comment_id: number) => void;
+        handleAllDeleteComment: (comment_id: number) => void;
     }
 };
 
@@ -25,7 +26,7 @@ function CommentItem({
                          commentService
                      }: Props) {
     const childComments = childCommentMap[item.comment_id] ?? [];
-    const {ref, handleToggleIdolDropdown, isIdolDropdownOpen} = useCommentDropdown();
+    const {ref, handleCommentDropdownToggle, commentDropdownOpen} = useCommentDropdown();
 
     const renderCommentItem = () => {
         if (inputMode.mode === 'edit' && inputMode.payload.comment_id !== item.comment_id) return null;
@@ -105,21 +106,21 @@ function CommentItem({
             <div className="absolute top-4 right-4" ref={ref}>
                 <button
                     type="button"
-                    onClick={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    onClick={() => handleCommentDropdownToggle(String(item.comment_id))}
                     className="text-gray-400 hover:text-gray-600"
                 >
                     <Frame/>
                 </button>
                 <Dropdown
-                    isDropdownOpen={isIdolDropdownOpen === String(item.comment_id)}
-                    handleToggleIdolDropdown={() => handleToggleIdolDropdown(String(item.comment_id))}
+                    dropdownOpen={commentDropdownOpen === String(item.comment_id)}
+                    handleToggleDropdown={() => handleCommentDropdownToggle(String(item.comment_id))}
                     mode="comment"
                 >
                     <div>
                         <button
                             type="button"
                             onClick={() => {
-                                handleToggleIdolDropdown(String(item.comment_id));
+                                handleCommentDropdownToggle(String(item.comment_id));
                                 setInputMode({mode: 'reply', payload: {parent_id: item.comment_id}});
                             }}
                             className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
@@ -139,28 +140,44 @@ function CommentItem({
                             수정
                         </button>
                     </div>
-                    <div>
-                        <button
-                            type="button"
-                            className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
-                            onClick={() => commentService.handleDeleteComment(item.comment_id)}
-                        >
-                            삭제
-                        </button>
-                    </div>
+                    {
+                        item.parent_id &&
+                        <div>
+                            <button
+                                type="button"
+                                className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+                                onClick={() => commentService.handleDeleteComment(item.comment_id)}
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    }
+                    {
+                        !item.parent_id &&
+                        <div>
+                            <button
+                                type="button"
+                                className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+                                onClick={() => commentService.handleAllDeleteComment(item.comment_id)}
+                            >
+                                전체 삭제
+                            </button>
+                        </div>
+                    }
                 </Dropdown>
             </div>
-            <ul className="mt-4 space-y-4">
-                {childComments.map(replyComment =>
-                    <CommentItem
-                        key={replyComment.comment_id}
-                        item={replyComment}
-                        childCommentMap={childCommentMap}
-                        inputMode={inputMode}
-                        setInputMode={setInputMode}
-                        commentService={commentService}
-                    />
-                )
+            <ul className="mt-4 space-y-4 pl-4">
+                {childComments.length > 0 &&
+                    childComments.map(replyComment =>
+                        <CommentItem
+                            key={replyComment.comment_id}
+                            item={replyComment}
+                            childCommentMap={childCommentMap}
+                            inputMode={inputMode}
+                            setInputMode={setInputMode}
+                            commentService={commentService}
+                        />
+                    )
                 }
             </ul>
         </li>

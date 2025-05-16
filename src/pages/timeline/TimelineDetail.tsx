@@ -15,6 +15,7 @@ function TimelineDetail() {
     const {
         inputMode,
         setInputMode,
+        comments,
         setComments,
         parentComments,
         childCommentMap,
@@ -39,7 +40,7 @@ function TimelineDetail() {
         const newReply = {
             comment_id: Number(new Date()),
             content: inputMode.payload.value,
-            author: 'dndndn',
+            author: 'dndndㄻㅇㄴㄹㄴㅇn',
             createdAt: new Date().toISOString(),
             parent_id: inputMode.payload.parent_id,
             img: '../src/assets/img/ncity.jpeg'
@@ -49,8 +50,17 @@ function TimelineDetail() {
     }, [inputMode, setComments, setInputMode]);
 
     const handleDeleteComment = useCallback((comment_id: number) => {
-        setComments((prev) => (prev.filter(item => item.comment_id !== comment_id)));
-    }, [setComments]);
+        const find = comments.find(item => item.comment_id === comment_id);
+        const parent = find.parent_id;
+        setComments((prev) => prev.map(item => item.parent_id === comment_id ? {
+            ...item,
+            parent_id: parent,
+        } : item).filter(v => v.comment_id !== comment_id));
+    }, [setComments, comments]);
+
+    const handleAllDeleteComment = (comment_id: number) => {
+        setComments((prev) => prev.filter(item => item.comment_id !== comment_id));
+    };
 
     const handleAddRootComment = () => {
         setRootInput('');
@@ -68,6 +78,7 @@ function TimelineDetail() {
         handleEditComment,
         handleAddReplyComment,
         handleDeleteComment,
+        handleAllDeleteComment
     };
 
     return (
