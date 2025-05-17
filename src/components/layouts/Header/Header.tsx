@@ -15,8 +15,8 @@ import {useIdolState} from '@store/idolStore';
 const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 
 function Header() {
-    const idols = [];
-    const {selectedIdolId, setSelectIdol} = useIdolState();
+    const {followedIdols, selectedIdolId, setSelectIdol} = useIdolState();
+    const idols = followedIdols;
     const mobileRef = useRef<null | HTMLDivElement>(null);
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -74,7 +74,8 @@ function Header() {
                 <IdolDropdown handleToggleDropdown={handleToggleDropdown} idols={idols}
                               setSelectIdol={setSelectIdol} handleCloseDropdown={handleCloseDropdown}
                               dropdownOpen={dropdownOpen} selectedIdolId={selectedIdolId}
-                              displayedIdolName={displayedIdolName}/>
+                              displayedIdolName={displayedIdolName}
+                              />
                 {isMobile ? (
                     <>
                         <UserInfo
