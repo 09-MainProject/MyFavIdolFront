@@ -34,7 +34,6 @@ function CreateArtist() {
     formData.append('object_type', 'idol');
     formData.append('object_id', `${object_id}`);
     formData.append('object_type', 'idol');
-
     formData.append('image', imageFile);
     return formData;
   }
