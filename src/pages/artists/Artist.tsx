@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { IdolCardList } from '@/components/common/Card/IdolCardList';
@@ -15,42 +16,25 @@ interface Idol {
 }
 
 function Artist() {
-  // 전체 아이돌 리스트 상태
-  const [idolList, setIdolList] = useState<Idol[]>([]);
   // 팔로우 아이돌 리스트 상태
   const [followIdols, setFollowIdols] = useState<IdolArtistsCard[]>([]);
   const { setFollowedIdols } = useIdolState();
   
   // 전체 아이돌 리스트 api 요청
-  useEffect(() => {
-    async function fetchIdolList() {
-      try {
-        const resIdolList = await api.get('/idols');
-        // eslint-disable-next-line no-console
-        console.log('전체 데이터 :', resIdolList.data);
-        // 응답 데이터를 map 메서드를 통해 분해
-        setIdolList(
-          resIdolList.data.map(
-            (item: {
-              id: number;
-              name: string;
-              image_url: string;
-            }) => ({
-              // api로 받은 아이돌 구조
-              id: item.id,
-              name: item.name,
-              img: item.image_url,
-            })
-          )
-        );
-        // console.log(idolList.map(item => item));
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    }
-    fetchIdolList();
-  }, []);
+  const {
+    data: idolList = [],
+  } = useQuery<Idol[]>({
+    queryKey: ['idolList'],
+    queryFn: async () => {
+      const res = await api.get('/idols');
+      return res.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        img: item.image_url,
+        isVertical: item.is_vertical,
+      }));
+    },
+  });
 
   // 팔로우 아이돌 api 요청
   useEffect(() => {
@@ -145,7 +129,6 @@ function Artist() {
             <IdolCardList
               idolTitle={`팔로우한 ${followIdols?.length}팀의 아티스트`}
               idolList={followIdols ?? []}
-              // onCardClick={setModalIdol}
               onCardClick={idol => {
                 setModalIdol(idol);
                 setSelectIdol(idol.id);
@@ -172,7 +155,6 @@ function Artist() {
                 description: '',
                 enName: '',
               }))}
-              // onCardClick={setModalIdol}
               onCardClick={idol => {
                 setModalIdol(idol);
                 setSelectIdol(idol.id);
