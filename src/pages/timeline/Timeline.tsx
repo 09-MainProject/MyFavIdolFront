@@ -1,20 +1,26 @@
+import {useMemo} from 'react';
 import {Link} from 'react-router';
 import CardFrame from '@components/CardFrame';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
 import useFetchPosts from '@hooks/useFetchPosts';
+import useInfiniteObserver from '@hooks/useInfiniteObserver.tsx';
 import TimelineCard from '@pages/timeline/TimelineCard';
 import {useAuthStore} from '@store/authStore';
 
 function Timeline() {
+    const params = useMemo(() => ({ordering: '-created_at'}), []);
     const {
         getPostData,
         getPostLoading,
         getPostError,
         getUserProfileData,
         getUserProfileLoading,
-        getUserProfileError
-    } = useFetchPosts();
+        getUserProfileError,
+        getPostFetchNextPage,
+        getPostHasNextPage,
+    } = useFetchPosts(params);
     const {login} = useAuthStore();
+    const ref = useInfiniteObserver(getPostFetchNextPage, getPostHasNextPage);
 
     if (getPostLoading) return <p>로딩 중...</p>;
     if (getPostError) return <p>오류가 발생했습니다.</p>;
@@ -54,6 +60,7 @@ function Timeline() {
                     </Link>
                 </div>
             }
+            <div ref={ref}/>
         </section>
     );
 }

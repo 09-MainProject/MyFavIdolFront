@@ -12,9 +12,14 @@ export const updatePostApi = async (data: PostCreateRequest, id: number): Promis
     return response.data;
 };
 
-export const getPostsApi = async (params?: PostListRequest): Promise<PostListResponse> => {
+export const getPostsApi = async (params: PostListRequest): Promise<PostListResponse> => {
     const response = await api.get('/post', {
-        params,
+        params: {
+            search: params?.search,
+            ordering: params?.ordering,
+            page: params?.page,
+            page_size: params?.page_size,
+        }
     });
     return response.data;
 };

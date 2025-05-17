@@ -23,7 +23,7 @@ export type PostListResponse = {
 export type PostListRequest = {
     search?: string;
     ordering?: string;
-    page?: number;
+    page?: number | unknown;
     page_size?: number;
 };
 
