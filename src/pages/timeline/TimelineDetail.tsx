@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {useNavigate, useParams} from 'react-router';
 import CardFrame from '@components/CardFrame';
-import ProfileHeader from '@components/common/Profile/ProfileHeader';
 import useComments from '@hooks/useComments.tsx';
 import CommentItem from '@pages/timeline/CommentItem.tsx';
 import TimelineDetailCard from '@pages/timeline/TimelineDetailCard.tsx';
@@ -83,12 +82,12 @@ function TimelineDetail() {
 
     return (
         <div className="mt-12 p-4">
-            <ProfileHeader
-                avatar={idolDetail.img}
-                nickname={idolDetail.name}
-                startDate={idolDetail.startDate}
-                mode="post"
-            />
+            {/* <ProfileHeader */}
+            {/*     avatar={idolDetail.img} */}
+            {/*     nickname={idolDetail.name} */}
+            {/*     startDate={idolDetail.startDate} */}
+            {/*     mode="post" */}
+            {/* /> */}
             <CardFrame>
                 <TimelineDetailCard
                     idol={idolDetail}
