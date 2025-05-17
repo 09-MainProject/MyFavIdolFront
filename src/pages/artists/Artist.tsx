@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { IdolCardList } from '@/components/common/Card/IdolCardList';
 import type { IdolArtistsCard } from '@/components/common/Card/IdolCardList';
 import { IdolConfirmModal } from '@/components/common/IdolConfirmModal';
+import { api } from '@/lib/api';
 import { useIdolState } from '@/store/idolStore';
 
 // 백엔드 받아오는 아이돌 정보 인터페이스
@@ -26,7 +26,7 @@ function Artist() {
   useEffect(() => {
     async function fetchIdolList() {
       try {
-        const resIdolList = await axios.get('/api/idols/');
+        const resIdolList = await api.get('/idols');
         // eslint-disable-next-line no-console
         console.log('전체 데이터 :', resIdolList.data);
         // 응답 데이터를 map 메서드를 통해 분해
@@ -87,22 +87,22 @@ function Artist() {
     if (!modalIdol) return;
 
     // 팔로우 상태 확인
-    const res = await axios.get(
-      `http://43.203.181.6/api/idols/${modalIdol.id}/follow-status/`
+    const res = await api.get(
+      `/idols/${modalIdol.id}/follow-status/`
     );
     const isFollowed = res.data.is_following;
 
     if (isFollowed) {
       // 팔로우 된 경우 팔로우 취소 요청
-      await axios.delete(
-        `http://43.203.181.6/api/idols/${modalIdol.id}/follows/`
+      await api.delete(
+        `/idols/${modalIdol.id}/follows/`
       );
       // 상태에서 제거
       setFollowIdols(prev => prev.filter(idol => idol.id !== modalIdol.id));
     } else {
       // 팔로우 되지 않은 경우 팔로우 추가 요청
-      await axios.post(
-        `http://43.203.181.6/api/idols/${modalIdol.id}/follows/`
+      await api.post(
+        `/idols/${modalIdol.id}/follows/`
       );
       setFollowIdols(prev => [...prev, modalIdol]);
 

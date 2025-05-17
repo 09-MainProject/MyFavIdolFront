@@ -1,15 +1,16 @@
 export type PostListItem = {
     id: number;
-    author: { nickname: string; name: string };
+    author: string;
     title: string;
     content: string;
+    image_url: null | string;
     created_at: string;
     updated_at: string;
     views: number;
-    likes_count: string;
+    comments: [];
+    likes_count: number;
     is_liked: boolean;
-    image: string;
-    image_url: string;
+    is_deleted: boolean;
 };
 
 export type PostListResponse = {
@@ -17,6 +18,13 @@ export type PostListResponse = {
     next: string;
     previous: string;
     results: PostListItem[];
+};
+
+export type PostListRequest = {
+    search?: string;
+    ordering?: string;
+    page?: number;
+    page_size?: number;
 };
 
 export type PostResponse = {

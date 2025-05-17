@@ -67,11 +67,13 @@ export function IdolCardList({
                 </div>
               ) : (
                   <>
-                  <img
-                    src={idol.img}
-                    alt={idol.name}
-                    className="h-auto w-full object-cover"
-                  />
+                    <div className='h-[180px] overflow-hidden'>
+                      <img
+                        src={idol.img}
+                        alt={idol.name}
+                        className="h-full w-full object-cover transition-transform hover:scale-105"
+                      />
+                    </div>
                   <div className="p-3">
                     <p className="text-center mb-1 text-[1.1rem] font-bold">{idol.name}</p>
                     {/* {pageType === 'artist' && (

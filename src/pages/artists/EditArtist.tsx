@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import {api} from '@/lib/api';
 import {useAuthStore} from '@/store/authStore';
 
@@ -9,35 +9,59 @@ interface IdolData {
     debut_date: string;
     agency: string;
     description: string;
-    // profile_image: File | null;
     is_active: boolean;
 }
 
-function CreateArtist() {
+function EditArtist() {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const {accessToken} = useAuthStore.getState();
     // eslint-disable-next-line no-console
     console.log(accessToken);
     const navigate = useNavigate();
-
+    const {id} = useParams();
     // 폼에서 입력되는 아이돌 정보 상태
     const [formIdolData, setFormIdolData] = useState<IdolData>({
         name: '',
         debut_date: '',
         agency: '',
         description: '',
-        // profile_image: null,
         is_active: true,
     });
 
-    // form데이터
+    // 기존 입력값 불러오기
+    useEffect(() => {
+        async function fetchIdolInfo() {
+            try {
+                const res = await api.get(`/idols${Number(id)}`);
+                const {name, debut_date, agency, description, is_active} = res.data;
+
+                setFormIdolData({
+                    name,
+                    debut_date,
+                    agency,
+                    description,
+                    is_active,
+                });
+                // eslint-disable-next-line no-console
+                console.log(res);
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error(err);
+            }
+        }
+
+        if (id) {
+            fetchIdolInfo();
+        }
+    }, [id]);
+
+    // form데이터 
     function setFormData(object_id: number) {
         const formData = new FormData();
 
         formData.append('object_type', 'idol');
         formData.append('object_id', `${object_id}`);
         formData.append('object_type', 'idol');
-
         formData.append('image', imageFile);
         return formData;
     }
@@ -45,7 +69,7 @@ function CreateArtist() {
     const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // 새로고침 방지
         try {
-            const res = await api.post('/idols', formIdolData,
+            const res = await api.patch(`/idols${Number(id)}`, formIdolData,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -76,11 +100,17 @@ function CreateArtist() {
             console.error(err);
         }
     };
+
+    // 수정 취소 버튼 함수
+    function handleCancle() {
+        navigate(`/artists/${Number(id)}`);
+    }
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-white">
             <div>
 
-                <h2 className="mb-2 text-center text-2xl font-bold">Idol 추가</h2>
+                <h2 className="mb-2 text-center text-2xl font-bold">Idol 수정</h2>
                 <form onSubmit={handleAddIdol} className="w-full max-w-md p-8 space-y-4">
                     <div className="block text-md font-medium text-gray-700">이름</div>
                     <input
@@ -126,11 +156,17 @@ function CreateArtist() {
                         className="border w-30 border-gray-300 text-sm"
                     />
 
-                    <div className="mt-6 flex justify-center">
+                    <div className="mt-6 flex justify-center gap-2">
                         <button
                             type="submit"
                             className="w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm">
-                            아티스트 등록
+                            수정 완료
+                        </button>
+                        <button
+                            type="submit"
+                            onClick={handleCancle}
+                            className="w-full font-semibold py-2 rounded bg-red-400 text-white hover:bggray800 text-sm">
+                            취소
                         </button>
                     </div>
                 </form>
@@ -139,4 +175,4 @@ function CreateArtist() {
     );
 }
 
-export default CreateArtist;
+export default EditArtist;

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://wistar.n-e.kr/api',
   withCredentials: true,
 });
 
