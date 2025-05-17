@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import useMobile from '@/hooks/useMobile';
@@ -14,7 +15,6 @@ interface IdolData {
 };
 function ArtistDetail() {
   const { id } = useParams();
-  const [idolInfo, setIdolInfo] = useState<IdolData | null>(null);
   const isMobile = useMobile();
   const navigate = useNavigate();
 
@@ -57,19 +57,14 @@ function ArtistDetail() {
     }
   }
   
-  useEffect(() => {
-    async function fetchIdolDetail() {
-      try {
-        const res = await api.get(`/idols${Number(id)}`);
-        setIdolInfo(res?.data);
-      } catch (err){
-        console.error('error :', err);
-      }
-    }
-    // if (id) {
-      fetchIdolDetail();
-    // }
-  }, [id]);
+  const { data: idolInfo } = useQuery<IdolData>({
+    queryKey: ['idolDetail', id],
+    queryFn: async () => {
+      const res = await api.get(`/idols${Number(id)}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
   
   return (
     <div>
