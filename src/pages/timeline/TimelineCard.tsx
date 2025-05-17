@@ -26,6 +26,8 @@ function TimelineCard({post, postId, likeCount, is_liked, is_deleted}: Props) {
                         src={post.image_url}
                         alt={post.title}
                         className="h-48 w-full rounded-t-lg object-cover"
+                        width={300}
+                        height={300}
                     />
                 </picture>
                 <p className="mt-2 line-clamp-2 px-2 text-sm text-gray-600">

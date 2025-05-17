@@ -5,7 +5,7 @@ function useInfiniteObserver(fetchNextPage: () => void, hasNextPage: boolean) {
 
     const handleIntersect = useCallback((entry: IntersectionObserverEntry[]) => {
         entry.forEach(entries => {
-            if (entries[0].isIntersecting && hasNextPage) {
+            if (entries.isIntersecting && hasNextPage) {
                 fetchNextPage();
             }
         });
