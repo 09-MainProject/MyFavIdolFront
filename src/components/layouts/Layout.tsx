@@ -1,8 +1,8 @@
-import axios from 'axios';
 import {useEffect} from 'react';
 import {Outlet} from 'react-router';
 import {ToastContainer} from 'react-toastify';
 import {useAuthStore} from '@store/authStore.ts';
+import {api} from '@/lib/api.ts';
 import Footer from './Footer';
 import Header from './Header/Header';
 import Breadcrumb from '../common/Breadcrumb';
@@ -16,11 +16,7 @@ function Layout() {
         setLogin(accessToken, csrfToken);
         const fetchProfile = async () => {
             try {
-                const response = await axios.get('/profile', {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
+                const response = await api.get('/profile');
                 setUser(response.data.data);
             } catch (e) {
                 // eslint-disable-next-line no-console
