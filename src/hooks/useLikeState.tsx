@@ -1,9 +1,9 @@
 import {useMutation} from '@tanstack/react-query';
-import {createLikeApi, deleteLikeApi} from '@api/timeline/getLikes.ts';
-import PerformToast from '@utils/PerformToast.tsx';
-import {LikePostCreateRequest, LikePostCreateResponse, LikePostDeleteRequest} from '@/types/like.ts';
+import {createLikeApi, deleteLikeApi} from '@api/timeline/getLikes';
+import PerformToast from '@utils/PerformToast';
+import {LikePostCreateRequest, LikePostCreateResponse, LikePostDeleteRequest} from '@/types/like';
 
-function usePostLikeMutation() {
+function useLikeState() {
     const createLikeMutation = useMutation<LikePostCreateResponse, Error, LikePostCreateRequest>({
         mutationFn: (data) => createLikeApi(data),
         onSuccess: () => {
@@ -26,4 +26,4 @@ function usePostLikeMutation() {
     return {createLikeMutation, deleteLikeMutation};
 }
 
-export default usePostLikeMutation;
+export default useLikeState;
