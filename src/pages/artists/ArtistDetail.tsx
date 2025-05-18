@@ -19,7 +19,6 @@ function ArtistDetail() {
   const navigate = useNavigate();
 
   // 권한 확인
-  function useAdminCheck() {
     const { accessToken } = useAuthStore.getState();
     const { user } = useAuthStore();
     const [isAdmin, setIsAdmin] = useState(false);
@@ -35,11 +34,7 @@ function ArtistDetail() {
       }
     }, [accessToken, user]);
 
-    return isAdmin;
-  }
-  const isAdmin = useAdminCheck();
   async function handleDelete() {
-    const { accessToken } = useAuthStore.getState();
     if (!id) return;
     const confirm = window.confirm('정말로 삭제하시겠습니까?');
     if (!confirm) return;
