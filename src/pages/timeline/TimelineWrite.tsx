@@ -1,8 +1,8 @@
 import {useMutation} from '@tanstack/react-query';
 import React, {useState} from 'react';
 import {useNavigate, useParams} from 'react-router';
-import {UploadImageRequest} from '@api/img/images';
-import {createPostApi, updatePostApi} from '@api/timeline/posts';
+import {UploadImageRequest} from '@api/img/getImages.ts';
+import {createPostApi, updatePostApi} from '@api/timeline/getPosts.ts';
 import {Trash} from '@assets/icons/inedx';
 import Input from '@components/common/Input/Input';
 import usePostImageManager from '@hooks/usePostImageManager';

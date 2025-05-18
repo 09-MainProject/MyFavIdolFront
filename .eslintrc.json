@@ -1,16 +1,20 @@
 {
   "parser": "@typescript-eslint/parser",
-  "ignorePatterns": ["public/mockServiceWorker.js"],
+  "ignorePatterns": [
+    "public/mockServiceWorker.js"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./tsconfig.app.json", "./tsconfig.node.json"],
+    "project": [
+      "./tsconfig.app.json",
+      "./tsconfig.node.json"
+    ],
     "noWarnOnMultipleProjects": true
   },
-
   "settings": {
     "react": {
       "version": "detect"
@@ -23,15 +27,17 @@
       }
     }
   },
-
   "env": {
     "browser": true,
     "es2021": true,
     "node": true
   },
-
-  "plugins": ["@typescript-eslint", "react", "react-hooks", "jsx-a11y"],
-
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "jsx-a11y"
+  ],
   "extends": [
     "airbnb",
     "airbnb/hooks",
@@ -41,7 +47,6 @@
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "prettier"
   ],
-
   "rules": {
     "import/extensions": "off",
     "import/no-unresolved": "off",
@@ -52,7 +57,10 @@
           "builtin",
           "external",
           "internal",
-          ["parent", "sibling"],
+          [
+            "parent",
+            "sibling"
+          ],
           "index",
           "object",
           "type"
@@ -97,6 +105,8 @@
     "@typescript-eslint/no-use-before-define": "error",
     "no-var": "error",
     "camelcase": "off",
+    "no-console": "off",
+    "no-alert": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -106,12 +116,24 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "semi": ["error", "always"],
-    "quotes": ["error", "single"],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
     "react/jsx-filename-extension": [
       1,
-      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     ]
-
   }
 }

@@ -1,5 +1,5 @@
 import {useMutation} from '@tanstack/react-query';
-import {uploadImageApi, UploadImageRequest} from '@api/img/images';
+import {uploadImageApi, UploadImageRequest} from '@api/img/getImages';
 import PerformToast from '@utils/PerformToast';
 
 function useUploadImageMutation() {
