@@ -1,32 +1,28 @@
-import {Link} from 'react-router';
+import { useEffect } from 'react';
+import {Link, useNavigate} from 'react-router';
+import { IdolArtistsCard } from '@/components/common/Card/IdolCardList';
 
-type Idol = {
-    id: number;
-    idolId: number;
-    title: string;
-    type: string;
-    startDate: string;
-    endDate: string;
-    location: string;
-    description: string;
-    img: string;
-    name: string;
-    enName: string;
-};
 
 type Props = {
-    idols: Idol[];
+    idols: IdolArtistsCard[];
     selectedIdolId: number | null;
     setSelectIdol: (idolId: number) => void;
     handleCloseDropdown: () => void;
+    handleToggleDropdown: () => void;
 };
 
 function IdolDropdownPanel({
                                idols,
                                selectedIdolId,
                                setSelectIdol,
-                               handleCloseDropdown,
-                           }: Props) {
+    handleCloseDropdown,
+                               handleToggleDropdown,
+}: Props) {
+    const navigate = useNavigate();
+    useEffect(() => { 
+        
+    }, [idols]);
+    
     return (
         <div className="flex flex-col gap-1">
             {idols.map(idol => (
@@ -36,6 +32,8 @@ function IdolDropdownPanel({
                         onClick={() => {
                             setSelectIdol(idol.id);
                             handleCloseDropdown();
+                            handleToggleDropdown();
+                            navigate(`/schedule/${idol.id}`);
                         }}
                         className={`flex w-full items-center justify-between px-4 py-2 ${
                             selectedIdolId === idol.id && 'bg-gray-100'

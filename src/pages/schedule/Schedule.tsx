@@ -2,7 +2,7 @@ import { useIdolState } from '@store/idolStore';
 import CalendarWrapper from '@/components/common/Calendar/CalendarWrapper';
 
 function Schedule() {
-  const { idols, selectedIdolId } = useIdolState();
+  const { followedIdols, selectedIdolId } = useIdolState();
   const isLogin = true;
 
   const publicIdols = [
@@ -21,7 +21,7 @@ function Schedule() {
     },
   ];
 
-  const selectedIdol = idols.filter(idol => idol.id === selectedIdolId);
+  const selectedIdol = followedIdols.filter(idol => idol.id === selectedIdolId);
   const displayIdols = isLogin ? selectedIdol : publicIdols;
   return (
     <section className="mt-20 px-2">

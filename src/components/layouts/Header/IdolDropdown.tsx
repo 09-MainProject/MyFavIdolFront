@@ -21,7 +21,8 @@ function IdolDropdown({
                           displayedIdolName,
                           setSelectIdol,
                           selectedIdolId,
-                          handleCloseDropdown
+                          handleCloseDropdown,
+                          
                       }: Props) {
     return (
         <div className="relative flex items-center gap-4">
@@ -39,6 +40,7 @@ function IdolDropdown({
                     selectedIdolId={selectedIdolId}
                     setSelectIdol={setSelectIdol}
                     handleCloseDropdown={handleCloseDropdown}
+                    handleToggleDropdown={handleToggleDropdown}
                 />
             </Dropdown>
         </div>

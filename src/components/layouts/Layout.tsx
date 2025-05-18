@@ -1,8 +1,8 @@
+import axios from 'axios';
 import {useEffect} from 'react';
 import {Outlet} from 'react-router';
 import {ToastContainer} from 'react-toastify';
 import {useAuthStore} from '@store/authStore.ts';
-import {api} from '@/lib/api.ts';
 import Footer from './Footer';
 import Header from './Header/Header';
 import Breadcrumb from '../common/Breadcrumb';
@@ -18,6 +18,17 @@ function Layout() {
             try {
                 const response = await api.get('/profile');
                 setUser(response.data.data);
+                const response = await api.get('/users/profile', {
+                    // headers: {
+                    //     Authorization: `Bearer ${accessToken}`,
+                    // },
+                });
+                const payload = accessToken.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+                console.log(decodedPayload);
+                    setUser({...response.data, is_staff: decodedPayload.is_staff, is_superuser : decodedPayload.is_superuser});
+                // setUser(response.data);
+                console.log('layout에서 데이터 출력 :', response.data);
             } catch (e) {
                 // eslint-disable-next-line no-console
                 console.error(e);
