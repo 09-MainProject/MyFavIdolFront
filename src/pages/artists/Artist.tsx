@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { IdolCardList } from '@/components/common/Card/IdolCardList';
@@ -23,6 +23,7 @@ function Artist() {
   const { accessToken } = useAuthStore.getState();
   const { user } = useAuthStore();
   const [isAdmin, setIsAdmin] = useState(false);
+  const queryClient = useQueryClient();
 
     useEffect(() => {
       if (!accessToken) return;
@@ -55,30 +56,32 @@ function Artist() {
   });
 
   // 팔로우 아이돌 api 요청
-  useEffect(() => {
-    async function fetchFollowIdols() {
-      if (idolList.length === 0) return;
+  async function fetchFollowIdols() {
+    console.log('fetchFollowIdols 실행');
+    if (idolList.length === 0) return;
 
-      try {
-        const resFollow = await api.get(
-          '/idols/follows'
-        );
-        const followed = resFollow.data.map(item => {
-          const matchedIdol = idolList.find(idol => idol.id === item.idol.id);
-          return {
-            id: item.idol.id,
-            name: item.idol.name,
-            img: matchedIdol?.img ?? '',
-          };
-        });
-        setFollowIdols(followed); // 로컬 상태
-        setFollowedIdols(followed); // 전역 상태
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      const resFollow = await api.get(
+        '/idols/follows'
+      );
+      const followed = resFollow.data.map(item => {
+        const matchedIdol = idolList.find(idol => idol.id === item.idol.id);
+        return {
+          id: item.idol.id,
+          name: item.idol.name,
+          img: matchedIdol?.img ?? '',
+        };
+      });
+      console.log(followed);
+      setFollowIdols(followed); // 로컬 상태
+      setFollowedIdols(followed); // 전역 상태
+    } catch (error) {
+      console.error(error);
     }
+  }
+  useEffect(() => {
     fetchFollowIdols();
-  }, [idolList, setFollowedIdols]);
+  }, []);
 
   const {
     selectedIdolId, // 선택된 아이돌 Id
@@ -110,11 +113,16 @@ function Artist() {
       await api.delete(
         `/idols/${modalIdol.id}/follows`
       );
-      // 상태에서 제거
-      const updatedFollowIdols = followIdols.filter(idol => idol.id !== modalIdol.id);
+      fetchFollowIdols();
 
-      setFollowIdols(updatedFollowIdols);
-      setFollowedIdols(updatedFollowIdols);
+      // await api.delete(`/idols/${modalIdol.id}/follows`);
+      // // 상태에서 제거
+      // const updatedFollowIdols = followIdols.filter(idol => idol.id !== modalIdol.id);
+
+      // setFollowIdols(updatedFollowIdols);
+      // setFollowedIdols(updatedFollowIdols);
+
+      queryClient.invalidateQueries({ queryKey: ['idolList'] });
     } else {
       // 팔로우 되지 않은 경우 팔로우 추가 요청
       await api.post(
