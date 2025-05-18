@@ -34,6 +34,8 @@ function Artist() {
         setIsAdmin(false);
       }
     }, [accessToken, user]);
+  
+  console.log(isAdmin, user);
 
   // 전체 아이돌 리스트 api 요청
   const {
