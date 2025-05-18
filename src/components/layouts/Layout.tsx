@@ -16,13 +16,13 @@ function Layout() {
         setLogin(accessToken, csrfToken);
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/profile');
+                const response = await api.get('/users/profile');
                 setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
-                console.log(decodedPayload);
+                console.log('계정 :', decodedPayload);
                 setUser({
-                    ...response.data,
+                    ...response.data.data,
                     is_staff: decodedPayload.is_staff,
                     is_superuser: decodedPayload.is_superuser
                 });
