@@ -36,6 +36,7 @@ function Artist() {
     }, [accessToken, user]);
   
   console.log(isAdmin, user);
+    console.log('배포 잘되는지 테스트');
 
   // 전체 아이돌 리스트 api 요청
   const {
