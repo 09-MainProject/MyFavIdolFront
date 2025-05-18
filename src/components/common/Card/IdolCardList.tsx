@@ -7,15 +7,15 @@ type PageType = 'artist' | 'home';
 export interface IdolArtistsCard {
   id: number;
   idolId: number;
-  title: string;
-  img: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  description: string;
   name: string;
-  enName: string;
+  img: string;
+  title?: string;
+  type?: string;
+  startDate?: string;
+  endDate?: string;
+  location?: string;
+  description?: string;
+  enName?: string;
 }
 
 type Props = {
