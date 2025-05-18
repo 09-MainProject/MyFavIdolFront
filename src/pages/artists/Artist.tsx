@@ -5,6 +5,7 @@ import { IdolCardList } from '@/components/common/Card/IdolCardList';
 import type { IdolArtistsCard } from '@/components/common/Card/IdolCardList';
 import { IdolConfirmModal } from '@/components/common/IdolConfirmModal';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 import { useIdolState } from '@/store/idolStore';
 
 // 백엔드 받아오는 아이돌 정보 인터페이스
@@ -19,7 +20,26 @@ function Artist() {
   // 팔로우 아이돌 리스트 상태
   const [followIdols, setFollowIdols] = useState<IdolArtistsCard[]>([]);
   const { setFollowedIdols } = useIdolState();
-  
+
+  function useAdminCheck() {
+    const { accessToken } = useAuthStore.getState();
+    const { user } = useAuthStore();
+    const [isAdmin, setIsAdmin] = useState(false);
+    
+    useEffect(() => {
+      if (!accessToken) return;
+
+      try {
+        setIsAdmin(user?.is_staff === true);
+      } catch (err) {
+        console.error(err);
+        setIsAdmin(false);
+      }
+    }, [accessToken, user]);
+    return isAdmin;
+  }
+  const isAdmin = useAdminCheck();
+
   // 전체 아이돌 리스트 api 요청
   const {
     data: idolList = [],
@@ -116,9 +136,13 @@ function Artist() {
 
   return (
     <div>
-      <button onClick={() => navigate('/artists/create')} type='button'>
-        추가
-      </button>
+      {isAdmin && (
+        <div className='flex justify-end px-4 mt-4'>
+          <button onClick={() => navigate('/artists/create')} type='button' className='px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray700 transition'>
+            추가
+          </button>
+        </div>
+      )}
       <div className="mx-auto max-w-[1080px]">
         <div className="mt-20 px-4 md:px-8">
           <div className="text-center text-4xl font-bold">
