@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router';
-import {Comment, Heart} from '@assets/icons/inedx';
-import usePostLikeMutation from '@hooks/usePostLikeMutation';
+import CommentButton from '@pages/timeline/CommentButton.tsx';
+import LikeButton from '@pages/timeline/LikeButton';
+import TimelineCardImage from '@pages/timeline/TimelineCardImage';
 import {PostResponse} from '@/types/post';
 
 type Props = {
@@ -15,53 +15,20 @@ type Props = {
 function TimelineCard({post, postId, likeCount, is_liked, is_deleted}: Props) {
     const [liked, setLiked] = useState(is_liked && !is_deleted);
     const [count, setCount] = useState(likeCount);
-    const {createLikeMutation, deleteLikeMutation} = usePostLikeMutation();
     const id = postId.toString();
+
     return (
-        <div className="flex flex-col gap-4">
-            <Link to={`/timeline/${post.id}`} className="block">
-                <picture>
-                    <source srcSet={post.image_url} type="image/webp"/>
-                    <img
-                        src={post.image_url}
-                        alt={post.title}
-                        className="h-48 w-full rounded-t-lg object-cover"
-                        width={300}
-                        height={300}
-                    />
-                </picture>
-                <p className="mt-2 line-clamp-2 px-2 text-sm text-gray-600">
+        <div className="flex flex-col overflow-hidden pb-4 border-b border-gray-300">
+            <TimelineCardImage post={post}/>
+            <div className="flex items-center gap-6 px-3 py-3 text-sm text-gray-600 ">
+                <LikeButton id={id} liked={liked} setLiked={setLiked} setCount={setCount} count={count}
+                />
+                <CommentButton/>
+            </div>
+            <div>
+                <p className="mt-4 px-3 mb-4 text-sm text-gray-700 line-clamp-2 whitespace-nowrap truncate verflow-hidden">
                     {post.content}
                 </p>
-            </Link>
-            <div className="flex items-center gap-4 px-2 text-sm text-gray-500">
-                <button
-                    type="button"
-                    className="flex items-center gap-1 hover:text-red-500"
-                    onClick={() => {
-                        if (liked === true) {
-                            deleteLikeMutation.mutateAsync({id}).then(() => {
-                                setCount((prev) => prev - 1);
-                                setLiked(false);
-                            });
-                        }
-                        if (liked === false) {
-                            createLikeMutation.mutateAsync({id}).then(() => {
-                                setCount((prev) => prev + 1);
-                                setLiked(true);
-                            });
-                        }
-                    }}
-                >
-                    <Heart/>
-                    {count}
-                </button>
-                <button
-                    type="button"
-                    className="flex items-center gap-1 hover:text-blue-500"
-                >
-                    <Comment/>
-                </button>
             </div>
         </div>
     );

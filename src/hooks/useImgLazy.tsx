@@ -23,7 +23,7 @@ function useImgLazy() {
             observer.disconnect();
         };
     }, [handleImgLoad]);
-    return {imgRef};
+    return imgRef;
 }
 
 export default useImgLazy;

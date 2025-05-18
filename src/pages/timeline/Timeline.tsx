@@ -1,11 +1,12 @@
 import {useMemo} from 'react';
 import {Link} from 'react-router';
-import CardFrame from '@components/CardFrame';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
+import ListCardSkeleton from '@components/common/Skeleton/ListCardSkeleton.tsx';
 import useFetchPosts from '@hooks/useFetchPosts';
-import useInfiniteObserver from '@hooks/useInfiniteObserver.tsx';
+import useInfiniteObserver from '@hooks/useInfiniteObserver';
 import TimelineCard from '@pages/timeline/TimelineCard';
 import {useAuthStore} from '@store/authStore';
+import performToast from '@utils/PerformToast';
 
 function Timeline() {
     const params = useMemo(() => ({ordering: '-created_at'}), []);
@@ -22,16 +23,15 @@ function Timeline() {
     const {login} = useAuthStore();
     const ref = useInfiniteObserver(getPostFetchNextPage, getPostHasNextPage);
 
-    if (getPostLoading) return <p>로딩 중...</p>;
-    if (getPostError) return <p>오류가 발생했습니다.</p>;
-    if (getUserProfileLoading) return <p>로딩 중...</p>;
-    if (getUserProfileError) return <p>오류가 발생했습니다.</p>;
+    if (getPostLoading || getUserProfileLoading) return <ListCardSkeleton num={10}/>;
+    if (getPostError) return performToast({msg: '게시글 불러 오기 실패', type: 'error'});
+    if (getUserProfileError) return performToast({msg: '프로필 불러 오기 실패', type: 'error'});
 
     return (
-        <section className="mt-12 p-4">
-            <ul className="grid grid-cols-1 place-items-center items-center gap-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {getPostData.map(post => (
-                    <li key={post.id} className="w-full max-w-[300px]">
+        <section className="mt-12 px-4">
+            <ul className="flex flex-col items-center gap-10">
+                {getPostData.map((post) => (
+                    <li key={post.id} className="w-full">
                         {getUserProfileData && (
                             <ProfileHeader
                                 image_url={getUserProfileData.image_url}
@@ -40,17 +40,17 @@ function Timeline() {
                                 mode="post"
                             />
                         )}
-                        <article>
-                            <CardFrame>
-                                <TimelineCard post={post} postId={post.id} likeCount={post.likes_count}
-                                              is_liked={post.is_liked} is_deleted={post.is_deleted}/>
-                            </CardFrame>
-                        </article>
+                        <TimelineCard
+                            post={post}
+                            postId={post.id}
+                            likeCount={post.likes_count}
+                            is_liked={post.is_liked}
+                            is_deleted={post.is_deleted}
+                        />
                     </li>
                 ))}
             </ul>
-            {
-                login &&
+            {login && (
                 <div className="mt-12 text-center">
                     <Link
                         to="/timeline/write"
@@ -59,7 +59,7 @@ function Timeline() {
                         글 작성하기
                     </Link>
                 </div>
-            }
+            )}
             <div ref={ref}/>
         </section>
     );
