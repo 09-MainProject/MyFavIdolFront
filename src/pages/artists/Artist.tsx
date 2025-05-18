@@ -20,12 +20,10 @@ function Artist() {
   // 팔로우 아이돌 리스트 상태
   const [followIdols, setFollowIdols] = useState<IdolArtistsCard[]>([]);
   const { setFollowedIdols } = useIdolState();
+  const { accessToken } = useAuthStore.getState();
+  const { user } = useAuthStore();
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  function useAdminCheck() {
-    const { accessToken } = useAuthStore.getState();
-    const { user } = useAuthStore();
-    const [isAdmin, setIsAdmin] = useState(false);
-    
     useEffect(() => {
       if (!accessToken) return;
 
@@ -36,9 +34,6 @@ function Artist() {
         setIsAdmin(false);
       }
     }, [accessToken, user]);
-    return isAdmin;
-  }
-  const isAdmin = useAdminCheck();
 
   // 전체 아이돌 리스트 api 요청
   const {
