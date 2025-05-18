@@ -2,7 +2,7 @@ import { businessInfo, customerServiceInfo } from '@/constants/footerInfo';
 
 function Footer() {
   return (
-    <footer className="bg-black px-6 py-10 text-sm text-gray-400">
+    <footer className="absolute left-0 bg-black w-screen px-6 py-10 text-sm text-gray-400">
       <div className="mx-auto flex max-w-6xl flex-col justify-between gap-10 md:flex-row">
         <div>
           <h4 className="mb-2 text-xl font-bold">{businessInfo.title}</h4>
