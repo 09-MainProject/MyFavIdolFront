@@ -1,11 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import useIdolData from '@/hooks/useIdolData';
 import useMobile from '@/hooks/useMobile';
-import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
-interface IdolData {
+export interface IdolDetailData {
   name: string;
   debut_date: string;
   agency: string;
@@ -19,47 +17,23 @@ function ArtistDetail() {
   const navigate = useNavigate();
 
   // 권한 확인
-    const { accessToken } = useAuthStore.getState();
-    const { user } = useAuthStore();
-    const [isAdmin, setIsAdmin] = useState(false);
-
-    useEffect(() => {
-      if (!accessToken) return;
-
-      try {
-        setIsAdmin(user?.is_staff === true);
-      } catch (err) {
-        console.error(err);
-        setIsAdmin(false);
-      }
-    }, [accessToken, user]);
+  const { isAdmin } = useAuthStore();
+  const { deleteIdolList, idolDetailData, loadingIdolDetailData } = useIdolData(Number(id));
+  const {
+    name = '',
+    debut_date = '',
+    agency = '',
+    description = '',
+    image_url = '',
+  } = idolDetailData || {};
 
   async function handleDelete() {
     if (!id) return;
     const confirm = window.confirm('정말로 삭제하시겠습니까?');
     if (!confirm) return;
-
-    try {
-      await api.delete(`/idols${Number(id)}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      alert('삭제가 완료되었습니다.');
-      navigate('/artists');
-    } catch (err) {
-      console.error(err);
-    }
+    deleteIdolList(Number(id));
+    navigate('/artists');
   }
-  
-  const { data: idolInfo } = useQuery<IdolData>({
-    queryKey: ['idolDetail', id],
-    queryFn: async () => {
-      const res = await api.get(`/idols${Number(id)}`);
-      return res.data;
-    },
-    enabled: !!id,
-  });
   
   return (
     <div>
@@ -70,50 +44,46 @@ function ArtistDetail() {
         </div>
       )}
       <div className="flex min-h-screen flex-col items-center bg-white px-4 pt-10">
-        {isMobile ? (
+        {idolDetailData && isMobile ? (
           <div className='flex flex-col items-center gap-4'>
-            <h1 className='text-[50px] font-bold text-center'>{idolInfo?.name}</h1>
-            <p className='text-gray-700 text-[18px] text-center'>{idolInfo?.description}</p>
-            <img src={idolInfo.image_url} alt={idolInfo.name} className='w-full rounded' />
+            <h1 className='text-[50px] font-bold text-center'>{name}</h1>
+            <p className='text-gray-700 text-[18px] text-center'>{description}</p>
+            <img src={image_url} alt={name} className='w-full rounded' />
             <div className='mt-4 text-center'>
               <div className='text-sm'>
                 <span className='font-bold'>DEBUT</span>
-                <span className='text-gray-500 ml-4'>{idolInfo.debut_date}</span>
+                <span className='text-gray-500 ml-4'>{debut_date}</span>
               </div>
-              <p className='text-sm text-gray-700'>{idolInfo.agency}</p>
+              <p className='text-sm text-gray-700'>{agency}</p>
             </div>
           </div>
         ) : (
-        <div className="flex w-full max-w-3xl flex-col gap-6">
-          {idolInfo ? (
-            <>
-              <h1 className='text-[60px] font-bold text-center'>
-                {idolInfo?.name}
-              </h1>
-              <p className='text-gray-700 text-[20px] text-center mt-[50px]'>{idolInfo?.description}</p>
-              <div className='flex items-center w-full'>
-                <img src={idolInfo.image_url} alt={idolInfo.name} className='h-full w-full rounded object-cover' />
+          <div className="flex w-full max-w-3xl flex-col gap-6">
+            <h1 className='text-[60px] font-bold text-center'>
+              {name}
+            </h1>
+            <p className='text-gray-700 text-[20px] text-center mt-[50px]'>{description}</p>
+            <div className='flex items-center w-full'>
+              <img src={image_url} alt={name} className='h-full w-full rounded object-cover' />
+            </div>
+            <div className='flex justify-between w-full'>
+              <div className="flex items-center">
+                <span className="font-bold text-[13px]">DEBUT</span>
+                <span className="ml-2 text-[13px] text-gray-500">{debut_date}</span>
               </div>
-                <div className='flex justify-between w-full'>
-                  <div className="flex items-center">
-                    <span className="font-bold text-[13px]">DEBUT</span>
-                    <span className="ml-2 text-[13px] text-gray-500">{idolInfo?.debut_date}</span>
-                </div>
-                <div>
-                  <p className='text-gray-700 text-[13px]'>{idolInfo?.agency}</p>
-                </div>
-
-                </div>
-            </>
-          ) : (
-              <p className='text-gray400'>
-                로딩 중...
-              </p>
-          )}
-        </div>   
+              <div>
+                <p className='text-gray-700 text-[13px]'>{agency}</p>
+              </div>
+            </div>
+          </div>
         )}
+        {loadingIdolDetailData && (
+          <p className='text-gray400'>
+            로딩 중...
+          </p>
+        )}
+        </div>   
       </div>
-    </div>
   );
 }
 
