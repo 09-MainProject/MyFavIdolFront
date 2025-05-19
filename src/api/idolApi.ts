@@ -40,10 +40,9 @@ export async function deleteIdol(id:number){
 }
 // 아이돌 상세 정보 
 export async function getIdolDetailData(id:number){
-    const res = await api.get(`/idols${id}`);
+  const res = await api.get(`/idols${id}`);
     return res.data;
 }
-
 // 아이돌 스케줄 목록 조회
 export async function idolSchedule(id: number) {
   console.log('idolSchedule called with:', id);

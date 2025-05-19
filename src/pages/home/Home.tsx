@@ -10,6 +10,7 @@ import useHomeSchedule from '@/hooks/useHomeSchedule';
 import useIdolData from '@/hooks/useIdolData';
 // import { allIdolList } from '@/mocks/idolData';
 
+
 function Home() {
   const imgList = [
     '../src/assets/img/swiper1.png',
