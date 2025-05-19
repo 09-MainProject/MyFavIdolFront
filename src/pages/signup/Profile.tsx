@@ -1,45 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import useProfile from '@/hooks/useProfile';
 import { useAuthStore } from '@/store/authStore';
+import { userProfile } from './EditProfile';
 // import Calendar from '@/components/Calendar';
 // import TodaySchedule from '@/components/TodaySchedule';
 
 function Profile() {
-  const { login, user, setLogout } = useAuthStore(); // 회원정보 갱신 때 setUser를 추가
-  const [profile, setProfile] = useState({
-    nickname: '',
-    profileImage: '',
-  });
+  const { login } = useAuthStore(); // 회원정보 갱신 때 setUser를 추가
+
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const [isImgError, setIsImgError] = useState(false);
+  const { userProfileData }: { userProfileData: userProfile } = useProfile();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      setProfile({
-        nickname: user.nickname || '',
-        profileImage: user.profileImage || '',
-      });
+    if (!login) {
+      navigate('/');
     }
-  }, [user]);
-
-  // const refreshProfile = async () => {
-  //   try {
-  //     const response = await fetch('/api/users/profile', {
-  //       credentials: 'include',
-  //     });
-  //     const data = await response.json();
-  //     setUser(data);
-  //   } catch (e) {
-  //     console.error('프로필 갱신 실패', e);
-  //   }
-  // };
-
-  const handleLogout = () => {
-    setLogout();
-    navigate('/');
-  };
-  
-// eslint-disable-next-line no-console
-  console.log(handleLogout);
+  });
 
   return (
     <div>
@@ -60,13 +39,22 @@ function Profile() {
 
           <h2 className="text-2xl font-bold">프로필</h2>
 
-       
-          {login ? (
+          {userProfileData ? (
             <div className="flex items-center">
-              <div className="h-20 w-20 rounded-full bg-gray-300" />
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-gray-300">
+                <img
+                  ref={imgRef}
+                  src={userProfileData?.image_url}
+                  alt="프로필"
+                  className="h-full w-full object-cover"
+                  onError={() => {
+                    if (!isImgError) setIsImgError(true);
+                  }}
+                />
+              </div>
               <div className="ml-4">
                 <p className="text-lg font-semibold">
-                  {profile.nickname}님 환영합니다
+                  {userProfileData?.nickname}님 환영합니다
                 </p>
               </div>
             </div>
@@ -76,7 +64,6 @@ function Profile() {
             </div>
           )}
 
-    
           <div>
             <h3 className="mb-4 text-lg font-semibold">팬로그</h3>
             <div className="rounded-lg bg-gray-100 p-4 shadow-sm">
@@ -84,7 +71,6 @@ function Profile() {
             </div>
           </div>
 
-       
           <div>
             <h3 className="mb-4 text-lg font-semibold">오늘의 스케줄</h3>
             <div className="rounded-lg bg-gray-100 p-4 shadow-sm">
