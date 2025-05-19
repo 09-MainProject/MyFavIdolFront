@@ -2,18 +2,32 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
 export const api = axios.create({
+<<<<<<< HEAD
   baseURL: 'https://wistar.n-e.kr/api',
   withCredentials: true,
+=======
+  baseURL: '/api',
+  withCredentials: true, // ✅ 쿠키 필요 시 true
+>>>>>>> feature/#69-edit-profile
 });
 
 api.interceptors.request.use(
-  config => {
-    const token = useAuthStore.getState().accessToken;
-    if (token) {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${token}`;
+  (config) => {
+    const { accessToken, csrfToken } = useAuthStore.getState();
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    return config; // ✅ 반드시 반환해야 함
+
+    if (csrfToken) {
+      config.headers['X-CSRFToken'] = csrfToken;
+    }
+
+    return config;
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
+
+
+
+

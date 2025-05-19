@@ -1,9 +1,16 @@
 import React, {useEffect, useState} from 'react';
+import { useAuthStore } from '@/store/authStore';
 import Input from '@components/common/Input/Input.tsx';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
-import {api} from '@/lib/api';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
+
+// import {api} from '@/lib/api';
+
+
+
 
 type User = {
     email: string;
@@ -25,6 +32,8 @@ const containsSpecialChar = (password: string) => {
 const isValidPassword = (password: string) => isPasswordLengthValid(password) && containsSpecialChar(password);
 
 function SignUp() {
+
+const navigate = useNavigate();
     const [form, setForm] = useState<User>({
         email: '',
         password: '',
@@ -38,6 +47,7 @@ function SignUp() {
 
     const [errorMessage, setErrorMessage] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     useEffect(() => {
         setIsPasswordMatched(
@@ -67,21 +77,46 @@ function SignUp() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!isValidPassword(form.password)) {
-            setErrorMessage('비밀번호는 특수문자를 포함한 8자 이상이여야 합니다!');
-            return;
-        }
 
-        if (form.password !== form.password_confirm) {
-            setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
-            return;
-        }
+  if (!isValidPassword(form.password)) {
+    setErrorMessage('비밀번호는 특수문자를 포함한 8자 이상이여야 합니다!');
+    return;
+  }
+
+  if (form.password !== form.password_confirm) {
+    setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
+    return;
+  }
+
 
         try {
-            const response = await api.post('/users/signup', form);
+            const response = await axios.post('/api/users/signup', form);
             // eslint-disable-next-line no-console
-            console.log(response);
-        } catch (error) {
+            console.log('회원가입 성공:',response.data);
+            setIsSuccessModalOpen(true);
+
+  const userData = response.data?.data;
+      if (userData) {
+        setUser({
+          nickname: userData.nickname,
+          profileImage: userData.profileImage ?? '',
+          commentAlarm: userData.commentAlarm ?? true,
+          likeAlarm: userData.likeAlarm ?? true,
+          scheduleAlarm: userData.scheduleAlarm ?? true,
+        });
+      }
+
+
+
+            setIsSuccessModalOpen(true);
+        } catch (error: any) {
+            if (error.response) {
+                console.error('회원가입 실패:', error.response.data);
+                setErrorMessage(error.response.data.message || '회원가입에 실패했습니다.');
+            } else {
+                console.error('네트워크 오류:', error);
+                setErrorMessage('네트워트 오류가 발생했습니다.');
+            }
             // eslint-disable-next-line no-console
             console.log(error);
         }
@@ -95,6 +130,7 @@ function SignUp() {
         form.nickname !== '';
 
     return (
+        <>
         <div className="flex min-h-screen items-center justify-center bg-white">
             <div className="w-full max-w-md p-8">
                 <h2 className="mb-2 text-center text-2xl font-bold">Sign Up</h2>
@@ -168,7 +204,27 @@ function SignUp() {
                 </div>
             </div>
         </div>
-    );
-}
+  {isSuccessModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="w-full max-w-sm rounded-lg bg-white p-6 text-center shadow-lg animate-fade-in-up">
+            <h3 className="mb-2 text-lg font-semibold">이메일 인증을 완료해주세요</h3>
+            <p className="mb-4 text-sm text-gray-600">
+              입력하신 이메일 주소로 인증 메일이 전송되었습니다.<br />
+          
+            </p>
+            <button
+              onClick={() =>{ setIsSuccessModalOpen(false)
+        navigate('/login'); 
+              }}
+              
+              className="mt-2 rounded bg-black px-4 py-2 text-sm text-white hover:bg-gray-800"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+    )};
 
 export default SignUp;
