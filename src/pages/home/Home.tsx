@@ -1,11 +1,16 @@
+
 import { format, addDays } from 'date-fns';
 import { useState } from 'react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { IdolCardList } from '@/components/common/Card/IdolCardList';
+import { getIdolList } from '@/api/idolApi';
+import { IdolArtistsCard, IdolCardList } from '@/components/common/Card/IdolCardList';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { allIdolList } from '@/mocks/idolData';
+import useHomeSchedule from '@/hooks/useHomeSchedule';
+import useIdolData from '@/hooks/useIdolData';
+// import { allIdolList } from '@/mocks/idolData';
+
 
 function Home() {
   const imgList = [
@@ -13,17 +18,44 @@ function Home() {
     '../src/assets/img/swiper2.png',
     '../src/assets/img/swiper3.png',
   ];
-
+  
+  const { idolList } = useIdolData();
+  console.log(idolList);
+  console.log('getidolList', getIdolList);
+  
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
+  
+  const { scheduleQueries } = useHomeSchedule();
+  
+  // 스케줄 데이터를 모아서 하나의 배열로 평탄화
+  const allSchedules = scheduleQueries
+    .filter(query => query.data)
+    .flatMap(query => query.data) || [];
+  
+  const formattedSchedules = allSchedules.map(schedule => ({
+    id: schedule.id,
+    idolId: schedule.idol?.id ?? -1,
+    name: schedule.idol_name,
+    img: idolList?.find(i => i.id === schedule.idol?.id)?.img ?? '',
+    title: schedule.title,
+    type: '',
+    startDate: schedule.start_date,
+    endDate: schedule.end_date,
+    location: schedule.location,
+    description: schedule.description,
+    enName: '',
+  }));
+  console.log('formattedSchedules : ', allSchedules.map((i) => i.img));
+  console.log('개별 schedule 확인:', allSchedules);
 
   const handleSelect = (offset: number) => {
     const newDate = format(addDays(new Date(), offset), 'yyyy-MM-dd');
     setSelectedDate(newDate);
   };
 
-  const filtered = allIdolList.filter(item => item.startDate === selectedDate);
+  const filtered = formattedSchedules.filter(item => item.startDate === selectedDate);
 
   return (
     <div className="px-4 md:px-8">
@@ -90,7 +122,7 @@ function Home() {
               해당 날짜에 스케줄이 없습니다.
             </p>
           ) : (
-            <IdolCardList idolList={filtered} pageType="home" isVertical={false} />
+            <IdolCardList idolList={filtered as IdolArtistsCard[]} pageType="home" isVertical={false} />
           )}
         </section>
       </div>
