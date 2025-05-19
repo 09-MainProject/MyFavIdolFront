@@ -85,13 +85,14 @@ function EditProfile() {
     // 유저가 수정한 정보 전송
     editProfile(userInput);
     // 이미지 업로드
-    uploadImageMutation.mutate({
-      object_type: 'user',
-      object_id: userProfileData.id,
-      image_url: userInput.image_url,
-      image: imageFile,
-    });
-
+    if (imageFile) {
+      uploadImageMutation.mutate({
+        object_type: 'user',
+        object_id: userProfileData.id,
+        image_url: userInput.image_url,
+        image: imageFile,
+      });
+    }
     // 프로필 페이지로 이동
     navigate('/profile');
   }
