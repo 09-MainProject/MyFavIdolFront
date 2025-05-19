@@ -7,22 +7,20 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
+  config => {
     const { accessToken, csrfToken } = useAuthStore.getState();
 
     if (accessToken) {
+      // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     if (csrfToken) {
+      // eslint-disable-next-line no-param-reassign
       config.headers['X-CSRFToken'] = csrfToken;
     }
 
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 );
-
-
-
-
