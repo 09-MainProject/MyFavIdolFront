@@ -122,7 +122,6 @@ function SignUp() {
         setErrorMessage('네트워크 오류가 발생했습니다.');
       }
 
-      // ✅ 이 줄을 **catch 블록 안**으로 옮겨줘야 해!
       // eslint-disable-next-line no-console
       console.log(error);
     }
