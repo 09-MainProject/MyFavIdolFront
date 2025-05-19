@@ -1,45 +1,34 @@
-import React from 'react';
-import {Link} from 'react-router';
-import {Comment, Heart} from '@assets/icons/inedx.ts';
-import usePostMeta from '@hooks/usePostMeta.tsx';
-import {mockComments} from '@mocks/data/comment.ts';
-import {Idol} from '@store/idolStore.ts';
+import React, {useState} from 'react';
+import CommentButton from '@pages/timeline/CommentButton.tsx';
+import LikeButton from '@pages/timeline/LikeButton';
+import TimelineCardImage from '@pages/timeline/TimelineCardImage';
+import {PostResponse} from '@/types/post';
 
 type Props = {
-    idol: Idol;
+    post: PostResponse;
+    postId: number;
+    likeCount: number;
+    is_liked: boolean;
+    is_deleted: boolean;
 };
 
-function TimelineCard({idol}: Props) {
-    const {count, handleLike} = usePostMeta();
+function TimelineCard({post, postId, likeCount, is_liked, is_deleted}: Props) {
+    const [liked, setLiked] = useState(is_liked && !is_deleted);
+    const [count, setCount] = useState(likeCount);
+    const id = postId.toString();
 
     return (
-        <div className="flex flex-col gap-4">
-            <Link to={`/timeline/${idol.id}`} className="block">
-                <img
-                    src={idol.img}
-                    alt={idol.name}
-                    className="h-48 w-full rounded-t-lg object-cover"
+        <div className="flex flex-col overflow-hidden pb-4 border-b border-gray-300">
+            <TimelineCardImage post={post}/>
+            <div className="flex items-center gap-6 px-3 py-3 text-sm text-gray-600 ">
+                <LikeButton id={id} liked={liked} setLiked={setLiked} setCount={setCount} count={count}
                 />
-                <p className="mt-2 line-clamp-2 px-2 text-sm text-gray-600">
-                    {idol.description}
+                <CommentButton/>
+            </div>
+            <div>
+                <p className="mt-4 px-3 mb-4 text-sm text-gray-700 line-clamp-2 whitespace-nowrap truncate verflow-hidden">
+                    {post.content}
                 </p>
-            </Link>
-            <div className="flex items-center gap-4 px-2 text-sm text-gray-500">
-                <button
-                    type="button"
-                    onClick={handleLike}
-                    className="flex items-center gap-1 hover:text-red-500"
-                >
-                    <Heart/>
-                    <span>{count}</span>
-                </button>
-                <button
-                    type="button"
-                    className="flex items-center gap-1 hover:text-blue-500"
-                >
-                    <Comment/>
-                    <span>{mockComments.length}</span>
-                </button>
             </div>
         </div>
     );

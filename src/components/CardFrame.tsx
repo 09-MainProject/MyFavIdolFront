@@ -1,14 +1,16 @@
-import { ReactNode } from 'react';
+import {ReactNode} from 'react';
 
 interface Props {
-  children: ReactNode;
+    children: ReactNode;
+    mode?: 'post';
 }
-function CardFrame({ children }: Props) {
-  return (
-    <div className="rounded-xl bg-white shadow transition-shadow duration-300 hover:shadow-lg">
-      {children}
-    </div>
-  );
+
+function CardFrame({children, mode}: Props) {
+    return (
+        <div className={`rounded-xl bg-white ${mode ? '' : 'duration-300 shadow transition-shadow hover:shadow-lg'} `}>
+            {children}
+        </div>
+    );
 }
 
 export default CardFrame;
