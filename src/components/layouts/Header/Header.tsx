@@ -32,7 +32,7 @@ function Header() {
         handleCloseDropdown
     } = useOutsideClick();
 
-    const selectedIdol = idols.find(idol => idol.id === selectedIdolId) || null;
+    const selectedIdol = idols?.find(idol => idol.id === selectedIdolId) || null;
     const displayedIdolName = selectedIdol?.name ?? DEFAULT_SELECTED_IDOL;
 
     const handleToggleMobileMenu = useCallback(() => {
