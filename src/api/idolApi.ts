@@ -43,3 +43,10 @@ export async function getIdolDetailData(id:number){
     const res = await api.get(`/idols${id}`);
     return res.data;
 }
+
+// 아이돌 스케줄 목록 조회
+export async function idolSchedule(id: number) {
+  console.log('idolSchedule called with:', id);
+  const res = await api.get(`/idols/${id}/schedules`);
+  return res.data;
+}
