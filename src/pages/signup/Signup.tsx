@@ -7,6 +7,13 @@ import NaverIcon from '@/assets/icons/NaverIcon';
 // import axios from 'axios';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import type { AxiosError } from 'axios';
+
+function isAxiosError(
+  error: unknown
+): error is AxiosError<{ message: string }> {
+  return typeof error === 'object' && error !== null && 'response' in error;
+}
 
 type User = {
   email: string;
@@ -89,7 +96,7 @@ function SignUp() {
       const response = await api.post('/users/signup', form);
       // eslint-disable-next-line no-console
       console.log('회원가입 성공:', response.data);
-      setIsSuccessModalOpen(true);
+      // setIsSuccessModalOpen(true);
 
       const userData = response.data?.data;
       if (userData) {
@@ -99,20 +106,23 @@ function SignUp() {
           commentAlarm: userData.commentAlarm ?? true,
           likeAlarm: userData.likeAlarm ?? true,
           scheduleAlarm: userData.scheduleAlarm ?? true,
+          is_staff: userData.is_staff ?? false,
+          is_superuser: userData.is_superuser ?? false,
         });
       }
 
       setIsSuccessModalOpen(true);
-    } catch (error: any) {
-      if (error.response) {
-        console.error('회원가입 실패:', error.response.data);
-        setErrorMessage(
-          error.response.data.message || '회원가입에 실패했습니다.'
-        );
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        const responseData = error.response.data;
+        console.error('회원가입 실패:', responseData);
+        setErrorMessage(responseData.message || '회원가입에 실패했습니다.');
       } else {
         console.error('네트워크 오류:', error);
-        setErrorMessage('네트워트 오류가 발생했습니다.');
+        setErrorMessage('네트워크 오류가 발생했습니다.');
       }
+
+      // ✅ 이 줄을 **catch 블록 안**으로 옮겨줘야 해!
       // eslint-disable-next-line no-console
       console.log(error);
     }
@@ -240,6 +250,7 @@ function SignUp() {
               <br />
             </p>
             <button
+              type="submit"
               onClick={() => {
                 setIsSuccessModalOpen(false);
                 navigate('/login');
