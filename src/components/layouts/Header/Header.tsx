@@ -10,13 +10,15 @@ import useMobile from '@hooks/useMobile';
 import useOutsideClick from '@hooks/useOutsideClick.tsx';
 import {useAuthStore} from '@store/authStore.ts';
 import {useIdolState} from '@store/idolStore';
+import useIdolData from '@/hooks/useIdolData';
 import {api} from '@/lib/api.ts';
 
 const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 
 function Header() {
-    const {followedIdols, selectedIdolId, setSelectIdol} = useIdolState();
-    const idols = followedIdols;
+    const { selectedIdolId, setSelectIdol } = useIdolState();
+    const { followedIdol } = useIdolData();
+    const idols = followedIdol;
     const mobileRef = useRef<null | HTMLDivElement>(null);
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -25,7 +25,6 @@ function Artist() {
   };
 
   // 아이돌 카드 리스트에 이런식으로 매핑해서 보내길래 함수를 따로 만들었음 
-  // 따로 파일 만들어서 관리 필요 . 근데 도대체 왜 ? 이렇게 보내는지 이해안감 ;;; 첨부터 통일을 하는 방식으로 나중에 수정하세요 꼭! 
   function createIdolArtistsCard(partial: Partial<IdolArtistsCard>): IdolArtistsCard {
     return {
       id: partial.id ?? 0,
