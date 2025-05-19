@@ -1,21 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link , Navigate } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
+
 const uploadProfileImage = async (file: File, userId: number): Promise<string> => {
   const formData = new FormData();
-  formData.append('object_type', 'profile'); // 또는 서버 명세에 맞게
+  formData.append('object_type', 'user'); // 또는 서버 명세에 맞게
   formData.append('object_id', String(userId));
   formData.append('image', file);
 
-  const res = await api.post('/images/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  for (const [key, val] of formData.entries()) {
+    console.log('FormData', key, val);
+  } 
 
-  return res.data.image_url; // ← 이건 Swagger 명세에서 확인!
+  const res = await api.post('/images/upload', formData
+    // headers: {
+    //   'Content-Type': 'multipart/form-data',
+    // },
+  );
+
+ return res.data.image_url;
 };
 
 
@@ -45,22 +50,22 @@ const [preview, setPreview] = useState<string | null>(null);
     const fetchProfile = async () => {
       try {
         const res = await api.get('/users/profile'); 
-        const data = res.data;
+        const userdata = res.data.data;
         // 데이터 값이 있으면 데이터 값을 불러오고, 없으면 빈칸 유지
         // API 못 불러오면 에러 발생
         // 프로필 호출 
         setForm({
-          name: data.name || '',
-          email: data.email || '',
-          nickname: data.nickname || '',
+          name: userdata.name || '',
+          email: userdata.email || '',
+          nickname: userdata.nickname || '',
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
-          alarmOptIn: data.alarmOptIn ?? false,
+          alarmOptIn: userdata.alarmOptIn ?? false,
         });
-
-        setOriginalData(data);
-        setPreview(data.profile_image || null);
+console.log('유저데이터:', userdata);
+        setOriginalData(userdata);
+        setPreview(userdata.profile_image || null);
       } catch (err) {
         setError('프로필 정보를 불러오지 못했습니다.');
       }
@@ -89,7 +94,7 @@ const [preview, setPreview] = useState<string | null>(null);
       setAlarmMessage(checked
         ? '알림 받기가 활성화 되었습니다'
         : '알림 받기가 비활성화 되었습니다.'
-      )
+      );
     }
     setForm(prev => ({
       ...prev,
@@ -130,6 +135,7 @@ const handleSave = async () => {
 const uploadedUrl = await uploadProfileImage(selectedFile, user.id);
       profileImageUrl = uploadedUrl;
     }
+  
 // 이후 프로필 patch를 요청 => profile_image
 // const payload: any = {
 //   nickname: form.nickname,
@@ -142,55 +148,33 @@ const payload = {
   schedule_alarm: form.alarmOptIn, 
   profile_image: profileImageUrl,
 };
-if (form.name && form.name.trim() !== '') {
-  payload.name = form.name;
-}
-// 비밀번호 있을 경우만 추가
-if (form.newPassword) {
-  payload.password = form.newPassword;
-}
 
-// 프로필 이미지 URL 있을 경우만 추가
-if (profileImageUrl) {
-  payload.profile_image = profileImageUrl;
-}
 
-//서버에에 요청
+
+
+
+// if (form.name && form.name.trim() !== '') {
+//   payload.name = form.name;
+// }
+// // 비밀번호 있을 경우만 추가
+// if (form.newPassword) {
+//   payload.password = form.newPassword;
+// }
+
+// // 프로필 이미지 URL 있을 경우만 추가
+// if (profileImageUrl) {
+//   payload.profile_image = profileImageUrl;
+// }
+
+// 서버에에 요청
 await api.patch('/users/profile', payload);
 // const updated = res.data;
-//프로필 재조회 
+// 프로필 재조회 (useeffect로 감싸서 비동기처리 고쳐보기)
 const res = await api.get('/users/profile', payload);
 console.log('📦 재조회 프로필:', res.data);
 const updated = res.data;
 console.log('✅ PATCH 응답:', res.data);
-//Zustand 동기화 작업
 
-
-
-// const formData = new FormData();
-
-//     formData.append('name', form.name);
-//     // formData.append('email', form.email);
-//     formData.append('nickname', form.nickname);
-//     formData.append('schedule_alarm', String(form.alarmOptIn ? 'true' : 'false'));
-
-
-//     if (form.newPassword) {
-//       formData.append('password', form.newPassword);
-//     }
-
-//     if (selectedFile) {
-//       formData.append('profile_image', selectedFile); 
-//     }
-
-//     await api.patch('/users/profile', formData, {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     });
-
-//        const res = await api.patch('/users/profile');
-//     const updated = res.data;
 
     setUser({
   nickname: updated.nickname,
@@ -256,6 +240,7 @@ console.log('✅ PATCH 응답:', res.data);
   </div>
   <div>
     <p className="text-lg font-semibold">{form.nickname}</p>
+    <p className="text-sm text-gray-500">{user?.id ?? '알 수 없음'}</p>
     <button
       type="button"
       onClick={handleEdit}

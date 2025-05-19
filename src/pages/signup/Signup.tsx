@@ -4,10 +4,9 @@ import Input from '@components/common/Input/Input.tsx';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
-import axios from 'axios';
+// import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
-
-// import {api} from '@/lib/api';
+import { api } from '@/lib/api';
 
 
 
@@ -34,6 +33,7 @@ const isValidPassword = (password: string) => isPasswordLengthValid(password) &&
 function SignUp() {
 
 const navigate = useNavigate();
+const { setUser } = useAuthStore();
     const [form, setForm] = useState<User>({
         email: '',
         password: '',
@@ -90,7 +90,7 @@ const navigate = useNavigate();
 
 
         try {
-            const response = await axios.post('/api/users/signup', form);
+            const response = await api.post('/users/signup', form);
             // eslint-disable-next-line no-console
             console.log('회원가입 성공:',response.data);
             setIsSuccessModalOpen(true);

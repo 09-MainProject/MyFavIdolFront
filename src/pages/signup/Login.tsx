@@ -6,7 +6,7 @@ import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 import { api } from '@/lib/api';
-import axios from 'axios';
+// import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ function Login() {
     e.preventDefault();
     console.log('로그인 제대로?', form);
     try {
-      const response = await axios.post('/api/users/token/login', form, {
+      const response = await api.post('/users/token/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
