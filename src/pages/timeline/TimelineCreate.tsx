@@ -1,26 +1,24 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {UploadImageRequest} from '@api/img/getImages';
-import {getDetailPostApi, updatePostApi} from '@api/timeline/getPosts';
+import {createPostApi} from '@api/timeline/getPosts';
 import usePostImageManager from '@hooks/usePostImageManager';
 import useUploadImageMutation from '@hooks/useUploadImageMutation';
-import {useAuthStore} from '@store/authStore.ts';
+import {useAuthStore} from '@store/authStore';
 import PerformToast from '@utils/PerformToast';
 import {PostCreateRequest} from '@/types/post';
 import {ImageUploader} from './components/TimelineEdit/ImageUploader';
 import {PostForm} from './components/TimelineEdit/PostForm';
 
-
-function TimelineEdit() {
-    const {id} = useParams();
+function TimelineCreate() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {login, user} = useAuthStore();
+    const {login} = useAuthStore();
     const [form, setForm] = useState<PostCreateRequest>({title: '', content: ''});
     const {showImages, imageFiles, handleImageChange, handleImageDelete} = usePostImageManager();
     const uploadImageMutation = useUploadImageMutation();
-    const [imageMeta, setImageMeta] = useState<UploadImageRequest>({
+    const [imageMeta] = useState<UploadImageRequest>({
         object_type: 'post',
         object_id: 0,
         image_url: '',
@@ -34,60 +32,35 @@ function TimelineEdit() {
         }
     }, [login, navigate]);
 
-    const {isLoading} = useQuery({
-        queryKey: ['post', id],
-        queryFn: () => getDetailPostApi(id!),
-        enabled: !!id,
-        select: (data) => {
-            if (!user || data.author !== user.nickname) {
-                PerformToast({msg: '수정 권한이 없습니다.', type: 'error'});
-                navigate(`/timeline/${id}`);
-                return null;
-            }
-            setForm({
-                title: data.title,
-                content: data.content,
-            });
-            if (data.image_url) {
-                setImageMeta(prev => ({
-                    ...prev,
-                    image_url: data.image_url,
-                }));
-            }
-            return data;
-        }
-    });
-
-    const updatePostMutation = useMutation<PostCreateRequest, Error, PostCreateRequest>({
-        mutationFn: (data) => updatePostApi(data, Number(id)),
-        onSuccess: () => {
+    const createPostMutation = useMutation<{id: number}, Error, PostCreateRequest>({
+        mutationFn: createPostApi,
+        onSuccess: (data) => {
             if (imageFiles.length > 0) {
                 uploadImageMutation.mutate({
                     object_type: 'post',
-                    object_id: Number(id),
+                    object_id: data.id,
                     image_url: imageMeta.image_url,
                     image: imageFiles[0]
                 });
                 PerformToast({msg: '이미지 업로드 성공', type: 'success'});
             }
-            PerformToast({msg: '게시글이 수정되었습니다.', type: 'success'});
+            PerformToast({msg: '게시글이 작성되었습니다.', type: 'success'});
             queryClient.invalidateQueries({queryKey: ['posts']});
-            queryClient.invalidateQueries({queryKey: ['post']});
-            navigate(`/timeline/${id}`);
+            navigate(`/timeline/${data.id}`);
         },
         onError: () => {
-            PerformToast({msg: '게시글 수정에 실패했습니다.', type: 'error'});
+            PerformToast({msg: '게시글 작성에 실패했습니다.', type: 'error'});
         }
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!login || !user) {
+        if (!login) {
             PerformToast({msg: '로그인이 필요한 서비스입니다.', type: 'error'});
             navigate('/login');
             return;
         }
-        updatePostMutation.mutate(form);
+        createPostMutation.mutate(form);
     };
 
     const handleInputChange = (
@@ -97,35 +70,35 @@ function TimelineEdit() {
         setForm(prev => ({...prev, [name]: value}));
     };
 
-    if (!login || isLoading) {
+    if (!login) {
         return null;
     }
 
     return (
         <form className="px-4" onSubmit={handleSubmit}>
             <h2 className="mt-20 mb-8 text-2xl font-bold text-gray-800">
-                게시글 수정
+                게시글 작성
             </h2>
 
-            <PostForm
-                form={form}
-                onInputChange={handleInputChange}
+            <PostForm 
+                form={form} 
+                onInputChange={handleInputChange} 
             />
 
-            <ImageUploader
+            <ImageUploader 
                 showImages={showImages}
                 onImageChange={handleImageChange}
                 onImageDelete={handleImageDelete}
             />
 
-            <button
-                type="submit"
+            <button 
+                type="submit" 
                 className="w-full cursor-pointer bg-black text-white py-2 rounded-md"
             >
-                수정 완료
+                작성 완료
             </button>
         </form>
     );
 }
 
-export default TimelineEdit;
+export default TimelineCreate;

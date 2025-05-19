@@ -21,13 +21,12 @@ interface AuthState {
 interface AuthActions {
     setLogin: (accessToken: string, csrfToken: string) => void;
     setLogout: () => void;
-    isAuthenticated: () => boolean;
     setUser: (user: User) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
 
-export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
+export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             user: null,

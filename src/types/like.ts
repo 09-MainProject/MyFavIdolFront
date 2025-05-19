@@ -20,7 +20,7 @@ export type LikePostCheckedRequest = {
 };
 
 export type LikePostCheckedResponse = {
-    liked: boolean;
+    data: { liked: boolean; }
 }
 
 export type LikePostCreateRequest = {

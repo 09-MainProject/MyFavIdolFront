@@ -1,16 +1,18 @@
-import React, {useCallback, useState} from 'react';
-import {useNavigate, useParams} from 'react-router';
+import {useQuery} from '@tanstack/react-query';
+import React, {useState} from 'react';
+import {useParams} from 'react-router';
+import {getDetailPostApi} from '@api/timeline/getPosts';
 import CardFrame from '@components/CardFrame';
-import useComments from '@hooks/useComments.tsx';
-import CommentItem from '@pages/timeline/CommentItem.tsx';
-import TimelineDetailCard from '@pages/timeline/TimelineDetailCard.tsx';
-import {useTimelineStore} from '@store/useTimelineStore';
+import ProfileHeader from '@components/common/Profile/ProfileHeader.tsx';
+import {useCommentHandlers} from '@hooks/useCommentHandlers.tsx';
+import useComments from '@hooks/useComments';
+import TimelineDetailCard from '@pages/timeline/components/Cards/TimelineDetailCard';
+import CommentItem from '@pages/timeline/components/Comments/CommentItem';
+import RootForm from '@pages/timeline/components/Comments/RootForm.tsx';
 
 function TimelineDetail() {
-    const {posts, removePost} = useTimelineStore();
-    const [rootInput, setRootInput] = useState('');
+    const [commentInput, setCommentInput] = useState('');
     const {id} = useParams();
-    const navigate = useNavigate();
     const {
         inputMode,
         setInputMode,
@@ -18,60 +20,29 @@ function TimelineDetail() {
         setComments,
         parentComments,
         childCommentMap,
-    } = useComments();
+    } = useComments(id);
 
-    const idolDetail = posts.find(idol => idol?.id?.toString() === id);
+    const {
+        handleAddRootComment,
+        handleAddReplyComment,
+        handleAllDeleteComment,
+        handleDeleteComment,
+        handleEditComment
+    } = useCommentHandlers({
+        postId: id,
+        comments,
+        setComments,
+        inputMode,
+        setInputMode,
+        rootInput: commentInput,
+        setRootInput: setCommentInput,
+    });
 
-    const handleDeletePost = () => {
-        removePost(Number(id));
-        navigate('/timeline');
-    };
-
-    const handleEditComment = useCallback(() => {
-        setComments((prev) => (prev.map(item => item.comment_id === inputMode.payload.comment_id ? {
-            ...item,
-            content: inputMode?.payload?.value
-        } : item)));
-        setInputMode({mode: 'unknown'});
-    }, [inputMode, setComments, setInputMode]);
-
-    const handleAddReplyComment = useCallback(() => {
-        const newReply = {
-            comment_id: Number(new Date()),
-            content: inputMode.payload.value,
-            author: 'dndndㄻㅇㄴㄹㄴㅇn',
-            createdAt: new Date().toISOString(),
-            parent_id: inputMode.payload.parent_id,
-            img: '../src/assets/img/ncity.jpeg'
-        };
-        setComments((prev) => [...prev, newReply]);
-        setInputMode({mode: 'unknown'});
-    }, [inputMode, setComments, setInputMode]);
-
-    const handleDeleteComment = useCallback((comment_id: number) => {
-        const find = comments.find(item => item.comment_id === comment_id);
-        const parent = find.parent_id;
-        setComments((prev) => prev.map(item => item.parent_id === comment_id ? {
-            ...item,
-            parent_id: parent,
-        } : item).filter(v => v.comment_id !== comment_id));
-    }, [setComments, comments]);
-
-    const handleAllDeleteComment = (comment_id: number) => {
-        setComments((prev) => prev.filter(item => item.comment_id !== comment_id));
-    };
-
-    const handleAddRootComment = () => {
-        setRootInput('');
-        setComments((prev) => ([...prev, {
-            comment_id: Number(new Date()),
-            content: rootInput,
-            parent_id: null,
-            img: 'dasdas',
-            author: 'dasd',
-            createdAt: new Date().toISOString()
-        }]));
-    };
+    const {data: postDetail, isLoading, error} = useQuery({
+        queryKey: ['post', id],
+        queryFn: () => getDetailPostApi(id!),
+        enabled: !!id
+    });
 
     const commentService = {
         handleEditComment,
@@ -80,43 +51,39 @@ function TimelineDetail() {
         handleAllDeleteComment
     };
 
+    if (isLoading) return null;
+    if (error) return null;
+    if (!postDetail) return null;
+
     return (
         <div className="mt-12 p-4">
-            {/* <ProfileHeader */}
-            {/*     avatar={idolDetail.img} */}
-            {/*     nickname={idolDetail.name} */}
-            {/*     startDate={idolDetail.startDate} */}
-            {/*     mode="post" */}
-            {/* /> */}
+            <ProfileHeader
+                image_url={postDetail.image_url}
+                nickname={postDetail.author}
+                created_at={postDetail.created_at}
+                mode="post"
+            />
             <CardFrame>
                 <TimelineDetailCard
-                    idol={idolDetail}
-                    handleDeletePost={handleDeletePost}
+                    postDetail={postDetail}
+                    id={id!}
                 />
                 <ul className="mt-6 border-t border-gray-200 p-4">
-                    <div className="flex gap-2 mb-4">
-                        <input
-                            type="text"
-                            className="flex-1 rounded border border-gray-300 p-2 text-sm"
-                            value={rootInput}
-                            onChange={(e) => setRootInput(e.target.value)}
-                        />
-                        <button
-                            type="button"
-                            className="rounded bg-blue-500 px-4 py-1.5 text-sm text-white"
-                            onClick={handleAddRootComment}
-                        >
-                            저장
-                        </button>
-                    </div>
-                    {parentComments.map(item => (
+                    <RootForm
+                        rootInput={commentInput}
+                        setRootInput={setCommentInput}
+                        handleAddRootComment={handleAddRootComment}
+                    />
+                    {parentComments.map(comment => (
                         <CommentItem
-                            key={item.comment_id}
-                            item={item}
+                            key={comment.id}
+                            item={comment}
                             childCommentMap={childCommentMap}
                             inputMode={inputMode}
                             setInputMode={setInputMode}
                             commentService={commentService}
+                            onEdit={handleEditComment}
+                            onDelete={handleDeleteComment}
                         />
                     ))}
                 </ul>

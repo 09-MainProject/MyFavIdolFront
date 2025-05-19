@@ -9,30 +9,32 @@ import Breadcrumb from '../common/Breadcrumb';
 import ScrollTop from '../common/ScrollTop';
 
 function Layout() {
-    const {setLogin, csrfToken, accessToken, setUser} = useAuthStore();
+    const {setLogin, csrfToken, accessToken, setUser, login} = useAuthStore();
 
     useEffect(() => {
         if (!csrfToken || !accessToken) return;
-        setLogin(accessToken, csrfToken);
+        
+        // 토큰이 있으면 항상 로그인 상태로 설정
+        if (!login) {
+            setLogin(accessToken, csrfToken);
+        }
+
         const fetchProfile = async () => {
             try {
                 const response = await api.get('/profile');
-                setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
-                console.log(decodedPayload);
                 setUser({
-                    ...response.data,
+                    ...response.data.data,
                     is_staff: decodedPayload.is_staff,
                     is_superuser: decodedPayload.is_superuser
                 });
-                console.log('layout에서 데이터 출력 :', response.data);
             } catch (e) {
                 console.error(e);
             }
         };
         fetchProfile();
-    }, [accessToken, csrfToken, setLogin, setUser]);
+    }, [accessToken, csrfToken, setLogin, setUser, login]);
 
     return (
         <div>
