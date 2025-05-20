@@ -13,9 +13,9 @@ import useIdolData from '@/hooks/useIdolData';
 
 function Home() {
   const imgList = [
-    '../src/assets/img/swiper1.png',
-    '../src/assets/img/swiper2.png',
-    '../src/assets/img/swiper3.png',
+    '/img/swiper1.png',
+    '/img/swiper2.png',
+    '/img/swiper3.png',
   ];
   
   const { idolList } = useIdolData();
@@ -54,7 +54,12 @@ function Home() {
     setSelectedDate(newDate);
   };
 
-  const filtered = formattedSchedules.filter(item => item.startDate === selectedDate);
+  // const filtered = formattedSchedules.filter(item => item.startDate === selectedDate);
+  const filtered = formattedSchedules.filter(item => {
+    const scheduleDate = new Date(item.startDate).toDateString();
+    const targetDate = new Date(scheduleDate).toDateString();
+    return scheduleDate === targetDate;
+  });
 
   return (
     <div className="px-4 md:px-8">
