@@ -6,6 +6,7 @@ import CommentAuthorInfo from '@pages/timeline/components/Comment/CommentAuthorI
 import CommentInput from '@pages/timeline/components/Comment/CommentInput.tsx';
 import useCommentDropdown from '@pages/timeline/components/hooks/useCommentDropdown.tsx';
 import {InputMode} from '@pages/timeline/components/hooks/useComments.tsx';
+import {User} from '@store/authStore.ts';
 import {formatDate} from '@utils/date.ts';
 import {CommentListItem} from '@/types/comment.ts';
 
@@ -13,7 +14,7 @@ type Props = {
     childCommentMap: Record<string, CommentListItem[]>;
     item: CommentListItem;
     inputMode: InputMode;
-    user: boolean;
+    user: User | null;
     login: boolean;
     setInputMode: React.Dispatch<React.SetStateAction<InputMode>>;
     commentService: {
@@ -21,7 +22,7 @@ type Props = {
         handleAddReplyComment: () => void;
         handleDeleteComment: (comment_id: number) => void;
         handleAllDeleteComment: (comment_id: number) => void;
-    }
+    };
 };
 
 function CommentItem({
@@ -116,6 +117,8 @@ function CommentItem({
                             inputMode={inputMode}
                             setInputMode={setInputMode}
                             commentService={commentService}
+                            user={user}
+                            login={login}
                         />
                     )
                 }

@@ -12,11 +12,11 @@ export type LoginRequest = {
 };
 
 export type UserProfileResponse = {
-    id?: number;
-    name?: string;
-    nickname: string;
-    email?: string;
-    image_url: string;
-    created_at: string;
-    updated_at?: string;
+    id?: number,
+    name?: string,
+    nickname: string,
+    email?: string,
+    image_url: string,
+    created_at: string,
+    updated_at?: string,
 }
