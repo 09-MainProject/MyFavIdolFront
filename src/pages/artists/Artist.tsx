@@ -147,7 +147,7 @@ function Artist() {
             {isAdmin && (
                 <div className="flex justify-end px-4 mt-4">
                     <button onClick={() => navigate('/artists/create')} type="button"
-                            className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray700 transition">
+                            className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray700 transition cursor-pointer">
                         추가
                     </button>
                 </div>
@@ -194,7 +194,9 @@ function Artist() {
                             }}
                             pageType="artist"
                             isVertical={false}
-                            onDetailClick={(idolId) => navigate(`/artists/${idolId}`)}
+                            onDetailClick={(idolId) => {
+                                navigate(`/artists/${idolId}`);
+                            }}
                         />
                     </div>
                     {modalIdol && ( // modalIdol 값이 존재할 때만 모달 컴포넌트 렌더링

@@ -18,6 +18,7 @@ import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
 
+
 function App() {
     const router = createBrowserRouter([
         {
@@ -91,7 +92,11 @@ function App() {
                 {
                     path: '/artists/:id/edit',
                     element: <EditArtist/>,
-                },
+              },
+                {
+          path: '/schedule/:scheduleId',
+          element: <ScheduleDetail />,
+        },
             ],
         },
     ]);

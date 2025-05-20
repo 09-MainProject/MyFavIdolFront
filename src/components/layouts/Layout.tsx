@@ -20,13 +20,11 @@ function Layout() {
                 setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
-                console.log(decodedPayload);
                 setUser({
-                    ...response.data,
+                    ...response.data.data,
                     is_staff: decodedPayload.is_staff,
                     is_superuser: decodedPayload.is_superuser
                 });
-                console.log('layout에서 데이터 출력 :', response.data);
             } catch (e) {
                 console.error(e);
             }

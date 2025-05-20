@@ -1,5 +1,6 @@
 import CardFrame from '@/components/CardFrame';
 import useMobile from '@/hooks/useMobile';
+import { useAuthStore } from '@/store/authStore';
 import { IdolArtistsCard } from '@/types/idols';
 
 // Api => Artist => IdolCardList
@@ -10,7 +11,7 @@ export type { IdolArtistsCard };
 type Props = {
   idolList: IdolArtistsCard[];
   onCardClick?: (idol: IdolArtistsCard) => void;
-  onDetailClick?: (idolId: number) => void;
+  onDetailClick?: (scheduleId: number, idolId: number) => void;
   idolTitle?: string;
   pageType: PageType;
   isVertical: boolean;
@@ -25,7 +26,7 @@ export function IdolCardList({
   isVertical,
 }: Props) {
   const isMobile = useMobile();
-
+  const { login } = useAuthStore();
   const gridClass = () => {
     if (isMobile) {
       return isVertical ? 'flex items-center gap-3 p-3' : 'grid-cols-3 gap-6';
@@ -41,7 +42,17 @@ export function IdolCardList({
             <div
               role="button"
               tabIndex={0}
-              onClick={() => onCardClick(idol)}
+              onClick={() => {
+                if (pageType === 'home') {
+                  if (login) {
+                    onDetailClick?.(idol.id, idol.idolId);
+                  } else {
+                    alert('로그인이 필요합니다.');
+                  }
+                } else {
+                  onCardClick?.(idol);
+                }
+              }}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') onCardClick(idol);
               }}
@@ -71,11 +82,6 @@ export function IdolCardList({
                     </div>
                   <div className="p-3">
                     <p className="text-center mb-1 text-[1.1rem] font-bold">{idol.name}</p>
-                    {/* {pageType === 'artist' && (
-                      <p className="text-[0.9rem] text-gray-500">
-                        {idol.enName}
-                      </p>
-                    )} */}
                     {idol.title && (
                       <p className="text-[0.9rem] text-gray-500">
                         {idol.title}
@@ -92,10 +98,10 @@ export function IdolCardList({
                       tabIndex={0}
                       onClick={(e) => {
                       e.stopPropagation();
-                      onDetailClick?.(idol.id);
+                        onDetailClick?.(idol.id, idol.idolId);
                       }}
                       onKeyDown={e => {
-                        if (e.key === 'Enter') onDetailClick?.(idol.id);
+                        if (e.key === 'Enter') onDetailClick?.(idol.id, idol.idolId);
                       }}
                       className='mt-2 mb-2 text-sm text-gray-500 cursor-pointer text-center'>
                       상세정보
