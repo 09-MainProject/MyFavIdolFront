@@ -16,7 +16,7 @@ function Layout() {
         setLogin(accessToken, csrfToken);
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/profile');
+                const response = await api.get('/users/profile');
                 setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
