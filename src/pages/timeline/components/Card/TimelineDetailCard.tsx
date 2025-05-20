@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {Comment, Frame} from '@assets/icons/inedx.ts';
 import Dropdown from '@components/common/Dropdown/Dropdown.tsx';
@@ -13,8 +13,15 @@ type Props = {
 };
 
 function TimelineDetailCard({getDetailPost, handleDeletePost}: Props) {
-    const {ref, handleToggleDropdown, dropdownOpen} = useOutsideClick();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const {user} = useAuthStore();
+
+    useOutsideClick(dropdownRef, () => setDropdownOpen(false), dropdownOpen);
+
+    const handleToggleDropdown = () => {
+        setDropdownOpen(prev => !prev);
+    };
 
     const isMine = user?.nickname === getDetailPost?.author;
 
@@ -40,7 +47,7 @@ function TimelineDetailCard({getDetailPost, handleDeletePost}: Props) {
                 </div>
 
                 {isMine && (
-                    <div className="relative" ref={ref}>
+                    <div className="relative" ref={dropdownRef}>
                         <button
                             type="button"
                             onClick={handleToggleDropdown}
