@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import CommentButton from '@pages/timeline/CommentButton.tsx';
-import LikeButton from '@pages/timeline/LikeButton';
-import TimelineCardImage from '@pages/timeline/TimelineCardImage';
-import {PostResponse} from '@/types/post';
+import React from 'react';
+import TimelineCardImage from '@pages/timeline/components/Card/TimelineCardImage.tsx';
+import CommentButton from '@pages/timeline/components/Comment/CommentButton.tsx';
+import LikeButton from '@pages/timeline/components/Like/LikeButton.tsx';
+import {PostResponse} from '@/types/post.ts';
 
 type Props = {
     post: PostResponse;
@@ -13,17 +13,16 @@ type Props = {
 };
 
 function TimelineCard({post, postId, likeCount, is_liked, is_deleted}: Props) {
-    const [liked, setLiked] = useState(is_liked && !is_deleted);
-    const [count, setCount] = useState(likeCount);
     const id = postId.toString();
 
     return (
         <div className="flex flex-col overflow-hidden pb-4 border-b border-gray-300">
             <TimelineCardImage post={post}/>
             <div className="flex items-center gap-6 px-3 py-3 text-sm text-gray-600 ">
-                <LikeButton id={id} liked={liked} setLiked={setLiked} setCount={setCount} count={count}
+                <LikeButton id={id} liked={is_liked} is_deleted={is_deleted} count={likeCount}
                 />
-                <CommentButton/>
+                <CommentButton commentCount={post.comments.length}/>
+                <span>Views: {post.views}</span>
             </div>
             <div>
                 <p className="mt-4 px-3 mb-4 text-sm text-gray-700 line-clamp-2 whitespace-nowrap truncate verflow-hidden">

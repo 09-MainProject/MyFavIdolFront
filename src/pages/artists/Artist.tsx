@@ -1,45 +1,146 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { IdolArtistsCard, IdolCardList } from '@/components/common/Card/IdolCardList';
-import { IdolConfirmModal } from '@/components/common/IdolConfirmModal';
-import useIdolData from '@/hooks/useIdolData';
-import { useAuthStore } from '@/store/authStore';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router';
+import type {IdolArtistsCard} from '@/components/common/Card/IdolCardList';
+import {IdolCardList} from '@/components/common/Card/IdolCardList';
+import {IdolConfirmModal} from '@/components/common/IdolConfirmModal';
+import {api} from '@/lib/api';
+import {useAuthStore} from '@/store/authStore';
+import {useIdolState} from '@/store/idolStore';
+
+// 백엔드 받아오는 아이돌 정보 인터페이스
+interface Idol {
+    id: number;
+    name: string;
+    img: string;
+    isVertical: boolean;
+}
 
 function Artist() {
+    // 팔로우 아이돌 리스트 상태
+    const [followIdols, setFollowIdols] = useState<IdolArtistsCard[]>([]);
+    const {setFollowedIdols} = useIdolState();
+    const {accessToken} = useAuthStore.getState();
+    const {user} = useAuthStore();
+    const [isAdmin, setIsAdmin] = useState(false);
+    const queryClient = useQueryClient();
 
-  const { idolList, followedIdol, handleFollowState } = useIdolData();
-  const { user, isAdmin } = useAuthStore();
-  console.log(user, isAdmin);
+    useEffect(() => {
+        if (!accessToken) return;
 
-  // 모달창 아이돌 초기 값 null
-  const [modalIdol, setModalIdol] = useState(null);
+        try {
+            setIsAdmin(user?.is_staff === true);
+        } catch (err) {
+            console.error(err);
+            setIsAdmin(false);
+        }
+    }, [accessToken, user]);
 
-  // 추가 후 home으로 이동하기 위한 navigate
-  const navigate = useNavigate();
+    console.log(isAdmin, user);
+    console.log('배포 잘되는지 테스트');
 
-  const handleConfirm = async () => {
-    if (!modalIdol) return;
-    handleFollowState(modalIdol.id);
-    // 모달 닫기 
-    setModalIdol(null);
-  };
+    // 전체 아이돌 리스트 api 요청
+    const {
+        data: idolList = [],
+    } = useQuery<Idol[]>({
+        queryKey: ['idolList'],
+        queryFn: async () => {
+            const res = await api.get('/idols');
+            return res.data.map((item) => ({
+                id: item.id,
+                name: item.name,
+                img: item.image_url,
+                isVertical: item.is_vertical,
+            }));
+        },
+    });
 
-  // 아이돌 카드 리스트에 이런식으로 매핑해서 보내길래 함수를 따로 만들었음 
-  function createIdolArtistsCard(partial: Partial<IdolArtistsCard>): IdolArtistsCard {
-    return {
-      id: partial.id ?? 0,
-      idolId: partial.idolId ?? 0,
-      title: partial.title ?? '',
-      img: partial.img ?? '',
-      type: partial.type ?? '',
-      startDate: partial.startDate ?? '',
-      endDate: partial.endDate ?? '',
-      location: partial.location ?? '',
-      description: partial.description ?? '',
-      name: partial.name ?? '',
-      enName: partial.enName ?? '',
+    // 팔로우 아이돌 api 요청
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    async function fetchFollowIdols() {
+        console.log('fetchFollowIdols 실행');
+        if (idolList.length === 0) return;
+
+        try {
+            const resFollow = await api.get(
+                '/idols/follows'
+            );
+            const followed = resFollow.data.map(item => {
+                const matchedIdol = idolList.find(idol => idol.id === item.idol.id);
+                return {
+                    id: item.idol.id,
+                    name: item.idol.name,
+                    img: matchedIdol?.img ?? '',
+                };
+            });
+            console.log(followed);
+            setFollowIdols(followed); // 로컬 상태
+            setFollowedIdols(followed); // 전역 상태
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchFollowIdols();
+    }, [fetchFollowIdols]);
+
+    const {
+        selectedIdolId, // 선택된 아이돌 Id
+        setSelectIdol,
+    } = useIdolState();
+
+    // 모달창 아이돌 초기 값 null
+    const [modalIdol, setModalIdol] = useState(null);
+
+    // 추가 후 home으로 이동하기 위한 navigate
+    const navigate = useNavigate();
+
+    const selectedIdol = idolList?.find(idol => idol.id === selectedIdolId);
+    // eslint-disable-next-line no-console
+    console.log(selectedIdol);
+
+    const handleConfirm = async () => {
+        if (!modalIdol) return;
+
+        // 팔로우 상태 확인
+        const res = await api.get(
+            `/idols/${modalIdol.id}/follow-status`
+        );
+        // console.log('res: ', res.data.data);
+        const isFollowed = res.data.data.is_following;
+
+        if (isFollowed) {
+            // 팔로우 된 경우 팔로우 취소 요청
+            await api.delete(
+                `/idols/${modalIdol.id}/follows`
+            );
+            fetchFollowIdols();
+
+            // await api.delete(`/idols/${modalIdol.id}/follows`);
+            // // 상태에서 제거
+            // const updatedFollowIdols = followIdols.filter(idol => idol.id !== modalIdol.id);
+
+            // setFollowIdols(updatedFollowIdols);
+            // setFollowedIdols(updatedFollowIdols);
+
+            queryClient.invalidateQueries({queryKey: ['idolList']});
+        } else {
+            // 팔로우 되지 않은 경우 팔로우 추가 요청
+            await api.post(
+                `/idols/${modalIdol.id}/follows`
+            );
+
+            const updatedFollowIdols = [...followIdols, modalIdol];
+            setFollowIdols(updatedFollowIdols);        // 로컬 상태
+            setFollowedIdols(updatedFollowIdols);      // 전역 상태도 갱신
+
+            navigate('/');
+            setSelectIdol(null);
+        }
+        // 모달 닫기 !
+        setModalIdol(null);
     };
-  }
 
     return (
         <div>
@@ -59,10 +160,11 @@ function Artist() {
                     </div>
                     <div className="mt-20 text-2xl font-bold">
                         <IdolCardList
-                            idolTitle={`팔로우한 ${followedIdol?.length}팀의 아티스트`}
-                            idolList={followedIdol ?? []}
+                            idolTitle={`팔로우한 ${followIdols?.length}팀의 아티스트`}
+                            idolList={followIdols ?? []}
                             onCardClick={idol => {
                                 setModalIdol(idol);
+                                setSelectIdol(idol.id);
                             }}
                             pageType="artist"
                             isVertical={false}
@@ -70,12 +172,25 @@ function Artist() {
                         />
                     </div>
                     <div className="mt-20 text-2xl font-bold">
-              {idolList &&              
-                          <IdolCardList
+                        <IdolCardList
                             idolTitle="전체 아티스트 페이지"
-                            idolList={idolList.map((idol) => createIdolArtistsCard(idol))}
+                            idolList={idolList.map((idol) => ({
+                                ...idol,
+                                id: idol.id,
+                                img: idol.img,
+                                name: idol.name,
+                                idolId: idol.id,
+                                title: '',
+                                type: '',
+                                startDate: '',
+                                endDate: '',
+                                location: '',
+                                description: '',
+                                enName: '',
+                            }))}
                             onCardClick={idol => {
                                 setModalIdol(idol);
+                                setSelectIdol(idol.id);
                             }}
                             pageType="artist"
                             isVertical={false}
@@ -83,7 +198,6 @@ function Artist() {
                                 navigate(`/artists/${idolId}`);
                             }}
                         />
-                        }
                     </div>
                     {modalIdol && ( // modalIdol 값이 존재할 때만 모달 컴포넌트 렌더링
                         <IdolConfirmModal
@@ -91,8 +205,9 @@ function Artist() {
                             onConfirm={handleConfirm} // '추가' 또는 '삭제' 버튼 클릭 시 handleConfirm함수 실행
                             onCancel={() => {
                                 setModalIdol(null);
+                                setSelectIdol(null);
                             }} // 취소 버튼 클릭 시 모달 닫음
-                            isAlreadySelected={followedIdol?.some(
+                            isAlreadySelected={followIdols?.some(
                                 // 현재 선택된 아이돌이 드롭다운 목록에 존재하는지 여부 확인
                                 i => i.id === modalIdol.id
                             )}

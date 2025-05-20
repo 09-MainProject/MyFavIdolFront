@@ -3,17 +3,17 @@ import {PostCreateRequest, PostListRequest, PostListResponse, PostResponse} from
 
 
 export const createPostApi = async (data: PostCreateRequest): Promise<PostResponse> => {
-    const response = await api.post('post', data);
+    const response = await api.post('posts', data);
     return response.data;
 };
 
 export const updatePostApi = async (data: PostCreateRequest, id: number): Promise<PostCreateRequest> => {
-    const response = await api.patch(`/posts/${id}`, data);
+    const response = await api.patch(`/posts${id}`, data);
     return response.data;
 };
 
 export const getPostsApi = async (params: PostListRequest): Promise<PostListResponse> => {
-    const response = await api.get('/post', {
+    const response = await api.get('/posts', {
         params: {
             search: params?.search,
             ordering: params?.ordering,
@@ -23,4 +23,14 @@ export const getPostsApi = async (params: PostListRequest): Promise<PostListResp
     });
     return response.data;
 };
+
+export const getDetailPostApi = async (id: string): Promise<PostResponse> => {
+    const response = await api.get(`/posts${id}`);
+    return response.data;
+};
+
+export const deletePostApi = async (id: string): Promise<void> => {
+    await api.delete(`/posts${id}`);
+};
+
 

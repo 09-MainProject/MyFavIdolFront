@@ -11,7 +11,7 @@ function usePostImageManager() {
                 existing.name === file.name && existing.size === file.size
             )
         );
-        if (files.length + imageFiles.length > 4) return;
+        if (files.length + imageFiles.length > 1) return;
 
         newFiles.forEach((item) => {
             const reader = new FileReader();

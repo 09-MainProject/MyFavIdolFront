@@ -1,9 +1,9 @@
 import React from 'react';
 import { Arrow } from '@assets/icons/inedx.ts';
-import { Idol } from '@store/idolStore.ts';
+import { IdolArtistsCard } from '@/types/idols';
 
 type Props = {
-  filterDate: Idol;
+  filterDate: IdolArtistsCard;
 };
 
 function NotificationInfoCardList({ filterDate }: Props) {
