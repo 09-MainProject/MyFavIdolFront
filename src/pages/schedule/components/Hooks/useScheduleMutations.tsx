@@ -1,4 +1,4 @@
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {createScheduleApi, deleteScheduleApi, updateScheduleApi} from '@api/schedules/getSchedules.ts';
 import PerformToast from '@utils/PerformToast.tsx';
 import {IdolScheduleRequest} from '@/types/idolSchedule.ts';
@@ -10,6 +10,7 @@ interface Props {
 }
 
 function useScheduleMutations({idolId, scheduleId, onSuccess}: Props) {
+    const queryClient = useQueryClient();
     const createMutation = useMutation({
         mutationFn: (data: IdolScheduleRequest) => createScheduleApi(data, idolId),
         onSuccess: () => {
@@ -28,6 +29,7 @@ function useScheduleMutations({idolId, scheduleId, onSuccess}: Props) {
         },
         onSuccess: () => {
             PerformToast({msg: '스케줄 수정 성공', type: 'success'});
+            queryClient.invalidateQueries({queryKey: ['idolSchedule', idolId]});
             onSuccess?.();
         },
         onError: () => {
