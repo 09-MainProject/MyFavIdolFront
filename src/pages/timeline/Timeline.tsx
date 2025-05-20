@@ -1,24 +1,14 @@
-import {useEffect, useMemo} from 'react';
-import {Link, useNavigate} from 'react-router';
+import {useMemo} from 'react';
+import {Link} from 'react-router';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
 import ListCardSkeleton from '@components/common/Skeleton/ListCardSkeleton';
 import useInfiniteObserver from '@hooks/useInfiniteObserver';
 import TimelineCard from '@pages/timeline/components/Card/TimelineCard';
 import useFetchPosts from '@pages/timeline/components/hooks/useFetchPosts';
 import {useAuthStore} from '@store/authStore';
-import performToast from '@utils/PerformToast';
-import {PostListResponse} from '@/types/post.ts';
 
 function Timeline() {
-    const navigate = useNavigate();
     const {login} = useAuthStore();
-
-    useEffect(() => {
-        if (!login) {
-            performToast({msg: '로그인 후 이용 가능합니다.', type: 'warning'});
-            navigate('/login');
-        }
-    }, [login, navigate]);
 
     const params = useMemo(() => ({ordering: '-created_at'}), []);
     const {
@@ -32,17 +22,8 @@ function Timeline() {
     const ref = useInfiniteObserver(getPostFetchNextPage, getPostHasNextPage);
 
     if (getPostLoading) return <ListCardSkeleton num={10}/>;
+    if (getPostError) return <div>Error</div>;
 
-    if (getPostError) {
-        const isAuthError = (getPostError as PostListResponse)?.response?.status === 401;
-        if (isAuthError) {
-            performToast({msg: '로그인이 필요합니다.', type: 'error'});
-            navigate('/login');
-        } else {
-            performToast({msg: '게시글 불러오기 실패', type: 'error'});
-        }
-        return null;
-    }
 
     return (
         <section className="mt-12 px-4">
