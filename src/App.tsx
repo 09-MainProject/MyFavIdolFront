@@ -1,5 +1,6 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import {createBrowserRouter, RouterProvider} from 'react-router';
 
+import TimelineForm from '@pages/timeline/TimelineForm.tsx';
 import Layout from '@/components/layouts/Layout';
 
 import Artist from '@/pages/artists/Artist';
@@ -13,88 +14,86 @@ import Profile from '@/pages/signup/Profile';
 import Signup from '@/pages/signup/Signup';
 import Timeline from '@/pages/timeline/Timeline';
 import TimelineDetail from '@/pages/timeline/TimelineDetail';
-import TimelineEdit from '@/pages/timeline/TimelineEdit';
-import TimelineWrite from '@/pages/timeline/TimelineWrite';
 import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
 
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <Layout />,
-      children: [
+    const router = createBrowserRouter([
         {
-          path: '/',
-          element: <Home />,
+            path: '/',
+            element: <Layout/>,
+            children: [
+                {
+                    path: '/',
+                    element: <Home/>,
+                },
+                {
+                    path: '/artists',
+                    element: <Artist/>,
+                },
+                {
+                    path: '/schedule',
+                    element: <Schedule/>,
+                },
+                {
+                    path: '/schedule/:id',
+                    element: <ScheduleDetail/>,
+                },
+                {
+                    path: '/timeline',
+                    element: <Timeline/>,
+                },
+                {
+                    path: '/timeline/write',
+                    element: <TimelineForm/>,
+                },
+                {
+                    path: '/timeline/:id',
+                    element: <TimelineDetail/>,
+                },
+                {
+                    path: '/timeline/edit/:id',
+                    element: <TimelineForm/>,
+                },
+                {
+                    path: '/login',
+                    element: <Login/>,
+                },
+                {
+                    path: '/signup',
+                    element: <Signup/>,
+                },
+                {
+                    path: '/profile',
+                    element: <Profile/>,
+                },
+                {
+                    path: '/checkpassword',
+                    element: <CheckPassword/>,
+                },
+                {
+                    path: '/editprofile',
+                    element: <EditProfile/>,
+                },
+                {
+                    path: '/artists/create',
+                    element: <CreateArtist/>,
+                },
+                {
+                    path: '/artists/:id',
+                    element: <ArtistDetail/>,
+                },
+                {
+                    path: '/artists/:id/edit',
+                    element: <EditArtist/>,
+                },
+            ],
         },
-        {
-          path: '/artists',
-          element: <Artist />,
-        },
-        {
-          path: '/schedule',
-          element: <Schedule />,
-        },
-        {
-          path: '/schedule/:id',
-          element: <ScheduleDetail />,
-        },
-        {
-          path: '/timeline',
-          element: <Timeline />,
-        },
-        {
-          path: '/timeline/write',
-          element: <TimelineWrite />,
-        },
-        {
-          path: '/timeline/:id',
-          element: <TimelineDetail />,
-        },
-        {
-          path: '/timeline/edit/:id',
-          element: <TimelineEdit />,
-        },
-        {
-          path: '/login',
-          element: <Login />,
-        },
-        {
-          path: '/signup',
-          element: <Signup />,
-        },
-        {
-          path: '/profile',
-          element: <Profile />,
-        },
-        {
-          path: '/checkpassword',
-          element: <CheckPassword />,
-        },
-        {
-path: '/editprofile',
-element: <EditProfile />,
-        },
-        {
-          path: '/artists/create',
-          element: <CreateArtist />,
-        },
-        {
-          path: '/artists/:id',
-          element: <ArtistDetail />,
-        },
-        {
-          path: '/artists/:id/edit',
-          element: <EditArtist />,
-        },
-      ],
-    },
-  ]);
+    ]);
 
-  return <RouterProvider router={router} />;
+    return <RouterProvider router={router}/>;
 }
 
 export default App;
