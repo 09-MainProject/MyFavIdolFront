@@ -1,63 +1,58 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {Link} from 'react-router';
-import Dropdown from '@components/common/Dropdown/Dropdown.tsx';
-import IdolDropdownPanel from '@pages/schedule/IdolDropdownPanel.tsx';
-import {Idol} from '@store/idolStore.ts';
-import {IdolArtistsCard} from '@/types/idols';
+import IdolDropdownPanel from '@pages/schedule/IdolDropdownPanel';
+import {Idol} from '@store/idolStore';
+import useOutsideClick from '@hooks/useOutsideClick.tsx';
 
 type Props = {
     idols: Idol[];
-    dropdownOpen: boolean;
-    handleToggleDropdown: () => void;
+    setSelectIdol: (id: number) => void;
+    selectedIdolId: number;
     displayedIdolName: string;
-    selectedIdolId: number | null;
-    setSelectIdol: (idolId: number) => void;
-    handleCloseDropdown: () => void;
 };
 
 function IdolDropdown({
-                          idols,
-                          dropdownOpen,
-                          handleToggleDropdown,
-                          displayedIdolName,
-                          setSelectIdol,
-                          selectedIdolId,
-                          handleCloseDropdown,
-                          
-                      }: Props) {
-    const idolArtistsCards: IdolArtistsCard[] = idols.map(idol => ({
-        ...idol,
-        idolId: idol.id,
-        title: idol.name,
-        img: idol.profile_image || '',
-        type: '일정',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
-        location: '',
-        enName: idol.en_name || '',
-    }));
+    idols,
+    setSelectIdol,
+    selectedIdolId,
+    displayedIdolName
+}: Props) {
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    useOutsideClick(dropdownRef, () => setDropdownOpen(false), dropdownOpen);
+
+    const handleToggleDropdown = () => {
+        setDropdownOpen(prev => !prev);
+    };
+
+    const handleCloseDropdown = () => {
+        setDropdownOpen(false);
+    };
 
     return (
-        <div className="relative flex items-center gap-4">
-            <Link to="/">
-                <h1 className="pb-2 text-3xl leading-none font-bold">Wistar</h1>
-            </Link>
-            <Dropdown
-                dropdownOpen={dropdownOpen}
-                handleToggleDropdown={handleToggleDropdown}
-                displayedIdolName={displayedIdolName}
-                mode="header"
+        <div className="relative w-[200px]" ref={dropdownRef}>
+            <button
+                type="button"
+                onClick={handleToggleDropdown}
+                className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-gray-50"
             >
-                <IdolDropdownPanel
-                    idols={idolArtistsCards}
-                    selectedIdolId={selectedIdolId}
-                    setSelectIdol={setSelectIdol}
-                    handleCloseDropdown={handleCloseDropdown}
-                    handleToggleDropdown={handleToggleDropdown}
-                />
-            </Dropdown>
+                <span className="truncate">{displayedIdolName}</span>
+                <span className="ml-2">▼</span>
+            </button>
+            {dropdownOpen && (
+                <div className="absolute left-0 top-full z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+                    <IdolDropdownPanel
+                        idols={idols}
+                        selectedIdolId={selectedIdolId}
+                        setSelectIdol={setSelectIdol}
+                        handleCloseDropdown={handleCloseDropdown}
+                        handleToggleDropdown={handleToggleDropdown}
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
-export default IdolDropdown;
+export default React.memo(IdolDropdown);

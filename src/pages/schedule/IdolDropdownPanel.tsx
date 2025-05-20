@@ -1,27 +1,22 @@
-import { useEffect } from 'react';
 import {Link, useNavigate} from 'react-router';
-import { IdolArtistsCard } from '@/components/common/Card/IdolCardList';
-
+import {Idol} from '@store/idolStore';
 
 type Props = {
-    idols: IdolArtistsCard[];
-    selectedIdolId: number | null;
+    idols: Idol[];
+    selectedIdolId: number;
     setSelectIdol: (idolId: number) => void;
     handleCloseDropdown: () => void;
     handleToggleDropdown: () => void;
 };
 
 function IdolDropdownPanel({
-                               idols,
-                               selectedIdolId,
-                               setSelectIdol,
+    idols,
+    selectedIdolId,
+    setSelectIdol,
     handleCloseDropdown,
-                               handleToggleDropdown,
+    handleToggleDropdown,
 }: Props) {
     const navigate = useNavigate();
-    useEffect(() => { 
-        
-    }, [idols]);
     
     return (
         <div className="flex flex-col gap-1">

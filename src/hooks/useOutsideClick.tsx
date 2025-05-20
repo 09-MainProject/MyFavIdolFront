@@ -1,43 +1,29 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useLocation} from 'react-router';
+import {RefObject, useCallback, useEffect} from 'react';
 
-function useOutsideClick() {
-    const ref = useRef<null | HTMLDivElement>(null);
-    const location = useLocation();
-    const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+function useOutsideClick<T extends HTMLElement>(
+    domRef: RefObject<T>,
+    onClick: () => void,
+    isOpen?: boolean,
+) {
+    const handleClickAnywhere = useCallback(
+        (e: MouseEvent) => {
+            const {target} = e;
+            if (!(target instanceof HTMLElement) || !(domRef?.current instanceof HTMLElement)) return;
 
-    const handleToggleDropdown = useCallback(() => {
-        setDropdownOpen(prev => !prev);
-    }, []);
-
-    const handleCloseDropdown = useCallback(() => {
-        setDropdownOpen(false);
-    }, []);
+            if (domRef.current.contains(target)) return;
+            onClick();
+        },
+        [domRef, onClick],
+    );
 
     useEffect(() => {
-        const handle = (e: globalThis.MouseEvent) => {
-            const target = e.target as Node;
-            if (dropdownOpen && ref.current && !ref.current.contains(target)) {
-                setDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handle);
+        if (isOpen === true || isOpen === undefined) {
+            document.addEventListener('click', handleClickAnywhere);
+        }
         return () => {
-            document.removeEventListener('mousedown', handle);
+            document.removeEventListener('click', handleClickAnywhere);
         };
-    }, [dropdownOpen]);
-
-    useEffect(() => {
-        setDropdownOpen(false);
-    }, [location.pathname]);
-
-    return {
-        dropdownOpen,
-        handleToggleDropdown,
-        handleCloseDropdown,
-        ref,
-    };
+    }, [handleClickAnywhere, isOpen]);
 }
 
 export default useOutsideClick;
