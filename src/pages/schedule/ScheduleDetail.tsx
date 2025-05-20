@@ -2,7 +2,7 @@ import {useQuery} from '@tanstack/react-query';
 import {useParams} from 'react-router';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {detailScheduleApi} from '@api/schedules/getSchedules';
-import EditButton from '@pages/schedule/components/Detail/EditButton.tsx';
+import DetailEditButton from '@pages/schedule/components/Detail/DetailEditButton.tsx';
 import ScheduleContent from '@pages/schedule/components/Detail/ScheduleContent.tsx';
 import ScheduleHeader from '@pages/schedule/components/Detail/ScheduleHeader.tsx';
 import {useAuthStore} from '@store/authStore';
@@ -43,7 +43,7 @@ function ScheduleDetail() {
                 <ScheduleHeader title={schedule.title} idolName={schedule.idol_name}/>
                 <ScheduleContent schedule={schedule}/>
                 {user.is_staff && (
-                    <EditButton
+                    <DetailEditButton
                         scheduleId={scheduleId!}
                         idolId={idolId!}
                         onNavigate={(path, navState) => navigate(path, {state: navState})}
