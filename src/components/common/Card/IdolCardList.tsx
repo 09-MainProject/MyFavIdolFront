@@ -1,22 +1,11 @@
 import CardFrame from '@/components/CardFrame';
 import useMobile from '@/hooks/useMobile';
+import { IdolArtistsCard } from '@/types/idols';
 
 // Api => Artist => IdolCardList
 type PageType = 'artist' | 'home';
 
-export interface IdolArtistsCard {
-  id: number;
-  idolId: number;
-  title: string;
-  img: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  description: string;
-  name: string;
-  enName: string;
-}
+export type { IdolArtistsCard };
 
 type Props = {
   idolList: IdolArtistsCard[];
