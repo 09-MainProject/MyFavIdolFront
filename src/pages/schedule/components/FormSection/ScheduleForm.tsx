@@ -1,8 +1,9 @@
+import {addDays, format} from 'date-fns';
 import {useMemo} from 'react';
-import Input from '@components/common/Input/Input';
+import Input from '@components/common/Input/Input.tsx';
 import useScheduleFormState from '@pages/schedule/components/Hooks/useScheduleFormState.tsx';
 import useScheduleHandlers from '@pages/schedule/components/Hooks/useScheduleHandlers.tsx';
-import {IdolSchedule} from '@/types/idolSchedule';
+import {IdolSchedule} from '@/types/idolSchedule.ts';
 
 interface ScheduleFormProps {
     mode: 'create' | 'edit';
@@ -21,10 +22,9 @@ function ScheduleForm({mode, initialData, scheduleId, onAfterSubmit, idols}: Sch
         onAfterSubmit,
     });
 
-    const minDate = useMemo(() => {
-        const d = new Date();
-        d.setDate(d.getDate() - 1);
-        return d.toISOString().slice(0, 16);
+    const yesterday = useMemo(() => {
+        const d = addDays(new Date(), -1);
+        return format(d, 'yyyy-MM-dd\'T\'HH:mm');
     }, []);
 
     return (
@@ -58,9 +58,9 @@ function ScheduleForm({mode, initialData, scheduleId, onAfterSubmit, idols}: Sch
             <Input type="text" name="location" value={form.location} onChange={handleChange} label="장소"
                    variant="lined"/>
             <Input type="datetime-local" name="start_date" value={form.start_date} onChange={handleChange} label="시작 일시"
-                   variant="lined" min={minDate}/>
+                   variant="lined" min={yesterday}/>
             <Input type="datetime-local" name="end_date" value={form.end_date} onChange={handleChange} label="종료 일시"
-                   variant="lined" min={minDate}/>
+                   variant="lined" min={yesterday}/>
 
             <div className="flex gap-2 pt-4">
                 <button type="submit" className="flex-1 bg-black text-white py-2 rounded"
