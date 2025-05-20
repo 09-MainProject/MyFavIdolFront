@@ -1,19 +1,19 @@
 import {useQuery} from '@tanstack/react-query';
 import {useNavigate} from 'react-router-dom';
-import {api} from '@/lib/api';
-import ScheduleForm from './ScheduleForm';
+import {api} from '@/lib/api.ts';
+import ScheduleForm from './ScheduleForm.tsx';
 
 function ScheduleCreatePage() {
     const navigate = useNavigate();
 
-    const {data: idolListResponse} = useQuery({
+    const {data: idolListResponse, isLoading} = useQuery({
         queryKey: ['idols'],
         queryFn: () => api.get('/idols'),
     });
 
-    if (!idolListResponse) return <div>로딩 중...</div>;
+    if (isLoading || !idolListResponse?.data) return <div>로딩 중...</div>;
 
-    const idols = idolListResponse.data.map((idol) => ({
+    const idols = idolListResponse?.data?.map((idol) => ({
         id: idol.id,
         name: idol.name,
     }));
