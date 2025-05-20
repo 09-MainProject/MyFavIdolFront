@@ -2,7 +2,6 @@ import { useQueries } from '@tanstack/react-query';
 import { idolSchedule } from '@/api/idolApi';
 import useIdolData from './useIdolData';
 
-
 type IdolScheduleItem = {
   id: number;
   idol: { id: number };

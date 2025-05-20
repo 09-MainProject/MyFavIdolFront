@@ -5,7 +5,7 @@ const today = new Date();
 const yesterday = format(add(today, { days: -2 }), 'yyyy-MM-dd');
 const tomorrow = format(add(today, { days: 2 }), 'yyyy-MM-dd');
 
-// 아이돌 전체 목록 조회 
+// 아이돌 전체 목록 조회 j
 export async function getIdolList(){
   const res = await api.get('/idols');
   return res.data;

@@ -153,6 +153,7 @@ function Home() {
                 onCardClick={handleCardClick}
                 onDetailClick={(idolId, scheduleId) => handleScheduleDetailClick(idolId, scheduleId)}
             />
+
           )}
         </section>
       </div>
