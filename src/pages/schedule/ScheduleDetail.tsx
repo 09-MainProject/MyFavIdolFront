@@ -1,44 +1,57 @@
-import { useParams } from 'react-router';
-
-const IDOL_DETAIL = ['#보이넥스트도어', '#보이넥스트도어'];
+import {useQuery} from '@tanstack/react-query';
+import {useParams} from 'react-router';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {detailScheduleApi} from '@api/schedules/getSchedules';
+import EditButton from '@pages/schedule/components/Detail/EditButton.tsx';
+import ScheduleContent from '@pages/schedule/components/Detail/ScheduleContent.tsx';
+import ScheduleHeader from '@pages/schedule/components/Detail/ScheduleHeader.tsx';
+import {useAuthStore} from '@store/authStore';
 
 function ScheduleDetail() {
-  const { id } = useParams();
+    const navigate = useNavigate();
+    const {id: scheduleId} = useParams();
+    const {state} = useLocation() as { state?: { idolId?: string; id?: string } };
+    const {user} = useAuthStore();
 
-  if (!id) return <div className="p-4">잘못된 접근입니다.</div>;
+    const idolId = state?.idolId;
+    const detailId = state?.id;
 
-  return (
-    <section className="mt-24 p-4">
-      <article>
-        {id}
-        <h1 className="mb-20 text-xl font-bold">
-          [🐦] BOYNEXTDOOR 4th EP [No Genre] 예약 구매자 대상 영상통화 팬사인회
-          안내
-          <a
-            href="https://t.co/BV0WXb4cum"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🔗 https://t.co/BV0WXb4cum
-          </a>
-          #BOYNEXTDOOR #보이넥스트도어 #BND #No_Genre
-        </h1>
-        <div className="flex h-[300px] max-h-[400px] items-center rounded-md border border-gray-200 p-8">
-          <p>lorem ipsum</p>
+    const {data: schedule, isError, isLoading} = useQuery({
+        queryKey: ['scheduleDetail', idolId, detailId],
+        queryFn: async () => {
+            const res = await detailScheduleApi(idolId, detailId);
+            return res.data.schedule_view;
+        },
+        enabled: !!idolId && !!detailId,
+    });
+
+    if (isLoading) return (
+        <div className="flex h-screen items-center justify-center">
+            <div className="text-lg text-gray-600">불러오는 중...</div>
         </div>
-        <ul className="mt-12 flex items-center gap-4">
-          {IDOL_DETAIL.map(idol => (
-            <li
-              key={idol}
-              className="rounded-2xl border border-gray-200 p-2 text-sm font-bold"
-            >
-              {idol}
-            </li>
-          ))}
-        </ul>
-      </article>
-    </section>
-  );
+    );
+
+    if (isError || !schedule) return (
+        <div className="flex h-screen items-center justify-center">
+            <div className="text-lg text-red-500">오류가 발생했습니다.</div>
+        </div>
+    );
+
+    return (
+        <section className="mt-24 px-4">
+            <div className="rounded-lg bg-white p-8 shadow-lg">
+                <ScheduleHeader title={schedule.title} idolName={schedule.idol_name}/>
+                <ScheduleContent schedule={schedule}/>
+                {user.is_staff && (
+                    <EditButton
+                        scheduleId={scheduleId!}
+                        idolId={idolId!}
+                        onNavigate={(path, navState) => navigate(path, {state: navState})}
+                    />
+                )}
+            </div>
+        </section>
+    );
 }
 
 export default ScheduleDetail;
