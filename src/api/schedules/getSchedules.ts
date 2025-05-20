@@ -1,8 +1,17 @@
 import {api} from '@/lib/api.ts';
-import {IdolSchedule, IdolScheduleRequest} from '@/types/idolSchedule.ts';
+import {
+    IdolSchedule,
+    IdolScheduleCreateResponse,
+    IdolScheduleDetailResponse,
+    IdolScheduleRequest
+} from '@/types/idolSchedule.ts';
 
-export const getSchedulesApi = async (idol_id: string): Promise<IdolSchedule[]> => {
-    const response = await api.get(`/idols/${idol_id}/schedules`);
+export const getSchedulesApi = async (idol_id: string, startData?: string): Promise<IdolScheduleCreateResponse> => {
+    const response = await api.get(`/idols/${idol_id}/schedules`, {
+        params: {
+            start_date: startData,
+        }
+    });
     return response.data;
 };
 
@@ -11,8 +20,8 @@ export const createScheduleApi = async (data: IdolScheduleRequest, idol_id: stri
     return response.data;
 };
 
-export const detailScheduleApi = async (idol_id: string, id: string): Promise<IdolSchedule> => {
-    const response = await api.delete(`/idols/${idol_id}/schedules/${id}`);
+export const detailScheduleApi = async (idol_id: string, id: string): Promise<IdolScheduleDetailResponse> => {
+    const response = await api.get(`/idols/${idol_id}/schedules/${id}`);
     return response.data;
 };
 

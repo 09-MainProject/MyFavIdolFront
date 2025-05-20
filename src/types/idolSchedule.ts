@@ -22,14 +22,13 @@ export type IdolScheduleRequest = {
 
 
 export type IdolScheduleCreateResponse = {
-    data: IdolSchedule
+    data: IdolSchedule[]
 }
 
-
-export type IdolScheduleUpdateResponse = {
-    data: IdolSchedule
-}
 
 export type IdolScheduleDetailResponse = {
-    data: IdolSchedule
-}
+    data: {
+        schedule_view: IdolSchedule;
+    };
+};
+
