@@ -16,7 +16,7 @@ function useScheduleHandlers({form, mode, scheduleId, onAfterSubmit}: Props) {
         scheduleId,
         onSuccess: onAfterSubmit,
     });
-
+    
     const {
         title,
         description,
