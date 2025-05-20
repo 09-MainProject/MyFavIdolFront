@@ -41,7 +41,7 @@ function Layout() {
                 <Breadcrumb/>
                 <Outlet/>
             </main>
-            <ToastContainer position="top-center" limit={1} closeButton={false} autoClose={3000} hideProgressBar/>
+            <ToastContainer position="bottom-right" limit={1} closeButton={false} autoClose={1000} hideProgressBar/>
 
             <ScrollTop/>
             <Footer/>
