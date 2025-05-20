@@ -7,6 +7,7 @@ interface Props {
     scheduleId?: string;
     mode: 'create' | 'edit';
     onAfterSubmit?: () => void;
+    onSuccess?: () => void;
 }
 
 function useScheduleHandlers({form, mode, scheduleId, onAfterSubmit}: Props) {

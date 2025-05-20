@@ -6,13 +6,15 @@ import {IdolScheduleRequest} from '@/types/idolSchedule.ts';
 interface Props {
     idolId: string;
     scheduleId?: string;
+    onSuccess?: () => void;
 }
 
-function useScheduleMutations({idolId, scheduleId}: Props) {
+function useScheduleMutations({idolId, scheduleId, onSuccess}: Props) {
     const createMutation = useMutation({
         mutationFn: (data: IdolScheduleRequest) => createScheduleApi(data, idolId),
         onSuccess: () => {
             PerformToast({msg: '스케줄 등록 성공', type: 'success'});
+            onSuccess?.();
         },
         onError: () => {
             PerformToast({msg: '스케줄 등록 실패', type: 'error'});
@@ -26,6 +28,7 @@ function useScheduleMutations({idolId, scheduleId}: Props) {
         },
         onSuccess: () => {
             PerformToast({msg: '스케줄 수정 성공', type: 'success'});
+            onSuccess?.();
         },
         onError: () => {
             PerformToast({msg: '스케줄 수정 실패', type: 'error'});
@@ -39,6 +42,7 @@ function useScheduleMutations({idolId, scheduleId}: Props) {
         },
         onSuccess: () => {
             PerformToast({msg: '스케줄 삭제 성공', type: 'success'});
+            onSuccess?.();
         },
         onError: () => {
             PerformToast({msg: '스케줄 삭제 실패', type: 'error'});

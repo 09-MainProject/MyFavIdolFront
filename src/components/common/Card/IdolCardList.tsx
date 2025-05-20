@@ -1,11 +1,11 @@
 import CardFrame from '@/components/CardFrame';
 import useMobile from '@/hooks/useMobile';
+import { Idol } from '@/types/idols';
 
 // Api => Artist => IdolCardList
 type PageType = 'artist' | 'home';
 
-export interface IdolArtistsCard {
-  id: number;
+export type IdolArtistsCard = Idol & {
   idolId: number;
   title: string;
   img: string;
@@ -13,10 +13,8 @@ export interface IdolArtistsCard {
   startDate: string;
   endDate: string;
   location: string;
-  description: string;
-  name: string;
   enName: string;
-}
+};
 
 type Props = {
   idolList: IdolArtistsCard[];
