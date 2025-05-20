@@ -1,46 +1,22 @@
+import {useQuery} from '@tanstack/react-query';
 import {Link} from 'react-router';
+import {getSchedulesApi} from '@api/schedules/getSchedules.ts';
+import CalendarWrapper from '@components/common/Calendar/CalendarWrapper.tsx';
 import {useAuthStore} from '@store/authStore.ts';
 import {useIdolState} from '@store/idolStore';
-import CalendarWrapper from '@/components/common/Calendar/CalendarWrapper';
-import {IdolArtistsCard} from '@/types/idols';
-
+import {toISODateString} from '@utils/date.ts';
 
 function Schedule() {
-    const {followedIdols, selectedIdolId} = useIdolState();
-    const {user, login} = useAuthStore();
-    console.log(user);
+    const today = toISODateString(new Date());
+    const {selectedIdolId} = useIdolState();
+    const {user} = useAuthStore();
+    const {data} = useQuery({
+        queryKey: ['idolSchedule', selectedIdolId, today],
+        queryFn: () => getSchedulesApi(selectedIdolId.toString(), today)
+    });
 
-    const publicIdols: IdolArtistsCard[] = [
-        {
-            id: 99,
-            idolId: 99,
-            title: 'K-POP 축제',
-            type: '공연',
-            startDate: '2025-05-25',
-            endDate: '2025-05-25',
-            location: '서울 월드컵 경기장!',
-            description: 'K-POP 슈퍼 콘서트',
-            img: '../src/assets/img/twice.jpg',
-            name: '트와이스',
-            enName: 'twice',
-        },
-    ];
+    const schedules = data?.data ?? [];
 
-    const selectedIdol = followedIdols
-        .filter(idol => idol.id === selectedIdolId)
-        .map(idol => ({
-            ...idol,
-            idolId: idol.id,
-            title: idol.name,
-            img: idol.profile_image || '',
-            type: '일정',
-            startDate: new Date().toISOString().split('T')[0],
-            endDate: new Date().toISOString().split('T')[0],
-            location: '',
-            enName: idol.en_name || '',
-        }));
-
-    const displayIdols = login ? selectedIdol : publicIdols;
     return (
         <section className="mt-20 px-2">
             {user.is_staff && (
@@ -50,7 +26,7 @@ function Schedule() {
                     </Link>
                 </div>
             )}
-            <CalendarWrapper idols={displayIdols}/>
+            <CalendarWrapper idols={schedules}/>
         </section>
     );
 }
