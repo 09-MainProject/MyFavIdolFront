@@ -35,14 +35,13 @@ function Layout() {
     }, [accessToken, csrfToken, setLogin, setUser]);
 
     return (
-        <div>
+        <div className="flex min-h-screen w-full flex-col">
             <Header/>
-            <main className="py-8">
+            <main className="flex-1 py-8">
                 <Breadcrumb/>
                 <Outlet/>
             </main>
             <ToastContainer position="bottom-right" limit={1} closeButton={false} autoClose={1000} hideProgressBar/>
-
             <ScrollTop/>
             <Footer/>
         </div>
