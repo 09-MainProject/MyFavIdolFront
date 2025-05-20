@@ -1,55 +1,51 @@
-import {useMemo} from 'react';
-import {Link} from 'react-router';
+import {useEffect, useMemo} from 'react';
+import {Link, useNavigate} from 'react-router';
 import ProfileHeader from '@components/common/Profile/ProfileHeader';
-import ListCardSkeleton from '@components/common/Skeleton/ListCardSkeleton.tsx';
-import useFetchPosts from '@hooks/useFetchPosts';
+import ListCardSkeleton from '@components/common/Skeleton/ListCardSkeleton';
 import useInfiniteObserver from '@hooks/useInfiniteObserver';
-import TimelineCard from '@pages/timeline/TimelineCard';
+import TimelineCard from '@pages/timeline/components/Card/TimelineCard';
+import useFetchPosts from '@pages/timeline/components/hooks/useFetchPosts';
 import {useAuthStore} from '@store/authStore';
 import performToast from '@utils/PerformToast';
+import {PostListResponse} from '@/types/post.ts';
 
 function Timeline() {
+    const navigate = useNavigate();
+    const {login} = useAuthStore();
+
+    useEffect(() => {
+        if (!login) {
+            performToast({msg: '로그인 후 이용 가능합니다.', type: 'warning'});
+            navigate('/login');
+        }
+    }, [login, navigate]);
+
     const params = useMemo(() => ({ordering: '-created_at'}), []);
     const {
         getPostData,
         getPostLoading,
         getPostError,
-        getUserProfileData,
-        getUserProfileLoading,
-        getUserProfileError,
         getPostFetchNextPage,
         getPostHasNextPage,
     } = useFetchPosts(params);
-    const {login} = useAuthStore();
+
     const ref = useInfiniteObserver(getPostFetchNextPage, getPostHasNextPage);
 
-    if (getPostLoading || getUserProfileLoading) return <ListCardSkeleton num={10}/>;
-    if (getPostError) return performToast({msg: '게시글 불러 오기 실패', type: 'error'});
-    if (getUserProfileError) return performToast({msg: '프로필 불러 오기 실패', type: 'error'});
+    if (getPostLoading) return <ListCardSkeleton num={10}/>;
+
+    if (getPostError) {
+        const isAuthError = (getPostError as PostListResponse)?.response?.status === 401;
+        if (isAuthError) {
+            performToast({msg: '로그인이 필요합니다.', type: 'error'});
+            navigate('/login');
+        } else {
+            performToast({msg: '게시글 불러오기 실패', type: 'error'});
+        }
+        return null;
+    }
 
     return (
         <section className="mt-12 px-4">
-            <ul className="flex flex-col items-center gap-10">
-                {getPostData.map((post) => (
-                    <li key={post.id} className="w-full">
-                        {getUserProfileData && (
-                            <ProfileHeader
-                                image_url={getUserProfileData.image_url}
-                                nickname={getUserProfileData.nickname}
-                                created_at={getUserProfileData.created_at}
-                                mode="post"
-                            />
-                        )}
-                        <TimelineCard
-                            post={post}
-                            postId={post.id}
-                            likeCount={post.likes_count}
-                            is_liked={post.is_liked}
-                            is_deleted={post.is_deleted}
-                        />
-                    </li>
-                ))}
-            </ul>
             {login && (
                 <div className="mt-12 text-center">
                     <Link
@@ -60,6 +56,25 @@ function Timeline() {
                     </Link>
                 </div>
             )}
+            <ul className="flex flex-col items-center gap-10">
+                {getPostData.map((post) => (
+                    <li key={post.id} className="w-full">
+                        <ProfileHeader
+                            image_url={post.image_url}
+                            nickname={post.author}
+                            created_at={post.created_at}
+                            mode="post"
+                        />
+                        <TimelineCard
+                            post={post}
+                            postId={post.id}
+                            likeCount={post.likes_count}
+                            is_liked={post.is_liked}
+                            is_deleted={post.is_deleted}
+                        />
+                    </li>
+                ))}
+            </ul>
             <div ref={ref}/>
         </section>
     );
