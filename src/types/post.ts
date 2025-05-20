@@ -54,3 +54,7 @@ export type PostRestoreRequest = {
     is_deleted: boolean;
     image_url: string;
 };
+
+export type PostDeleteRequest = {
+    id: string;
+};

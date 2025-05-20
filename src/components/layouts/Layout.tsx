@@ -16,13 +16,13 @@ function Layout() {
         setLogin(accessToken, csrfToken);
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/users/profile');
+                const response = await api.get('/profile');
                 setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
-                console.log('계정 :', decodedPayload);
+                console.log(decodedPayload);
                 setUser({
-                    ...response.data.data,
+                    ...response.data,
                     is_staff: decodedPayload.is_staff,
                     is_superuser: decodedPayload.is_superuser
                 });
@@ -41,7 +41,7 @@ function Layout() {
                 <Breadcrumb/>
                 <Outlet/>
             </main>
-            <ToastContainer position="top-center" limit={1} closeButton={false} autoClose={3000} hideProgressBar/>
+            <ToastContainer position="bottom-right" limit={1} closeButton={false} autoClose={1000} hideProgressBar/>
 
             <ScrollTop/>
             <Footer/>

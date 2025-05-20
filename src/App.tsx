@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 
+import TimelineForm from '@pages/timeline/TimelineForm.tsx';
 import Layout from '@/components/layouts/Layout';
 
 import Artist from '@/pages/artists/Artist';
@@ -13,12 +14,9 @@ import Profile from '@/pages/signup/Profile';
 import Signup from '@/pages/signup/Signup';
 import Timeline from '@/pages/timeline/Timeline';
 import TimelineDetail from '@/pages/timeline/TimelineDetail';
-import TimelineEdit from '@/pages/timeline/TimelineEdit';
-import TimelineWrite from '@/pages/timeline/TimelineWrite';
 import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
-
 
 function App() {
   const router = createBrowserRouter([
@@ -48,7 +46,7 @@ function App() {
         },
         {
           path: '/timeline/write',
-          element: <TimelineWrite />,
+          element: <TimelineForm />,
         },
         {
           path: '/timeline/:id',
@@ -56,7 +54,7 @@ function App() {
         },
         {
           path: '/timeline/edit/:id',
-          element: <TimelineEdit />,
+          element: <TimelineForm />,
         },
         {
           path: '/login',
@@ -75,8 +73,8 @@ function App() {
           element: <CheckPassword />,
         },
         {
-path: '/editprofile',
-element: <EditProfile />,
+          path: '/editprofile',
+          element: <EditProfile />,
         },
         {
           path: '/artists/create',

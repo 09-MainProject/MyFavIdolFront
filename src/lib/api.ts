@@ -8,19 +8,12 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   config => {
-    const { accessToken, csrfToken } = useAuthStore.getState();
-
-    if (accessToken) {
+    const token = useAuthStore.getState().accessToken;
+    if (token) {
       // eslint-disable-next-line no-param-reassign
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
-
-    if (csrfToken) {
-      // eslint-disable-next-line no-param-reassign
-      config.headers['X-CSRFToken'] = csrfToken;
-    }
-
-    return config;
+    return config; // ✅ 반드시 반환해야 함
   },
   error => Promise.reject(error)
 );
