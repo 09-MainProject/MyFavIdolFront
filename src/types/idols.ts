@@ -1,21 +1,25 @@
-export type Idol = {
+export type IdolArtistsCard = {
   id: number;
-  idolId?: number;
+  idolId: number;
   name: string;
-  en_name?: string;
+  title: string;
+  img: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  description: string;
+  enName: string;
+};
+
+export type Idol = IdolArtistsCard & {
+  en_name: string;
   debut_date: string;
   agency: string;
-  description: string;
   profile_image: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  title?: string;
-  type?: string;
-  startDate?: string;
-  endDate?: string;
-  location?: string;
-  img?: string;
 };
 
 export type IdolResponseType = {
