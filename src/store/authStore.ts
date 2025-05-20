@@ -43,7 +43,7 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
             setUser: (user: User) =>
                 set(state => ({user: {...state.user, ...user}})),
             setLogout: () => {
-                set({accessToken: null, csrfToken: null, login: false, user: null, isAdmin: false});
+                set({accessToken: null, csrfToken: null, login: false, user: null});
             },
         }),
         {
