@@ -26,7 +26,20 @@ function Schedule() {
         },
     ];
 
-    const selectedIdol = followedIdols.filter(idol => idol.id === selectedIdolId);
+    const selectedIdol = followedIdols
+        .filter(idol => idol.id === selectedIdolId)
+        .map(idol => ({
+            ...idol,
+            idolId: idol.id,
+            title: idol.name,
+            img: idol.profile_image || '',
+            type: '일정',
+            startDate: new Date().toISOString().split('T')[0],
+            endDate: new Date().toISOString().split('T')[0],
+            location: '',
+            enName: idol.en_name || '',
+        }));
+
     const displayIdols = login ? selectedIdol : publicIdols;
     return (
         <section className="mt-20 px-2">
