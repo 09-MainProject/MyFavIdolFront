@@ -79,7 +79,9 @@ function Artist() {
                             }}
                             pageType="artist"
                             isVertical={false}
-                            onDetailClick={(idolId) => navigate(`/artists/${idolId}`)}
+                            onDetailClick={(idolId) => {
+                                navigate(`/artists/${idolId}`);
+                            }}
                         />
                         }
                     </div>

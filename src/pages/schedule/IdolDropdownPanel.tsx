@@ -33,7 +33,7 @@ function IdolDropdownPanel({
                             setSelectIdol(idol.id);
                             handleCloseDropdown();
                             handleToggleDropdown();
-                            navigate(`/schedule/${idol.id}`);
+                            navigate('/schedule');
                         }}
                         className={`flex w-full items-center justify-between px-4 py-2 ${
                             selectedIdolId === idol.id && 'bg-gray-100'

@@ -90,6 +90,10 @@ element: <EditProfile />,
           path: '/artists/:id/edit',
           element: <EditArtist />,
         },
+        {
+          path: '/schedule/:scheduleId',
+          element: <ScheduleDetail />,
+        },
       ],
     },
   ]);

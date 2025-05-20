@@ -48,7 +48,7 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
                 isAdmin: !!(user?.is_staff || user?.is_superuser),
                 })),
             setLogout: () => {
-                set({accessToken: null, csrfToken: null, login: false, user: null});
+                set({accessToken: null, csrfToken: null, login: false, user: null, isAdmin: false});
             },
         }),
         {
