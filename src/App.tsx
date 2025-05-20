@@ -1,5 +1,6 @@
 import {createBrowserRouter, RouterProvider} from 'react-router';
-import ScheduleCreatePage from '@pages/schedule/ScheduleCreatePage.tsx';
+import ScheduleCreatePage from '@pages/schedule/components/FormSection/ScheduleCreatePage.tsx';
+import ScheduleEditorPage from '@pages/schedule/components/FormSection/ScheduleEditorPage.tsx';
 import TimelineForm from '@pages/timeline/TimelineForm.tsx';
 import Layout from '@/components/layouts/Layout';
 
@@ -40,6 +41,10 @@ function App() {
                 {
                     path: '/schedule/create',
                     element: <ScheduleCreatePage/>,
+                },
+                {
+                    path: '/schedule/:id/edit',
+                    element: <ScheduleEditorPage/>,
                 },
                 {
                     path: '/schedule/:id',
