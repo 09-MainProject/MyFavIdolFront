@@ -2,13 +2,15 @@ import {Link} from 'react-router';
 import {useAuthStore} from '@store/authStore.ts';
 import {useIdolState} from '@store/idolStore';
 import CalendarWrapper from '@/components/common/Calendar/CalendarWrapper';
+import {IdolArtistsCard} from '@/types/idols';
+
 
 function Schedule() {
     const {followedIdols, selectedIdolId} = useIdolState();
     const {user, login} = useAuthStore();
     console.log(user);
 
-    const publicIdols = [
+    const publicIdols: IdolArtistsCard[] = [
         {
             id: 99,
             idolId: 99,

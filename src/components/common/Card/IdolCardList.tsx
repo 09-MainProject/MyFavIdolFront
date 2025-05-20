@@ -5,6 +5,8 @@ import { IdolArtistsCard } from '@/types/idols';
 // Api => Artist => IdolCardList
 type PageType = 'artist' | 'home';
 
+export type { IdolArtistsCard };
+
 type Props = {
   idolList: IdolArtistsCard[];
   onCardClick?: (idol: IdolArtistsCard) => void;

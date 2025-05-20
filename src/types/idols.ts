@@ -12,7 +12,18 @@ export type IdolArtistsCard = {
   enName: string;
 };
 
-export type Idol = IdolArtistsCard & {
+export type Idol = {
+  id: number;
+  idolId: number;
+  name: string;
+  title: string;
+  img: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  description: string;
+  enName: string;
   en_name: string;
   debut_date: string;
   agency: string;
