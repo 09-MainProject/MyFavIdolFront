@@ -36,7 +36,7 @@ function CommentItem({
                      }: Props) {
     const childComments = childCommentMap[String(item.id)] ?? [];
     const {ref, handleCommentDropdownToggle, commentDropdownOpen} = useCommentDropdown();
-    const formattedDate = formatDate(item.created_at, 'yyyy-MM-dd HH:mm:ss');
+    const formattedDate = formatDate(item.created_at);
     const isMine = user?.nickname === item.author;
 
     return (
@@ -84,7 +84,6 @@ function CommentItem({
                         isParent={!item.parent}
                         isLoggedIn={login}
                         onClick={(id) => {
-                            handleCommentDropdownToggle(String(id));
                             setInputMode({mode: 'reply', payload: {parent_id: Number(id)}});
                         }}
                     />
