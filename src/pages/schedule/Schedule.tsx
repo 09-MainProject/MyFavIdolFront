@@ -1,4 +1,5 @@
 import {useQuery} from '@tanstack/react-query';
+import {addMonths, subMonths} from 'date-fns';
 import {Link} from 'react-router';
 import {getSchedulesApi} from '@api/schedules/getSchedules.ts';
 import CalendarWrapper from '@components/common/Calendar/CalendarWrapper.tsx';
@@ -7,12 +8,15 @@ import {useIdolState} from '@store/idolStore';
 import {toISODateString} from '@utils/date.ts';
 
 function Schedule() {
-    const today = toISODateString(new Date());
+    const today = new Date();
+    const startDate = toISODateString(subMonths(today, 1));
+    const endDate = toISODateString(addMonths(today, 1));
+
     const {selectedIdolId} = useIdolState();
     const {user} = useAuthStore();
     const {data} = useQuery({
-        queryKey: ['idolSchedule', selectedIdolId, today],
-        queryFn: () => getSchedulesApi(selectedIdolId.toString(), today)
+        queryKey: ['idolSchedule', selectedIdolId, startDate, endDate],
+        queryFn: () => getSchedulesApi(selectedIdolId.toString(), startDate, endDate)
     });
 
     const schedules = data?.data ?? [];

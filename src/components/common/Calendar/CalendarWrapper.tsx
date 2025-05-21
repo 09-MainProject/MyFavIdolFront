@@ -15,7 +15,7 @@ type Props = {
 
 
 function guessTypeFromTitle(title: string): '팬미팅' | '공연' | '방송' | 'Etc' {
-    if (/팬.?미팅/i.test(title)) return '팬미팅';
+    if (/팬\s?미팅/i.test(title)) return '팬미팅';
     if (/공연|콘서트|쇼케이스/i.test(title)) return '공연';
     if (/방송|출연|예능|라디오|인터뷰/i.test(title)) return '방송';
     return 'Etc';

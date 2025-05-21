@@ -17,6 +17,13 @@ function CommentInput({commentId, mode, inputMode, onChange, onSubmit}: Props) {
 
     const value = inputMode.payload?.value ?? '';
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            onSubmit();
+        }
+    };
+
     return (
         <div className="flex gap-2 mt-4">
             <input
@@ -29,10 +36,12 @@ function CommentInput({commentId, mode, inputMode, onChange, onSubmit}: Props) {
                         payload: {...inputMode.payload, value: e.target.value},
                     })
                 }
+                onKeyDown={handleKeyDown}
+                placeholder={isEditing ? '댓글을 수정하세요...' : '답글을 입력하세요...'}
             />
             <button
                 type="button"
-                className="rounded bg-blue-500 px-4 py-1.5 text-sm text-white"
+                className="rounded bg-black px-4 py-1.5 text-sm text-white"
                 onClick={onSubmit}
             >
                 저장

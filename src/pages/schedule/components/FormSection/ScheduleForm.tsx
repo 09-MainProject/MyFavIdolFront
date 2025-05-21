@@ -1,5 +1,3 @@
-import {addDays, format} from 'date-fns';
-import {useMemo} from 'react';
 import Input from '@components/common/Input/Input.tsx';
 import useScheduleFormState from '@pages/schedule/components/Hooks/useScheduleFormState.tsx';
 import useScheduleHandlers from '@pages/schedule/components/Hooks/useScheduleHandlers.tsx';
@@ -21,11 +19,6 @@ function ScheduleForm({mode, initialData, scheduleId, onAfterSubmit, idols}: Sch
         scheduleId,
         onAfterSubmit,
     });
-
-    const yesterday = useMemo(() => {
-        const d = addDays(new Date(), -1);
-        return format(d, 'yyyy-MM-dd\'T\'HH:mm');
-    }, []);
 
     return (
         <form onSubmit={handleSubmit} className="p-8 space-y-4">
@@ -58,9 +51,9 @@ function ScheduleForm({mode, initialData, scheduleId, onAfterSubmit, idols}: Sch
             <Input type="text" name="location" value={form.location} onChange={handleChange} label="장소"
                    variant="lined"/>
             <Input type="datetime-local" name="start_date" value={form.start_date} onChange={handleChange} label="시작 일시"
-                   variant="lined" min={yesterday}/>
+                   variant="lined"/>
             <Input type="datetime-local" name="end_date" value={form.end_date} onChange={handleChange} label="종료 일시"
-                   variant="lined" min={yesterday}/>
+                   variant="lined" min={form.start_date}/>
 
             <div className="flex gap-2 pt-4">
                 <button type="submit" className="flex-1 bg-black text-white py-2 rounded"
