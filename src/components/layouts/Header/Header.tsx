@@ -16,7 +16,11 @@ const DEFAULT_SELECTED_IDOL = '아이돌 선택';
 
 function Header() {
     const {followedIdols, selectedIdolId, setSelectIdol} = useIdolState();
-    const idols = followedIdols;
+    const idols = followedIdols.map(idol => ({
+        id: idol.id,
+        name: idol.name,
+        img: idol.image_url
+    }));
     const mobileRef = useRef<null | HTMLDivElement>(null);
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -73,7 +77,7 @@ function Header() {
 
     return (
         <header className="fixed z-[9999] w-full max-w-[1080px] bg-white">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between px-4 py-4">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="text-xl font-bold leading-none">
                         MyFavIdol
