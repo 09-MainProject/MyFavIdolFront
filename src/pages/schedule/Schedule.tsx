@@ -19,10 +19,10 @@ function Schedule() {
 
     return (
         <section className="mt-20 px-2">
-            {user.is_staff && (
+            {user?.is_staff && (
                 <div className="mb-4 flex gap-2">
                     <Link to="/schedule/create">
-                        <button type="button" className="bg-blue-600 text-white px-4 py-2 rounded-md">일정 추가</button>
+                        <button type="button" className="bg-black text-white px-4 py-2 rounded-md">일정 추가</button>
                     </Link>
                 </div>
             )}
