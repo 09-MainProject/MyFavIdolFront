@@ -10,6 +10,7 @@ import {
     getIdolList,
     unfollowIdol
 } from '@/api/idolApi';
+import {useAuthStore} from '@/store/authStore';
 import {useIdolState} from '@/store/idolStore';
 
 
@@ -19,6 +20,7 @@ const MAX_FOLLOWS = 3;
 export default function useIdolData(idolDetailId?: number) {
     const queryClient = useQueryClient();
     const {setFollowedIdols} = useIdolState();
+    const {login} = useAuthStore();
 
     // 전체 idol 리스트 받아오는 쿼리
     const {data: idolList, isSuccess: isIdolListReady} = useQuery({
@@ -36,7 +38,7 @@ export default function useIdolData(idolDetailId?: number) {
     const {data: followedIdol} = useQuery({
         queryKey: ['followedIdol'],
         queryFn: getFollowedIdolList,
-        enabled: isIdolListReady && !!idolList,
+        enabled: isIdolListReady && !!idolList && login,
         select: (data) =>
             data.map((item) => ({
                 id: item.idol.id,
@@ -49,6 +51,8 @@ export default function useIdolData(idolDetailId?: number) {
     React.useEffect(() => {
         if (followedIdol) {
             setFollowedIdols(followedIdol);
+        } else {
+            setFollowedIdols([]);
         }
     }, [followedIdol, setFollowedIdols]);
 
@@ -70,6 +74,11 @@ export default function useIdolData(idolDetailId?: number) {
     });
 
     async function handleFollowState(id: number) {
+        if (!login) {
+            PerformToast({msg: '로그인이 필요한 서비스입니다.', type: 'warning'});
+            return;
+        }
+
         // 팔로우 상태 확인 
         const isFollowed = await checkFollowState(id);
 
