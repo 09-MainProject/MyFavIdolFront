@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Input from '@components/common/Input/Input.tsx';
@@ -6,11 +7,11 @@ import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
 import { api } from '@/lib/api';
-// import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
   const { setLogin, setUser } = useAuthStore();
+
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -18,10 +19,10 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const refreshProfile = async () => {
-  const response = await api.get('/users/profile');
-  const userData = response.data.data;
-  setUser(userData);
-};
+    const response = await api.get('/users/profile');
+    const userData = response.data.data;
+    setUser(userData);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,11 +49,15 @@ function Login() {
         window.location.reload();
       }
     } catch (error) {
-        console.log('에러', error.response?.data || error);
+      console.log('에러', error.response?.data || error);
       if (error.response?.status === 401) {
         setErrorMessage('비밀번호가 일치하지 않습니다.');
       }
     }
+  };
+
+  const handleSocialLogin = async (provider: 'kakao' | 'naver' | 'google') => {
+    window.location.href = `https://wistar.n-e.kr/api/users/${provider}/login`;
   };
 
   return (
@@ -108,18 +113,23 @@ function Login() {
         <div className="mt-4 flex justify-center gap-4">
           <button
             type="button"
+            onClick={() => handleSocialLogin('kakao')}
             className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
           >
             <KakaoIcon />
           </button>
+
           <button
             type="button"
+            onClick={() => handleSocialLogin('naver')}
             className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
           >
             <NaverIcon />
           </button>
+
           <button
             type="button"
+            onClick={() => handleSocialLogin('google')}
             className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
           >
             <GoogleIcon />

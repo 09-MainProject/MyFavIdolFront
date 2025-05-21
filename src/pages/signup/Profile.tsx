@@ -7,6 +7,9 @@ import { userProfile } from './EditProfile';
 // import TodaySchedule from '@/components/TodaySchedule';
 
 function Profile() {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(true);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(true);
+
   const { login } = useAuthStore(); // 회원정보 갱신 때 setUser를 추가
 
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -21,62 +24,66 @@ function Profile() {
   });
 
   return (
-    <div>
-      <div className="flex min-h-screen flex-col items-center bg-white px-4 pt-10">
-        <div className="flex w-full max-w-3xl flex-col gap-6">
-          {/* 경로 표시 */}
-          <div className="flex items-center text-sm text-gray-600">
-            <Link to="/" className="text-gray-600 hover:text-black">
-              Home
-            </Link>
-            <span className="mx-2">{'>'}</span>
-            <Link to="/schedule" className="text-gray-600 hover:text-black">
-              일정 관리
-            </Link>
-            <span className="mx-2">{'>'}</span>
-            <span className="font-semibold text-black">프로필</span>
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="w-full max-w-xl -translate-y-12 transform space-y-8 rounded-xl border border-gray-200 bg-white px-6 py-10 shadow-sm">
+        {/* 👤 프로필 상단 */}
+        <div className="mb-4 flex items-center gap-6 border-b border-gray-200 pb-6">
+          <div className="h-20 w-20 overflow-hidden rounded-full bg-gray-200">
+            <img
+              ref={imgRef}
+              src={userProfileData?.image_url}
+              alt="프로필"
+              className="h-full w-full object-cover"
+              onError={() => !isImgError && setIsImgError(true)}
+            />
+          </div>
+          <div>
+            <p className="text-xl font-semibold text-gray-800">
+              {userProfileData?.nickname}님 환영합니다
+            </p>
+          </div>
+        </div>
+
+        {/* 📅 팬로그 */}
+        <div className="space-y-2">
+          <div
+            className="flex cursor-pointer items-center justify-between"
+            onClick={() => setIsCalendarOpen(prev => !prev)}
+          >
+            <h3 className="text-base font-semibold text-gray-800">📅 팬로그</h3>
+            <span className="text-sm text-gray-500">
+              {isCalendarOpen ? '접기 ▲' : '펼치기 ▼'}
+            </span>
           </div>
 
-          <h2 className="text-2xl font-bold">프로필</h2>
-
-          {userProfileData ? (
-            <div className="flex items-center">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-gray-300">
-                <img
-                  ref={imgRef}
-                  src={userProfileData?.image_url}
-                  alt="프로필"
-                  className="h-full w-full object-cover"
-                  onError={() => {
-                    if (!isImgError) setIsImgError(true);
-                  }}
-                />
-              </div>
-              <div className="ml-4">
-                <p className="text-lg font-semibold">
-                  {userProfileData?.nickname}님 환영합니다
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="ml-4 text-sm text-gray-500">
-              로그인 후 프로필을 확인할 수 있어요.
+          {isCalendarOpen && (
+            <div className="rounded-md bg-gray-50 p-4 text-sm text-gray-600 shadow-sm">
+              {/* 여기에 캘린더 컴포넌트 */}
+              여기에 캘린더 컴포넌트 들어갈 예정
             </div>
           )}
+        </div>
 
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">팬로그</h3>
-            <div className="rounded-lg bg-gray-100 p-4 shadow-sm">
-              <p>여기에 캘린더 컴포넌트 들어갈 예정</p>
-            </div>
+        {/* 📝 오늘의 스케줄 */}
+        <div className="space-y-2">
+          <div
+            className="flex cursor-pointer items-center justify-between"
+            onClick={() => setIsScheduleOpen(prev => !prev)}
+          >
+            <h3 className="text-base font-semibold text-gray-800">
+              📝 오늘의 스케줄
+            </h3>
+            <span className="text-sm text-gray-500">
+              {isScheduleOpen ? '접기 ▲' : '펼치기 ▼'}
+            </span>
           </div>
 
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">오늘의 스케줄</h3>
-            <div className="rounded-lg bg-gray-100 p-4 shadow-sm">
-              <p>여기에 오늘의 스케줄 컴포넌트 들어갈 예정</p>
+          {isScheduleOpen && (
+            <div className="rounded-md bg-gray-50 p-4 text-sm text-gray-600 shadow-sm">
+              {/* 여기에 스케줄 컴포넌트 */}
+              여기에 오늘의 스케줄 컴포넌트 들어갈 예정
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

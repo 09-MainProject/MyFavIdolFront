@@ -18,7 +18,9 @@ import TimelineWrite from '@/pages/timeline/TimelineWrite';
 import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
+import EmailVerificationResult from './pages/signup/EmailVerificationResult';
 
+import OAuthCallback from './pages/signup/OAuthCallback';
 
 function App() {
   const router = createBrowserRouter([
@@ -75,8 +77,8 @@ function App() {
           element: <CheckPassword />,
         },
         {
-path: '/editprofile',
-element: <EditProfile />,
+          path: '/editprofile',
+          element: <EditProfile />,
         },
         {
           path: '/artists/create',
@@ -89,6 +91,15 @@ element: <EditProfile />,
         {
           path: '/artists/:id/edit',
           element: <EditArtist />,
+        },
+
+        {
+          path: '/users/verify/email',
+          element: <EmailVerificationResult />,
+        },
+        {
+          path: '/users/:provider/callback',
+          element: <OAuthCallback />,
         },
       ],
     },
