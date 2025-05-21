@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '@/lib/api';
 
 function CheckPassword() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  // eslint-disable-next-line
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
 

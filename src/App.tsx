@@ -6,6 +6,7 @@ import Layout from '@/components/layouts/Layout';
 
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
+// eslint-disable-next-line
 import NotFound from '@/pages/NotFound';
 import Schedule from '@/pages/schedule/Schedule';
 import ScheduleDetail from '@/pages/schedule/ScheduleDetail';

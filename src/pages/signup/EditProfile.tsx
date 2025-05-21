@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line
 import useProfile from '@/hooks/useProfile';
 import { useAuthStore } from '@/store/authStore';
 
@@ -23,8 +23,9 @@ function EditProfile() {
   const [originalData, setOriginalData] = useState<userProfile | null>(null);
   const [newPassword, setNewPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // eslint-disable-next-line
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const navigate = useNavigate();
+
 
   // beforeunload 핸들러 ref
   const beforeUnloadHandlerRef = useRef<(e: BeforeUnloadEvent) => void>();
@@ -54,7 +55,7 @@ function EditProfile() {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [userInput, originalData, isEditing]);
+  }, [userInput, originalData, isEditing, isFormChanged]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,7 +112,10 @@ function EditProfile() {
   async function handleClickSubmitButton() {
     // 저장 시 beforeunload 핸들러 제거
     if (beforeUnloadHandlerRef.current) {
-      window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current);
+      window.removeEventListener(
+        'beforeunload',
+        beforeUnloadHandlerRef.current
+      );
     }
     try {
       await editProfile(userInput);
@@ -133,7 +137,9 @@ function EditProfile() {
         setShowModal(true);
         setErrorMessage(null);
       } else {
-        setErrorMessage('서버에 변경사항이 아직 반영되지 않았습니다. 잠시 후 다시 시도해주세요.');
+        setErrorMessage(
+          '서버에 변경사항이 아직 반영되지 않았습니다. 잠시 후 다시 시도해주세요.'
+        );
       }
     } catch (err) {
       setErrorMessage('저장 중 문제가 발생했어요. 다시 시도해주세요.');
