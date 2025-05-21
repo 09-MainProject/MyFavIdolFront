@@ -1,275 +1,195 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import useProfile from '@/hooks/useProfile';
-import useUploadImageMutation from '../../hooks/useUploadImageMutation';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Input from '@components/common/Input/Input.tsx';
+import GoogleIcon from '@/assets/icons/GoogleIcon';
+import KakaoIcon from '@/assets/icons/KakaoIcon';
+import NaverIcon from '@/assets/icons/NaverIcon';
+import { api } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
+import type { AxiosError } from 'axios';
 
-// getUserProfile 할때 받는 데이터 구조
-// 프로필 수정할 때 보내는 구조 (옵셔널 제외)
-export interface userProfile {
+function isAxiosError(error: unknown): error is AxiosError<{ message: string }> {
+  return typeof error === 'object' && error !== null && 'response' in error;
+}
+
+type User = {
   email: string;
   password: string;
+  password_confirm: string;
   name: string;
   nickname: string;
-  id?: number;
-  image_url?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+};
 
-export interface EditUserProfileResponse {
-  nickname: string;
-  profile_image: string;
-  comment_alarm: boolean;
-  like_alarm: boolean;
-  schedule_alarm: boolean;
-}
+const isPasswordLengthValid = (password: string) =>
+  password.length >= 8 && password.length <= 25;
 
-function EditProfile() {
-  const [showModal, setShowModal] = useState(false);
-  const { userProfileData, refetchUserProfile, editProfile } = useProfile();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInput, setUserInput] = useState<userProfile | null>(null);
-  const [originalData, setOriginalData] = useState<userProfile | null>(null); // ✅ 원본 데이터 저장
-  const [newPassword, setNewPassword] = useState('');
-  const [isActiveAlarm, setIsActiveAlarm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+const containsSpecialChar = (password: string) => {
+  const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+  return specialCharRegex.test(password);
+};
+
+const isValidPassword = (password: string) =>
+  isPasswordLengthValid(password) && containsSpecialChar(password);
+
+function SignUp() {
   const navigate = useNavigate();
-  const uploadImageMutation = useUploadImageMutation();
+  const { setUser } = useAuthStore();
+  const [form, setForm] = useState<User>({
+    email: '',
+    password: '',
+    password_confirm: '',
+    name: '',
+    nickname: '',
+  });
 
-  // ✅ 변경 여부 비교 함수
-  const isFormChanged = () =>
-    JSON.stringify(userInput) !== JSON.stringify(originalData);
+  const [isPasswordMatched, setIsPasswordMatched] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  // ✅ 브라우저 닫기 감지
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isFormChanged()) {
-        e.preventDefault();
-        e.returnValue = '';
+    setIsPasswordMatched(
+      form.password === '' || form.password_confirm === ''
+        ? null
+        : form.password === form.password_confirm
+    );
+  }, [form.password, form.password_confirm]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'email') {
+      const koreanRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+      if (koreanRegex.test(value)) {
+        setEmailError('이메일에는 한글을 입력할 수 없습니다.');
+      } else if (!value.includes('@')) {
+        setEmailError('올바른 이메일을 입력해주세요.');
+      } else {
+        setEmailError('');
       }
-    };
-    if (isEditing) window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [userInput, originalData]);
+    }
 
-  useEffect(() => {
-    // 유저 인포 세팅
-    setUserInput(userProfileData);
-    setOriginalData(userProfileData); // ✅ 원본 데이터 초기값 저장
-  }, [userProfileData]);
-
-  // 프로필 이미지 변경 핸들 이벤트
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageFile(file);
-
-    // 미리보기용 URL 생성
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUserInput(prev => ({ ...prev, image_url: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
-  };
-
-  function handleChangeUserInput(
-    key: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const { value } = e.target;
-
-    if (key === 'nickname') {
+    if (name === 'nickname') {
       const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,10}$/;
       if (!nicknameRegex.test(value)) {
-        setErrorMessage(
-          '닉네임은 한글, 영어, 숫자만 가능하며 2~10자 사이여야 해요.'
-        );
+        setNicknameError('닉네임은 한글, 영어, 숫자만 가능하며 2~10자 사이여야 해요.');
       } else {
-        setErrorMessage(null);
+        setNicknameError('');
       }
     }
+  };
 
-    setUserInput(prev => ({ ...prev, [key]: value }));
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  function checkCurrentPassword() {
-    // 현재 비밀번호 맞는지 체크
-  }
-
-  function handleChangeConfirmPassword(e: React.ChangeEvent<HTMLInputElement>) {
-    if (userInput?.password !== e.target.value) {
-      setErrorMessage('비밀번호 확인이 일치하지 않습니다.');
-    }
-    setNewPassword(e.target.value);
-  }
-
-  function handleClickCancelButton() {
-    refetchUserProfile();
-    setIsEditing(false);
-    setUserInput(userProfileData);
-    setOriginalData(userProfileData); // ✅ 취소 시 원본 데이터도 초기화
-  }
-
-  async function handleClickSubmitButton() {
-    const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,10}$/;
-    if (!nicknameRegex.test(userInput.nickname)) {
-      setErrorMessage(
-        '닉네임은 한글, 영어, 숫자만 가능하며 2~10자 사이여야 해요.'
-      );
+    if (!isValidPassword(form.password)) {
+      setErrorMessage('비밀번호는 특수문자를 포함한 8자 이상이여야 합니다!');
       return;
     }
-    await editProfile(userInput);
-    // refetch는 저장 이후 반영 확인용으로 한 번만 호출하면 충분함
-    const updated = await refetchUserProfile();
-    setUserInput(updated);
-    setOriginalData(updated);
-    setShowModal(true);
-    if (imageFile) {
-      uploadImageMutation.mutate({
-        object_type: 'user',
-        object_id: userProfileData.id,
-        image_url: userInput.image_url,
-        image: imageFile,
-      });
+
+    if (form.password !== form.password_confirm) {
+      setErrorMessage('입력하신 비밀번호가 일치하지 않습니다.');
+      return;
     }
-    await refetchUserProfile();
-    window.removeEventListener('beforeunload', handleBeforeUnload); // ✅ 새로고침 전 경고 제거
-    setIsEditing(false); // ✅ 수정 완료 후 버튼 숨김 처리
-    setShowModal(true);
-    setOriginalData(userInput); // ✅ 변경 감지 기준점 업데이트
-    // navigate(0); // 제거됨, 대신 상태만 갱신
-  }
+
+    try {
+      const response = await api.post('/users/signup', form);
+      const userData = response.data?.data;
+      if (userData) {
+        setUser({
+          nickname: userData.nickname,
+          profileImage: userData.profileImage ?? '',
+          commentAlarm: userData.commentAlarm ?? true,
+          likeAlarm: userData.likeAlarm ?? true,
+          scheduleAlarm: userData.scheduleAlarm ?? true,
+          is_staff: userData.is_staff ?? false,
+          is_superuser: userData.is_superuser ?? false,
+        });
+      }
+
+      setIsSuccessModalOpen(true);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        const responseData = error.response.data;
+        setErrorMessage(responseData.message || '회원가입에 실패했습니다.');
+      } else {
+        setErrorMessage('네트워크 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  const isFormFilled =
+    form.name && form.email && form.password && form.password_confirm && form.nickname;
 
   return (
     <>
-      <div className="flex min-h-screen items-center justify-center bg-white px-4">
-        <div className="w-full max-w-xl -translate-y-35 transform space-y-8 rounded-xl border border-gray-200 bg-white px-7 py-16 shadow-sm">
-          {/* 프로필 + 수정 영역 */}
-          <div className="flex items-center gap-6">
-            <div className="relative h-20 w-20 overflow-hidden rounded-full bg-gray-200">
-              <img
-                src={userInput?.image_url || '/default.png'}
-                alt="프로필 이미지"
-                className="h-full w-full object-cover"
-              />
-              {isEditing && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="absolute top-0 left-0 h-full w-full cursor-pointer opacity-0"
-                  title="프로필 이미지 선택"
-                />
-              )}
-            </div>
-            <div>
-              <p className="text-xl font-semibold text-gray-800">
-                {userInput?.nickname}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditing(!isEditing);
-                  setOriginalData(userInput); // ✅ 수정 시작 시 기준점 저장
-                }}
-                className="mt-1 text-sm text-gray-500 hover:text-black"
-              >
-                프로필 수정하기
-              </button>
-            </div>
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="w-full max-w-md p-8">
+          <h2 className="mb-2 text-center text-2xl font-bold">Sign Up</h2>
+          <p className="mb-6 text-center text-sm text-gray-600">
+            Enter your credentials to sign in
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input type="text" name="name" placeholder="Enter your username" value={form.name} onChange={handleChange} variant="outlined" />
+            <Input type="email" name="email" placeholder="Enter your email" value={form.email} onChange={handleChange} variant="outlined" />
+            {emailError && <div className="text-sm text-red-500">{emailError}</div>}
+
+            <Input type="text" name="nickname" placeholder="Enter your nickname" value={form.nickname} onChange={handleChange} variant="outlined" />
+            {nicknameError && <div className="text-sm text-red-500">{nicknameError}</div>}
+
+            <Input type="password" name="password" placeholder="Enter your password" value={form.password} onChange={handleChange} variant="outlined" />
+            <Input type="password" name="password_confirm" placeholder="Enter your password again" value={form.password_confirm} onChange={handleChange} variant="outlined" />
+
+            {errorMessage && <div className="text-sm text-red-500">{errorMessage}</div>}
+            {isPasswordMatched !== null && (
+              <div className={`text-sm ${isPasswordMatched ? 'text-green-500' : 'text-red-500'}`}>
+                {isPasswordMatched ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다'}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!isFormFilled || !isPasswordMatched}
+              className={`w-full rounded-md py-2 text-sm font-semibold transition ${
+                isFormFilled && isPasswordMatched
+                  ? 'bg-black text-white hover:bg-gray-800'
+                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
+              }`}
+            >
+              Sign up
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-gray-400">or continue with</div>
+
+          <div className="mt-4 flex justify-center gap-4">
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
+              <KakaoIcon />
+            </button>
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
+              <NaverIcon />
+            </button>
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
+              <GoogleIcon />
+            </button>
           </div>
-
-          <hr className="border-t border-gray-200" />
-
-          {/* 닉네임 변경 */}
-          <div className="space-y-4">
-            <h3 className="text-base font-semibold text-gray-800">
-              닉네임 변경하기
-            </h3>
-            <hr className="border-t border-gray-200" />
-            <input
-              type="text"
-              name="nickname"
-              value={userInput?.nickname}
-              onChange={e => handleChangeUserInput('nickname', e)}
-              placeholder="변경할 닉네임을 입력해주세요"
-              className="w-full rounded border border-gray-300 px-4 py-3 text-sm"
-              disabled={!isEditing}
-            />
-          </div>
-
-          {/* 비밀번호 변경 */}
-          <div className="space-y-4">
-            <h3 className="text-base font-semibold text-gray-800">
-              비밀번호 변경하기
-            </h3>
-            <hr className="border-t border-gray-200" />
-            <input
-              type="password"
-              name="currentPassword"
-              value={userInput?.password}
-              onChange={checkCurrentPassword}
-              placeholder="기존 비밀번호를 입력해주세요"
-              className="w-full rounded border border-gray-300 px-4 py-3 text-sm"
-              disabled={!isEditing}
-            />
-            <input
-              type="password"
-              name="newPassword"
-              value={userInput?.password}
-              onChange={e => handleChangeUserInput('password', e)}
-              placeholder="새 비밀번호를 입력해주세요"
-              className="w-full rounded border border-gray-300 px-4 py-3 text-sm"
-              disabled={!isEditing}
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              value={newPassword}
-              onChange={handleChangeConfirmPassword}
-              placeholder="비밀번호 확인을 입력해주세요"
-              className="w-full rounded border border-gray-300 px-4 py-3 text-sm"
-              disabled={!isEditing}
-            />
-          </div>
-
-          {/* 버튼 영역 */}
-          {isEditing ? (
-            <div className="flex justify-end gap-2 pt-4">
-              <button
-                type="button"
-                onClick={handleClickCancelButton}
-                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                취소
-              </button>
-              <button
-                type="button"
-                onClick={handleClickSubmitButton}
-                className="rounded bg-black px-4 py-2 text-sm text-white hover:bg-gray-800"
-              >
-                저장하기
-              </button>
-            </div>
-          ) : (
-            <div className="invisible h-[48px]" />
-          )}
         </div>
       </div>
 
-      {showModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-[9999] flex items-center justify-center bg-black">
+      {isSuccessModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
           <div className="animate-fade-in-up w-full max-w-sm rounded-lg bg-white p-6 text-center shadow-lg">
-            <h3 className="mb-2 text-lg font-semibold">✅ 저장되었습니다!</h3>
-            <p className="mb-4 text-sm text-gray-600">
-              변경사항이 정상적으로 저장되었습니다.
-            </p>
+            <h3 className="mb-2 text-lg font-semibold">이메일 인증을 완료해주세요</h3>
+            <p className="mb-4 text-sm text-gray-600">입력하신 이메일 주소로 인증 메일이 전송되었습니다.</p>
             <button
               type="button"
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setIsSuccessModalOpen(false);
+                navigate('/login');
+              }}
               className="mt-2 rounded bg-black px-4 py-2 text-sm text-white hover:bg-gray-800"
             >
               닫기
@@ -281,4 +201,4 @@ function EditProfile() {
   );
 }
 
-export default EditProfile;
+export default SignUp;

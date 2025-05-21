@@ -1,62 +1,87 @@
-
 import { format, addDays } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { getIdolList } from '@/api/idolApi';
+import { idolSchedule } from '@/api/idolApi';
 import { IdolArtistsCard, IdolCardList } from '@/components/common/Card/IdolCardList';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import useHomeSchedule from '@/hooks/useHomeSchedule';
 import useIdolData from '@/hooks/useIdolData';
-// import { allIdolList } from '@/mocks/idolData';
-
+import { useAuthStore } from '@/store/authStore';
 
 function Home() {
   const imgList = [
-    '../src/assets/img/swiper1.png',
-    '../src/assets/img/swiper2.png',
-    '../src/assets/img/swiper3.png',
+    '/img/swiper1.png',
+    '/img/swiper2.png',
+    '/img/swiper3.png',
   ];
   
+  const [schedules, setSchedules] = useState([]);
   const { idolList } = useIdolData();
-  console.log(idolList);
-  console.log('getidolList', getIdolList);
-  
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
-  
-  const { scheduleQueries } = useHomeSchedule();
-  
+  const navigate = useNavigate();
+  const { login } = useAuthStore();
+
+
   // 스케줄 데이터를 모아서 하나의 배열로 평탄화
-  const allSchedules = scheduleQueries
-    .filter(query => query.data)
-    .flatMap(query => query.data) || [];
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      if (!idolList || idolList.length === 0) return;
+      const results = await Promise.all(idolList.map(i => idolSchedule(i.id)));
+      const merged = results.map(r => r.data).flat();
+      setSchedules(merged);
+      // const res = await idolSchedule(26);
+      // setSchedules(res.data);
+    };
+    fetchSchedule();
+  }, [idolList]);
   
-  const formattedSchedules = allSchedules.map(schedule => ({
+  const formattedSchedules = schedules.map(schedule => {
+  const matchedIdol = idolList.find(
+    i => i.name.replace(/\s/g, '').toLowerCase() === schedule.idol_name.replace(/\s/g, '').toLowerCase()
+  );
+
+
+  return {
     id: schedule.id,
-    idolId: schedule.idol?.id ?? -1,
+    idolId: matchedIdol?.id ?? -1,
     name: schedule.idol_name,
-    img: idolList?.find(i => i.id === schedule.idol?.id)?.img ?? '',
+    img: matchedIdol?.img ?? '',
     title: schedule.title,
     type: '',
-    startDate: schedule.start_date,
+    startDate: format(schedule.start_date, 'yyyy-MM-dd'),
     endDate: schedule.end_date,
     location: schedule.location,
     description: schedule.description,
     enName: '',
-  }));
-  console.log('formattedSchedules : ', allSchedules.map((i) => i.img));
-  console.log('개별 schedule 확인:', allSchedules);
+  };
+});
+
 
   const handleSelect = (offset: number) => {
     const newDate = format(addDays(new Date(), offset), 'yyyy-MM-dd');
     setSelectedDate(newDate);
   };
 
-  const filtered = formattedSchedules.filter(item => item.startDate === selectedDate);
+  const filtered = formattedSchedules.filter(item => 
+    item.startDate === selectedDate
+  );
 
+  const handleScheduleDetailClick = (idolId: number, scheduleId: number) => {
+    navigate(`/schedule/${scheduleId}`);
+  };
+  const handleCardClick = (idol: IdolArtistsCard) => {
+    if (!login) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    navigate(`/idols/${idol.id}`);
+  };
   return (
     <div className="px-4 md:px-8">
       <div className="mx-auto max-w-[1080px]">
@@ -122,7 +147,13 @@ function Home() {
               해당 날짜에 스케줄이 없습니다.
             </p>
           ) : (
-            <IdolCardList idolList={filtered as IdolArtistsCard[]} pageType="home" isVertical={false} />
+              <IdolCardList
+                idolList={filtered as IdolArtistsCard[]}
+                pageType="home" isVertical
+                onCardClick={handleCardClick}
+                onDetailClick={(idolId, scheduleId) => handleScheduleDetailClick(idolId, scheduleId)}
+            />
+
           )}
         </section>
       </div>

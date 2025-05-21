@@ -20,13 +20,11 @@ function Layout() {
                 setUser(response.data.data);
                 const payload = accessToken.split('.')[1];
                 const decodedPayload = JSON.parse(atob(payload));
-                console.log('계정 :', decodedPayload);
                 setUser({
                     ...response.data.data,
                     is_staff: decodedPayload.is_staff,
                     is_superuser: decodedPayload.is_superuser
                 });
-                console.log('layout에서 데이터 출력 :', response.data);
             } catch (e) {
                 console.error(e);
             }
@@ -35,14 +33,13 @@ function Layout() {
     }, [accessToken, csrfToken, setLogin, setUser]);
 
     return (
-        <div>
+        <div className="flex min-h-screen w-full flex-col">
             <Header/>
-            <main className="py-8">
+            <main className="flex-1 py-8">
                 <Breadcrumb/>
                 <Outlet/>
             </main>
-            <ToastContainer position="top-center" limit={1} closeButton={false} autoClose={3000} hideProgressBar/>
-
+            <ToastContainer position="bottom-right" limit={1} closeButton={false} autoClose={1000} hideProgressBar/>
             <ScrollTop/>
             <Footer/>
         </div>

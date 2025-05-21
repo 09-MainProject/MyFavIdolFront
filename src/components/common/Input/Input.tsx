@@ -9,9 +9,11 @@ type Props = {
     label?: string;
     id?: string;
     variant?: 'outlined' | 'lined';
+    min?: string;
+    max?: string;
 }
 
-function Input({type = 'text', placeholder, value, onChange, name, id, variant, label}: Props) {
+function Input({type = 'text', placeholder, value, onChange, name, id, variant, label, min, max}: Props) {
     const classNames = {
         outlined: 'w-full rounded border border-gray-300 px-3 py-2 text-sm',
         lined: 'mt-4 w-full border-b border-gray-200 p-3 text-sm outline-none'
@@ -24,7 +26,7 @@ function Input({type = 'text', placeholder, value, onChange, name, id, variant, 
         >
             {label}
             <input type={type} placeholder={placeholder} value={value} onChange={onChange} name={name} id={id}
-                   className={`${classNames}`}/>
+                   className={`${classNames}`} min={min} max={max} required/>
         </label>
     );
 }

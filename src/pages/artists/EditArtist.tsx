@@ -66,7 +66,7 @@ function EditArtist() {
         return formData;
     }
 
-    const handleAddIdol = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddIdol = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault(); // 새로고침 방지
         try {
             const res = await api.patch(`/idols${Number(id)}`, formIdolData,
@@ -103,7 +103,7 @@ function EditArtist() {
 
     // 수정 취소 버튼 함수
     function handleCancle() {
-        navigate(`/artists/${Number(id)}`);
+        navigate(`/artists/${id}`);
     }
 
     return (
@@ -111,7 +111,7 @@ function EditArtist() {
             <div>
 
                 <h2 className="mb-2 text-center text-2xl font-bold">Idol 수정</h2>
-                <form onSubmit={handleAddIdol} className="w-full max-w-md p-8 space-y-4">
+                <form className="w-full max-w-md p-8 space-y-4">
                     <div className="block text-md font-medium text-gray-700">이름</div>
                     <input
                         className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -159,14 +159,15 @@ function EditArtist() {
                     <div className="mt-6 flex justify-center gap-2">
                         <button
                             type="submit"
-                            className="w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm">
-                            수정 완료
-                        </button>
-                        <button
-                            type="submit"
                             onClick={handleCancle}
                             className="w-full font-semibold py-2 rounded bg-red-400 text-white hover:bggray800 text-sm">
                             취소
+                        </button>
+                        <button
+                            type="submit"
+                            className="w-full font-semibold py-2 rounded bg-black text-white hover:bggray800 text-sm"
+                            onClick={handleAddIdol}>
+                            수정 완료
                         </button>
                     </div>
                 </form>

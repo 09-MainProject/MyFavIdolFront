@@ -18,16 +18,17 @@ type IdolScheduleItem = {
 export default function useHomeSchedule() {
   const { idolList } = useIdolData();
   
-  // console.log(idolList.map((i)=> i));
-  const scheduleQueries = useQueries<{
-    data: IdolScheduleItem[];
-  }[]>({
-    queries: (idolList ?? []).map((idol) => ({
+  const sampledIdols = (idolList ?? []).sort(() => 0.5 - Math.random()).slice(0, 5);
+  
+  const scheduleQueries = useQueries({
+    queries: sampledIdols.map(idol => ({
       queryKey: ['idolSchedule', idol.id],
       queryFn: () => idolSchedule(idol.id),
       enabled: !!idol?.id,
     })),
-  });
+  }) as { data?: IdolScheduleItem[] }[];
+
+
 
   return { scheduleQueries };
 }

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Input from '@components/common/Input/Input.tsx';
@@ -11,7 +10,6 @@ import { api } from '@/lib/api';
 function Login() {
   const navigate = useNavigate();
   const { setLogin, setUser } = useAuthStore();
-
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -57,7 +55,11 @@ function Login() {
   };
 
   const handleSocialLogin = async (provider: 'kakao' | 'naver' | 'google') => {
-    window.location.href = `https://wistar.n-e.kr/api/users/${provider}/login`;
+    try {
+      window.location.href = `https://wistar.n-e.kr/api/users/${provider}/login`;
+    } catch (err) {
+      console.error(`${provider} 로그인 URL 요청 실패`, err);
+    }
   };
 
   return (

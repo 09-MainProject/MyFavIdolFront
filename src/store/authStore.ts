@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 
-type User = {
+export type User = {
     nickname: string;
     profileImage: string;
     commentAlarm: boolean;
@@ -17,6 +17,7 @@ interface AuthState {
     accessToken: string | null;
     csrfToken: string | null;
     isAdmin: boolean | null;
+
 }
 
 interface AuthActions {
@@ -35,7 +36,8 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
             login: false,
             accessToken: null,
             csrfToken: null,
-            isAdmin: null,
+            isAdmin : null,
+
             setLogin: (accessToken: string, csrfToken: string) => {
                 if (!accessToken || !csrfToken) {
                     throw new Error('Invalid tokens provided');
@@ -47,6 +49,8 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
                 user,
                 isAdmin: !!(user?.is_staff || user?.is_superuser),
                 })),
+      
+            
             setLogout: () => {
                 set({accessToken: null, csrfToken: null, login: false, user: null});
             },

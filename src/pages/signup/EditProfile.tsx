@@ -111,10 +111,7 @@ function EditProfile() {
   async function handleClickSubmitButton() {
     // 저장 시 beforeunload 핸들러 제거
     if (beforeUnloadHandlerRef.current) {
-      window.removeEventListener(
-        'beforeunload',
-        beforeUnloadHandlerRef.current
-      );
+      window.removeEventListener('beforeunload', beforeUnloadHandlerRef.current);
     }
     try {
       await editProfile(userInput);
@@ -136,9 +133,7 @@ function EditProfile() {
         setShowModal(true);
         setErrorMessage(null);
       } else {
-        setErrorMessage(
-          '서버에 변경사항이 아직 반영되지 않았습니다. 잠시 후 다시 시도해주세요.'
-        );
+        setErrorMessage('서버에 변경사항이 아직 반영되지 않았습니다. 잠시 후 다시 시도해주세요.');
       }
     } catch (err) {
       setErrorMessage('저장 중 문제가 발생했어요. 다시 시도해주세요.');

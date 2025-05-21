@@ -16,16 +16,17 @@ function ArtistDetail() {
   const isMobile = useMobile();
   const navigate = useNavigate();
 
-  // 권한 확인
-  const { isAdmin } = useAuthStore();
-  const { deleteIdolList, idolDetailData, loadingIdolDetailData } = useIdolData(Number(id));
+  const { isAdmin} = useAuthStore();
+  const {deleteIdolList,idolDetailData,loadingIdolDetailData} = useIdolData(Number(id));
   const {
     name = '',
     debut_date = '',
     agency = '',
     description = '',
     image_url = '',
-  } = idolDetailData || {};
+    // is_active = false
+  } = idolDetailData || {}; 
+    
 
   async function handleDelete() {
     if (!id) return;
@@ -58,32 +59,33 @@ function ArtistDetail() {
             </div>
           </div>
         ) : (
-          <div className="flex w-full max-w-3xl flex-col gap-6">
-            <h1 className='text-[60px] font-bold text-center'>
-              {name}
-            </h1>
-            <p className='text-gray-700 text-[20px] text-center mt-[50px]'>{description}</p>
-            <div className='flex items-center w-full'>
-              <img src={image_url} alt={name} className='h-full w-full rounded object-cover' />
-            </div>
+        <div className="flex w-full max-w-3xl flex-col gap-6">
+          <h1 className='text-[60px] font-bold text-center'>
+            {name}
+          </h1>
+          <p className='text-gray-700 text-[20px] text-center mt-[50px]'>{description}</p>
+          <div className='flex items-center w-full'>
+            <img src={image_url} alt={name} className='h-full w-full rounded object-cover' />
+          </div>
             <div className='flex justify-between w-full'>
               <div className="flex items-center">
                 <span className="font-bold text-[13px]">DEBUT</span>
                 <span className="ml-2 text-[13px] text-gray-500">{debut_date}</span>
-              </div>
-              <div>
-                <p className='text-gray-700 text-[13px]'>{agency}</p>
-              </div>
             </div>
-          </div>
-        )}
-        {loadingIdolDetailData && (
-          <p className='text-gray400'>
-            로딩 중...
-          </p>
-        )}
+            <div>
+              <p className='text-gray-700 text-[13px]'>{agency}</p>
+            </div>
+            </div>
+         
         </div>   
+        )}
+        {loadingIdolDetailData && 
+          (<p className='text-gray400'>
+            로딩 중...
+          </p>)
+        }
       </div>
+    </div>
   );
 }
 

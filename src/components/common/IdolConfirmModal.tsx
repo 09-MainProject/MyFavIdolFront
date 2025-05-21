@@ -17,7 +17,7 @@ export function IdolConfirmModal({
   isAlreadySelected,
 }: Props) {
   return (
-    <div className="bg-opacity-40 fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="bg-opacity-40 fixed inset-0 z-50 flex items-center justify-center bg-white">
       <div className="w-[300px] rounded-lg bg-white p-6 shadow-lg">
         <p className="mb-4 text-center text-lg font-semibold">
           {isAlreadySelected
