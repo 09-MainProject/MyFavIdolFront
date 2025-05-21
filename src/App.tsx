@@ -97,11 +97,15 @@ function App() {
                 {
                     path: '/artists/:id/edit',
                     element: <EditArtist/>,
-              },
+                },
                 {
-          path: '/schedule/:scheduleId',
-          element: <ScheduleDetail />,
-        },
+                    path: '/schedule/:scheduleId',
+                    element: <ScheduleDetail/>,
+                },
+                // {
+                //     path: '*',
+                //     element: <NotFound/>,
+                // },
             ],
         },
     ]);
