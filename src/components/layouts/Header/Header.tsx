@@ -80,7 +80,7 @@ function Header() {
             <div className="flex items-center justify-between px-4 py-4">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="text-xl font-bold leading-none">
-                        MyFavIdol
+                        WiStar
                     </Link>
                     <IdolDropdown idols={idols}
                                   setSelectIdol={setSelectIdol}
