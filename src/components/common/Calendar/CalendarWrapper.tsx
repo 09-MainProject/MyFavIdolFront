@@ -52,7 +52,7 @@ function CalendarWrapper({idols}: Props) {
             (item) => format(toKoreaTime(item.start_date), 'yyyy-MM-dd') === dateStr
         );
         const types = filtered.map((item) => guessTypeFromTitle(item.title));
-        console.log(types);
+
         return (
             <div className="flex h-full flex-col">
                 <div className="mt-2 flex max-h-[100px] flex-col overflow-hidden">

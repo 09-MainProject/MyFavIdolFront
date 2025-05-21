@@ -6,10 +6,11 @@ import {
     IdolScheduleRequest
 } from '@/types/idolSchedule.ts';
 
-export const getSchedulesApi = async (idol_id: string, startData?: string): Promise<IdolScheduleCreateResponse> => {
+export const getSchedulesApi = async (idol_id: string, startDate?: string, endDate?: string): Promise<IdolScheduleCreateResponse> => {
     const response = await api.get(`/idols/${idol_id}/schedules`, {
         params: {
-            start_date: startData,
+            start_date: startDate,
+            end_date: endDate,
         }
     });
     return response.data;
