@@ -15,7 +15,7 @@ type Props = {
 
 
 function guessTypeFromTitle(title: string): '팬미팅' | '공연' | '방송' | 'Etc' {
-    if (/팬.?미팅/i.test(title)) return '팬미팅';
+    if (/팬\s?미팅/i.test(title)) return '팬미팅';
     if (/공연|콘서트|쇼케이스/i.test(title)) return '공연';
     if (/방송|출연|예능|라디오|인터뷰/i.test(title)) return '방송';
     return 'Etc';
@@ -52,7 +52,7 @@ function CalendarWrapper({idols}: Props) {
             (item) => format(toKoreaTime(item.start_date), 'yyyy-MM-dd') === dateStr
         );
         const types = filtered.map((item) => guessTypeFromTitle(item.title));
-
+        console.log(types);
         return (
             <div className="flex h-full flex-col">
                 <div className="mt-2 flex max-h-[100px] flex-col overflow-hidden">

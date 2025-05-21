@@ -26,7 +26,7 @@ function Input({type = 'text', placeholder, value, onChange, name, id, variant, 
         >
             {label}
             <input type={type} placeholder={placeholder} value={value} onChange={onChange} name={name} id={id}
-                   className={`${classNames}`} min={min} max={max}/>
+                   className={`${classNames}`} min={min} max={max} required/>
         </label>
     );
 }
