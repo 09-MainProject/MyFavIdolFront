@@ -16,6 +16,8 @@ interface AuthState {
     login: boolean;
     accessToken: string | null;
     csrfToken: string | null;
+    isAdmin: boolean | null;
+
 }
 
 interface AuthActions {
@@ -34,6 +36,8 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
             login: false,
             accessToken: null,
             csrfToken: null,
+            isAdmin : null,
+
             setLogin: (accessToken: string, csrfToken: string) => {
                 if (!accessToken || !csrfToken) {
                     throw new Error('Invalid tokens provided');
@@ -41,7 +45,12 @@ export const useAuthStore = create<AuthStore | Partial<AuthStore>>()(
                 set({accessToken, csrfToken, login: true});
             },
             setUser: (user: User) =>
-                set(state => ({user: {...state.user, ...user}})),
+                set(() => ({
+                user,
+                isAdmin: !!(user?.is_staff || user?.is_superuser),
+                })),
+      
+            
             setLogout: () => {
                 set({accessToken: null, csrfToken: null, login: false, user: null});
             },
