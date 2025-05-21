@@ -1,8 +1,10 @@
 import React, {useRef, useState} from 'react';
-import {Link} from 'react-router';
+import useOutsideClick from '@hooks/useOutsideClick.tsx';
+
+
 import IdolDropdownPanel from '@pages/schedule/IdolDropdownPanel';
 import {Idol} from '@store/idolStore';
-import useOutsideClick from '@hooks/useOutsideClick.tsx';
+
 
 type Props = {
     idols: Idol[];
@@ -12,11 +14,11 @@ type Props = {
 };
 
 function IdolDropdown({
-    idols,
-    setSelectIdol,
-    selectedIdolId,
-    displayedIdolName
-}: Props) {
+                          idols,
+                          setSelectIdol,
+                          selectedIdolId,
+                          displayedIdolName
+                      }: Props) {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -41,7 +43,8 @@ function IdolDropdown({
                 <span className="ml-2">▼</span>
             </button>
             {dropdownOpen && (
-                <div className="absolute left-0 top-full z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+                <div
+                    className="absolute left-0 top-full z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
                     <IdolDropdownPanel
                         idols={idols}
                         selectedIdolId={selectedIdolId}
