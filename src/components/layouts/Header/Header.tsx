@@ -1,5 +1,5 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router';
+import {useCallback, useRef, useState} from 'react';
+import {Link, useNavigate} from 'react-router';
 import {Close, Hamburger} from '@assets/icons/inedx';
 import DesktopMenu from '@components/layouts/Header/DesktopNav';
 import IdolDropdown from '@components/layouts/Header/IdolDropdown.tsx';
@@ -23,12 +23,8 @@ function Header() {
     const {login, user, setLogout} = useAuthStore();
     const [openDropdown, setOpenDropdown] = useState(false);
     const isMobile = useMobile();
-    const {
-        ref,
-        dropdownOpen,
-        handleToggleDropdown,
-        handleCloseDropdown
-    } = useOutsideClick();
+
+    useOutsideClick(mobileRef, () => setIsMobileMenuOpen(false), isMobileMenuOpen);
 
     const selectedIdol = idols.find(idol => idol.id === selectedIdolId) || null;
     const displayedIdolName = selectedIdol?.name ?? DEFAULT_SELECTED_IDOL;
@@ -41,47 +37,64 @@ function Header() {
         setIsMobileMenuOpen(false);
     }, []);
 
-    useEffect(() => {
-        const handle = (e: globalThis.MouseEvent) => {
-            const target = e.target as Node;
-            if (isMobileMenuOpen && mobileRef.current && !mobileRef.current.contains(target)) {
-                setIsMobileMenuOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handle);
-        return () => {
-            document.removeEventListener('mousedown', handle);
-        };
-    }, [isMobileMenuOpen]);
-
     const handleOnLogout = async () => {
         try {
             await api.post('/users/token/logout');
         } catch (error) {
-            // eslint-disable-next-line no-console
             console.log(error);
         }
         setLogout();
         navigate('/');
     };
 
+    const renderUserSection = () => {
+        if (!login) {
+            return (
+                <div className="flex items-center gap-4 text-sm">
+                    <Link to="/login" className="hover:text-blue-500">
+                        로그인
+                    </Link>
+                    <Link to="/signup" className="hover:text-blue-500">
+                        회원가입
+                    </Link>
+                </div>
+            );
+        }
+
+        return (
+            <UserInfo
+                login={login}
+                user={user}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                handleOnLogout={handleOnLogout}/>
+        );
+    };
+
     return (
         <header className="fixed z-[9999] w-full max-w-[1080px] bg-white">
-            <div className="flex items-center p-4 " ref={ref}>
-                <IdolDropdown handleToggleDropdown={handleToggleDropdown} idols={idols}
-                              setSelectIdol={setSelectIdol} handleCloseDropdown={handleCloseDropdown}
-                              dropdownOpen={dropdownOpen} selectedIdolId={selectedIdolId}
-                              displayedIdolName={displayedIdolName}
-                              />
+            <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-6">
+                    <Link to="/" className="text-xl font-bold leading-none">
+                        MyFavIdol
+                    </Link>
+                    <IdolDropdown idols={idols}
+                                  setSelectIdol={setSelectIdol}
+                                  selectedIdolId={selectedIdolId}
+                                  displayedIdolName={displayedIdolName}
+                    />
+                    {!isMobile && <DesktopMenu menuList={HEADER_MENU}/>}
+                </div>
                 {isMobile ? (
                     <>
-                        <UserInfo
-                            login={login}
-                            user={user}
-                            openDropdown={openDropdown}
-                            setOpenDropdown={setOpenDropdown}
-                            handleOnLogout={handleOnLogout}/>
+                        {login && (
+                            <UserInfo
+                                login={login}
+                                user={user}
+                                openDropdown={openDropdown}
+                                setOpenDropdown={setOpenDropdown}
+                                handleOnLogout={handleOnLogout}/>
+                        )}
                         <div className="ml-auto" ref={mobileRef}>
                             <button
                                 type="button"
@@ -96,15 +109,7 @@ function Header() {
                         </div>
                     </>
                 ) : (
-                    <>
-                        <DesktopMenu menuList={HEADER_MENU}/>
-                        <UserInfo
-                            login={login}
-                            user={user}
-                            openDropdown={openDropdown}
-                            setOpenDropdown={setOpenDropdown}
-                            handleOnLogout={handleOnLogout}/>
-                    </>
+                    renderUserSection()
                 )}
             </div>
         </header>

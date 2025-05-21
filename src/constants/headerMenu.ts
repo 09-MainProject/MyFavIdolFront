@@ -4,7 +4,7 @@ export interface HeaderMenuItem {
 }
 
 export const HEADER_MENU: HeaderMenuItem[] = [
-  { title: 'Artists', href: '/artists' },
-  { title: 'Schedule', href: '/schedule' },
-  { title: 'TimeLine', href: '/timeline' },
+  { title: '아티스트', href: '/artists' },
+  { title: '스케줄', href: '/schedule' },
+  { title: '타임라인', href: '/timeline' },
 ];

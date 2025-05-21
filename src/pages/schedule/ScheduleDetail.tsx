@@ -42,7 +42,7 @@ function ScheduleDetail() {
             <div className="rounded-lg bg-white p-8 shadow-lg">
                 <ScheduleHeader title={schedule.title} idolName={schedule.idol_name}/>
                 <ScheduleContent schedule={schedule}/>
-                {user.is_staff && (
+                {user?.is_staff && (
                     <DetailEditButton
                         scheduleId={scheduleId!}
                         idolId={idolId!}
