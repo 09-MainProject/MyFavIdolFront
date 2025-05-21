@@ -6,6 +6,7 @@ import Layout from '@/components/layouts/Layout';
 
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
+import NotFound from '@/pages/NotFound';
 import Schedule from '@/pages/schedule/Schedule';
 import ScheduleDetail from '@/pages/schedule/ScheduleDetail';
 import CheckPassword from '@/pages/signup/CheckPassword';
@@ -97,11 +98,15 @@ function App() {
                 {
                     path: '/artists/:id/edit',
                     element: <EditArtist/>,
-              },
+                },
                 {
-          path: '/schedule/:scheduleId',
-          element: <ScheduleDetail />,
-        },
+                    path: '/schedule/:scheduleId',
+                    element: <ScheduleDetail/>,
+                },
+                {
+                    path: '*',
+                    element: <NotFound/>,
+                },
             ],
         },
     ]);
