@@ -6,6 +6,7 @@ import Layout from '@/components/layouts/Layout';
 
 import Artist from '@/pages/artists/Artist';
 import Home from '@/pages/home/Home';
+// eslint-disable-next-line
 import NotFound from '@/pages/NotFound';
 import Schedule from '@/pages/schedule/Schedule';
 import ScheduleDetail from '@/pages/schedule/ScheduleDetail';
@@ -19,8 +20,9 @@ import TimelineDetail from '@/pages/timeline/TimelineDetail';
 import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
-import OAuthCallback from './pages/signup/OauthCallback';
+import EmailVerificationResult from './pages/signup/EmailVerificationResult';
 
+import OAuthCallback from './pages/signup/OAuthCallback';
 
 function App() {
     const router = createBrowserRouter([
@@ -110,14 +112,17 @@ function App() {
           element: <OAuthCallback />,
         },
 
-                {
-                    path: '*',
-                    element: <NotFound/>,
-                },
-
-            ],
+        {
+          path: '/users/verify/email',
+          element: <EmailVerificationResult />,
         },
-    ]);
+        {
+          path: '/users/:provider/callback',
+          element: <OAuthCallback />,
+        },
+      ],
+    },
+  ]);
 
     return <RouterProvider router={router}/>;
 }

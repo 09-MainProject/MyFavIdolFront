@@ -1,11 +1,11 @@
-import {useCallback, useRef, useState} from 'react';
-import {Link, useNavigate} from 'react-router';
-import {Close, Hamburger} from '@assets/icons/inedx';
+import { useCallback, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { Close, Hamburger } from '@assets/icons/inedx';
 import DesktopMenu from '@components/layouts/Header/DesktopNav';
 import IdolDropdown from '@components/layouts/Header/IdolDropdown.tsx';
 import MobileNav from '@components/layouts/Header/MobileNav';
 import UserInfo from '@components/layouts/Header/UserInfo';
-import {HEADER_MENU} from '@constants/headerMenu';
+import { HEADER_MENU } from '@constants/headerMenu';
 import useMobile from '@hooks/useMobile';
 import useOutsideClick from '@hooks/useOutsideClick.tsx';
 import {useAuthStore} from '@store/authStore.ts';
@@ -33,9 +33,9 @@ function Header() {
     const selectedIdol = idols.find(idol => idol.id === selectedIdolId) || null;
     const displayedIdolName = selectedIdol?.name ?? DEFAULT_SELECTED_IDOL;
 
-    const handleToggleMobileMenu = useCallback(() => {
-        setIsMobileMenuOpen(prev => !prev);
-    }, []);
+  const handleToggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
 
     const handleCloseMobileMenu = useCallback(() => {
         setIsMobileMenuOpen(false);

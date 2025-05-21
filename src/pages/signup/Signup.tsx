@@ -1,13 +1,16 @@
-import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '@components/common/Input/Input.tsx';
 import GoogleIcon from '@/assets/icons/GoogleIcon';
 import KakaoIcon from '@/assets/icons/KakaoIcon';
 import NaverIcon from '@/assets/icons/NaverIcon';
-// import axios from 'axios';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import type { AxiosError } from 'axios';
+
+function isAxiosError(error: unknown): error is AxiosError<{ message: string }> {
+  return typeof error === 'object' && error !== null && 'response' in error;
+}
 
 type User = {
   email: string;
@@ -17,16 +20,14 @@ type User = {
   nickname: string;
 };
 
-// 글자 수 유효성 검사
 const isPasswordLengthValid = (password: string) =>
   password.length >= 8 && password.length <= 25;
-// 특수문자 포함 여부
+
 const containsSpecialChar = (password: string) => {
-  // eslint-disable-next-line no-useless-escape
   const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
   return specialCharRegex.test(password);
 };
-// 길이랑 특수문자가 포함됐는지 확인 함수 (나중에 싹 다 리팩토링 // 합친다거나 그런 거 여부 확인해보기)
+
 const isValidPassword = (password: string) =>
   isPasswordLengthValid(password) && containsSpecialChar(password);
 
@@ -40,11 +41,10 @@ function SignUp() {
     name: '',
     nickname: '',
   });
-  const [isPasswordMatched, setIsPasswordMatched] = useState<boolean | null>(
-    null
-  );
 
+  const [isPasswordMatched, setIsPasswordMatched] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
@@ -58,9 +58,8 @@ function SignUp() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm(prev => ({ ...prev, [name]: value }));
 
-    // email 한글 및 @ 포함 체크
     if (name === 'email') {
       const koreanRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
       if (koreanRegex.test(value)) {
@@ -69,6 +68,15 @@ function SignUp() {
         setEmailError('올바른 이메일을 입력해주세요.');
       } else {
         setEmailError('');
+      }
+    }
+
+    if (name === 'nickname') {
+      const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,10}$/;
+      if (!nicknameRegex.test(value)) {
+        setNicknameError('닉네임은 한글, 영어, 숫자만 가능하며 2~10자 사이여야 해요.');
+      } else {
+        setNicknameError('');
       }
     }
   };
@@ -88,10 +96,6 @@ function SignUp() {
 
     try {
       const response = await api.post('/users/signup', form);
-      // eslint-disable-next-line no-console
-      console.log('회원가입 성공:', response.data);
-      setIsSuccessModalOpen(true);
-
       const userData = response.data?.data;
       if (userData) {
         setUser({
@@ -100,36 +104,24 @@ function SignUp() {
           commentAlarm: userData.commentAlarm ?? true,
           likeAlarm: userData.likeAlarm ?? true,
           scheduleAlarm: userData.scheduleAlarm ?? true,
-          is_staff: userData.is_staff,
-          is_superuser:userData.is_superuser,
+          is_staff: userData.is_staff ?? false,
+          is_superuser: userData.is_superuser ?? false,
         });
       }
 
       setIsSuccessModalOpen(true);
     } catch (error: unknown) {
-        const axiosError = error as AxiosError;
-
-        if (axiosError.response) {
-            console.error('회원가입 실패:', axiosError.response.data);
-            setErrorMessage(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (axiosError.response.data as any)?.message || '회원가입에 실패했습니다.'
-            );
-        } else {
-            console.error('네트워크 오류:', axiosError);
-            setErrorMessage('네트워크 오류가 발생했습니다.');
-        }
-
-        console.log(axiosError);
+      if (isAxiosError(error)) {
+        const responseData = error.response.data;
+        setErrorMessage(responseData.message || '회원가입에 실패했습니다.');
+      } else {
+        setErrorMessage('네트워크 오류가 발생했습니다.');
+      }
     }
-
   };
-  const isFormFilled = // 불리언 값을 담는 변수이므로 {} 필요 없음
-    form.name !== '' &&
-    form.email !== '' &&
-    form.password !== '' &&
-    form.password_confirm !== '' &&
-    form.nickname !== '';
+
+  const isFormFilled =
+    form.name && form.email && form.password && form.password_confirm && form.nickname;
 
   return (
     <>
@@ -141,61 +133,23 @@ function SignUp() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="text"
-              name="name"
-              placeholder="Enter your username"
-              value={form.name}
-              onChange={handleChange}
-              variant="outlined"
-            />
-            <Input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={handleChange}
-              variant="outlined"
-            />
-            <Input
-              type="text"
-              name="nickname"
-              placeholder="Enter your nickname"
-              value={form.nickname}
-              onChange={handleChange}
-              variant="outlined"
-            />
-            {emailError && (
-              <div className="text-sm text-red-500">{emailError}</div>
-            )}
-            <Input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleChange}
-              variant="outlined"
-            />
-            <Input
-              type="password"
-              name="password_confirm"
-              placeholder="Enter your password"
-              value={form.password_confirm}
-              onChange={handleChange}
-              variant="outlined"
-            />
-            {errorMessage && (
-              <div className="text-sm text-red-500">{errorMessage}</div>
-            )}
+            <Input type="text" name="name" placeholder="Enter your username" value={form.name} onChange={handleChange} variant="outlined" />
+            <Input type="email" name="email" placeholder="Enter your email" value={form.email} onChange={handleChange} variant="outlined" />
+            {emailError && <div className="text-sm text-red-500">{emailError}</div>}
+
+            <Input type="text" name="nickname" placeholder="Enter your nickname" value={form.nickname} onChange={handleChange} variant="outlined" />
+            {nicknameError && <div className="text-sm text-red-500">{nicknameError}</div>}
+
+            <Input type="password" name="password" placeholder="Enter your password" value={form.password} onChange={handleChange} variant="outlined" />
+            <Input type="password" name="password_confirm" placeholder="Enter your password again" value={form.password_confirm} onChange={handleChange} variant="outlined" />
+
+            {errorMessage && <div className="text-sm text-red-500">{errorMessage}</div>}
             {isPasswordMatched !== null && (
-              <div
-                className={`text-sm ${isPasswordMatched ? 'text-green-500' : 'text-red-500'}`}
-              >
-                {isPasswordMatched
-                  ? '비밀번호가 일치합니다'
-                  : '비밀번호가 일치하지 않습니다'}
+              <div className={`text-sm ${isPasswordMatched ? 'text-green-500' : 'text-red-500'}`}>
+                {isPasswordMatched ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다'}
               </div>
             )}
+
             <button
               type="submit"
               disabled={!isFormFilled || !isPasswordMatched}
@@ -209,44 +163,29 @@ function SignUp() {
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-400">
-            or continue with
-          </div>
+          <div className="mt-6 text-center text-sm text-gray-400">or continue with</div>
 
           <div className="mt-4 flex justify-center gap-4">
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
-            >
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
               <KakaoIcon />
             </button>
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
-            >
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
               <NaverIcon />
             </button>
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
-            >
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100">
               <GoogleIcon />
             </button>
           </div>
         </div>
       </div>
+
       {isSuccessModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
           <div className="animate-fade-in-up w-full max-w-sm rounded-lg bg-white p-6 text-center shadow-lg">
-            <h3 className="mb-2 text-lg font-semibold">
-              이메일 인증을 완료해주세요
-            </h3>
-            <p className="mb-4 text-sm text-gray-600">
-              입력하신 이메일 주소로 인증 메일이 전송되었습니다.
-              <br />
-            </p>
+            <h3 className="mb-2 text-lg font-semibold">이메일 인증을 완료해주세요</h3>
+            <p className="mb-4 text-sm text-gray-600">입력하신 이메일 주소로 인증 메일이 전송되었습니다.</p>
             <button
-                type='button'
+              type="button"
               onClick={() => {
                 setIsSuccessModalOpen(false);
                 navigate('/login');
@@ -260,5 +199,6 @@ function SignUp() {
       )}
     </>
   );
-  }
+}
+
 export default SignUp;
