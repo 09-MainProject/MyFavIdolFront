@@ -106,3 +106,22 @@ MyFavIdolFront/
 - - cd 해당폴더로 이동
 - npm i, npm install 패키지 설치
 - npm run dev 실행
+
+## 배포 링크
+https://wistar.o-r.kr/
+
+## 문서
+- 사용자 요구사항 정의서
+  https://docs.google.com/spreadsheets/d/1j6LmhFHiRqi9j7MlOIx9FTuPqTV3b5InJgEGm05m4CI/edit?gid=428803499#gid=428803499
+- 플로우차트
+  https://www.figma.com/board/DhHUijQ0Eh2ARjevUpieAz/Untitled?node-id=0-1&p=f&t=a8DJjTxh9arxrNxm-0
+- 화면정의서(와이어프레임)
+  https://www.figma.com/design/ItmTtXoVbTqDyUwyAjsnNe/%EC%98%A4%EC%A6%88%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8idol?node-id=112-10866&p=f&t=R695bky0Iwba2lG6-0
+- ERD 명세서
+  https://www.erdcloud.com/d/eNoew4DpdgWtb9dn4
+- 테이블 명세서
+  https://docs.google.com/spreadsheets/d/12pDVQs0daAvF2T8SBJ7TGTXsyEkNbVAuEVa_CjuTdoo/edit?usp=sharing
+- API 명세서
+  https://docs.google.com/spreadsheets/d/1iRFoYlJupYTs26U1PBsnsIMU6Yf5ulGjj6_-FxASFGc/edit?usp=sharing
+
+
