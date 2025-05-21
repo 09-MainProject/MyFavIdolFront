@@ -13,7 +13,7 @@ function useImgLazy() {
     }, []);
 
     useEffect(() => {
-        const observer = new IntersectionObserver(handleImgLoad, {threshold: 0.5});
+        const observer = new IntersectionObserver(handleImgLoad, {threshold: 0.1});
 
         if (imgRef.current) {
             observer.observe(imgRef.current);

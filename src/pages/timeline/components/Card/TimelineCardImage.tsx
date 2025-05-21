@@ -20,9 +20,10 @@ function TimelineCardImage({post}: Props) {
                     <source srcSet={post.image_url} type="image/webp"/>
                     <img
                         ref={imgRef}
-                        src={post.image_url}
+                        src=""
+                        data-src={post.image_url}
                         alt={post.title}
-                        className="w-full  h-full object-cover "
+                        className="w-full h-full object-cover"
                         onError={imgError}
                         width={300}
                         height={300}

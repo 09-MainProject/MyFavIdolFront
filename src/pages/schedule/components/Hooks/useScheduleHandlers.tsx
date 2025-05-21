@@ -16,7 +16,7 @@ function useScheduleHandlers({form, mode, scheduleId, onAfterSubmit}: Props) {
         scheduleId,
         onSuccess: onAfterSubmit,
     });
-    
+
     const {
         title,
         description,
@@ -35,12 +35,20 @@ function useScheduleHandlers({form, mode, scheduleId, onAfterSubmit}: Props) {
                 return;
             }
 
+            const startDate = new Date(start_date);
+            const endDate = new Date(end_date);
+
+            if (endDate <= startDate) {
+                alert('종료 일시는 시작 일시보다 이후여야 합니다.');
+                return;
+            }
+
             const payload = {
                 title,
                 description,
                 location,
-                start_date: new Date(start_date).toISOString(),
-                end_date: new Date(end_date).toISOString(),
+                start_date: startDate.toISOString(),
+                end_date: endDate.toISOString(),
             };
 
             if (mode === 'create') {
