@@ -104,10 +104,10 @@ function App() {
                     path: '/schedule/:scheduleId',
                     element: <ScheduleDetail />,
                 },
-                // {
-                //     path: '/users/:provider/callback',
-                //     element: <OAuthCallback />,
-                // },
+                {
+                    path: '/users/:provider/callback',
+                    element: <OAuthCallback />,
+                },
 
                 {
                     path: '*',
