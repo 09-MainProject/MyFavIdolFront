@@ -12,7 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 //   message:string;
 // }
 
-function OAuthCallback() {
+function OauthCallback() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,7 +55,8 @@ function OAuthCallback() {
 
   loginWithProvider();
 }, [params, navigate, location, setLogin]);
+return <div>로그인 처리 중</div>;
 
 }
 
-export default OAuthCallback;
+export default OauthCallback;
