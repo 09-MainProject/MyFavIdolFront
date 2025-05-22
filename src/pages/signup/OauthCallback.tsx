@@ -1,13 +1,16 @@
-import { AxiosError } from 'axios';
+import axios from 'axios';
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
-interface OAuthResponse {
-  access_token: string;
-  csrf_token: string;
-}
+// interface OAuthResponse {
+//   code:number,
+//   data:{
+//     access_token: string;
+//     csrf_token: string;
+//   },
+//   message:string;
+// }
 
 function OAuthCallback() {
   const [params] = useSearchParams();
@@ -16,30 +19,43 @@ function OAuthCallback() {
   const { setLogin } = useAuthStore();
 
   useEffect(() => {
+  const loginWithProvider = async () => {
+    console.log('로그인 함수 실행');
     const code = params.get('code');
     const state = params.get('state');
     const match = location.pathname.match(/\/users\/([^/]+)\/callback/);
     const provider = match?.[1];
 
-    if (!code || !provider) {
-      navigate('/login?error=missing_code_or_provider');
-      return;
+    // if (!code || !provider) {
+    //   navigate('/login?error=missing_code_or_provider');
+    //   return;
+    // }
+    try {
+      const res = await axios.post(
+        `https://wistar.n-e.kr/api/users/${provider}/callback`,
+        state ? { code, state } : { code },
+        {
+          headers: {
+            Authorization: '', // 불필요한 토큰 제거
+          },
+        }
+      );
+      console.log('🟢 로그인 성공', res.data);
+       const { access_token, csrf_token } = res.data;
+      setLogin(access_token, csrf_token);
+         navigate('/');
+    } catch (err) {
+      console.error('❌ 런타임 에러 발생', err);
+       console.error(`${provider} 로그인 실패`, err.response?.data || err.message);
+      navigate('/login?error=oauth');
     }
+   
 
-    api
-      .post<OAuthResponse>(`/users/${provider}/callback`, state ? { code, state } : { code })
-      .then(res => {
-        const { access_token, csrf_token } = res.data;
-        setLogin(access_token, csrf_token);
-        navigate('/');
-      })
-      .catch((err: AxiosError) => {
-        console.error(`${provider} 로그인 실패`, err.response?.data || err.message);
-        navigate('/login?error=oauth');
-      });
-  }, [params, navigate, location, setLogin]);
+  };
 
-  return <p>로그인 처리 중입니다...</p>;
+  loginWithProvider();
+}, [params, navigate, location, setLogin]);
+
 }
 
 export default OAuthCallback;
