@@ -41,7 +41,7 @@ function OauthCallback() {
         }
       );
       console.log('🟢 로그인 성공', res.data);
-       const { access_token, csrf_token } = res.data;
+       const { access_token, csrf_token } = res.data.data;
       setLogin(access_token, csrf_token);
          navigate('/');
     } catch (err) {
