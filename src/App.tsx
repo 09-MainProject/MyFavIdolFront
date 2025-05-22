@@ -19,7 +19,7 @@ import TimelineDetail from '@/pages/timeline/TimelineDetail';
 import ArtistDetail from './pages/artists/ArtistDetail';
 import CreateArtist from './pages/artists/CreateArtist';
 import EditArtist from './pages/artists/EditArtist';
-// import OAuthCallback from './pages/signup/OauthCallback';
+import OAuthCallback from './pages/signup/OauthCallback';
 
 
 function App() {
